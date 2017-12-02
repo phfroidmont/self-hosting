@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: true
+  gather_facts: no
+  tasks:
+    - name: Install ansible prerequisites
+      script: ansible_prerequisites.sh creates=/root/.ansible_prerequisites_installed
+      become: true 
+    - name: Install required packages
+      pacman: name={{item}} state=present update_cache=yes
+      with_items:
+      - htop
