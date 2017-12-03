@@ -7,6 +7,15 @@
       script: ansible_prerequisites.sh creates=/root/.ansible_prerequisites_installed
       become: true 
     - name: Install required packages
-      pacman: name={{item}} state=present update_cache=yes
+      package: name={{item}} state=present update_cache=yes
       with_items:
-      - htop
+        - htop
+        - docker
+        - docker-compose
+        - git
+        - nload
+        - rsync
+        - ufw
+        - vim
+        - wget
+        - zsh
