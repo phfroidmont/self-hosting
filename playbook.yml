@@ -19,3 +19,20 @@
         - vim
         - wget
         - zsh
+    - name: Enable and start docker service
+      systemd:
+        name: docker.service
+        state: started
+        enabled: True
+    - name: Create images config folder
+      file: dest=/etc/images state=directory
+    - name: Copy murmur config
+      copy: src=murmur dest=/etc/images
+    - name: Create murmur data folder
+      file: dest=/var/lib/murmur state=directory
+    - name: Copy murmur database
+      copy: src=/mnt/borg/banditlair.com-2017-12-04/backups/murmur/murmur.sqlite dest=/var/lib/murmur/
+    - name: Start murmur docker project
+      docker_service:
+        project_src: /etc/images/murmur
+        state: present

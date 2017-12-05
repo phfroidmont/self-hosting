@@ -1,0 +1,12 @@
+version: '2.2'
+
+services:
+  murmur:
+    image: mattikus/murmur
+    volumes:
+      - ./murmur.ini:/etc/murmur.ini
+      - /var/lib/murmur/murmur.sqlite:/data/murmur.sqlite
+    ports:
+      - 64738:64738
+      - 64738:64738/udp
+    restart: always
