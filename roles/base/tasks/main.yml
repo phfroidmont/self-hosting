@@ -1,0 +1,14 @@
+---
+- name: Install ansible prerequisites
+  script: ansible_prerequisites.sh creates=/root/.ansible_prerequisites_installed
+- name: Install base packages
+  package: name={{item}} state=present update_cache=yes
+  with_items:
+    - htop
+    - git
+    - nload
+    - rsync
+    - ufw
+    - vim
+    - wget
+    - zsh

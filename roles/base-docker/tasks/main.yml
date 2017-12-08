@@ -1,0 +1,13 @@
+---
+- name: Install docker packages
+  package: name={{item}} state=present update_cache=yes
+  with_items:
+    - docker
+    - docker-compose
+- name: Enable and start docker service
+  systemd:
+    name: docker.service
+    state: started
+    enabled: True
+- name: Create images config folder
+  file: dest={{docker_compose_files_folder}} state=directory

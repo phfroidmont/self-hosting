@@ -2,37 +2,9 @@
 - hosts: all
   become: true
   gather_facts: no
-  tasks:
-    - name: Install ansible prerequisites
-      script: ansible_prerequisites.sh creates=/root/.ansible_prerequisites_installed
-      become: true 
-    - name: Install required packages
-      package: name={{item}} state=present update_cache=yes
-      with_items:
-        - htop
-        - docker
-        - docker-compose
-        - git
-        - nload
-        - rsync
-        - ufw
-        - vim
-        - wget
-        - zsh
-    - name: Enable and start docker service
-      systemd:
-        name: docker.service
-        state: started
-        enabled: True
-    - name: Create images config folder
-      file: dest=/etc/images state=directory
-    - name: Copy murmur config
-      copy: src=murmur dest=/etc/images
-    - name: Create murmur data folder
-      file: dest=/var/lib/murmur state=directory
-    - name: Copy murmur database
-      copy: src=/mnt/borg/banditlair.com-2017-12-04/backups/murmur/murmur.sqlite dest=/var/lib/murmur/
-    - name: Start murmur docker project
-      docker_service:
-        project_src: /etc/images/murmur
-        state: present
+  vars:
+    docker_compose_files_folder: /etc/compose
+  roles:
+    - role: base
+    - role: base-docker
+    - role: murmur-docker

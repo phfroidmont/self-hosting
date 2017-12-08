@@ -1,0 +1,3 @@
+---
+docker_compose_files_folder: /etc/compose
+docker_compose_persistence_folder: /var/lib
