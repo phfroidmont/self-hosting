@@ -1,0 +1,21 @@
+version: '2.2'
+
+networks:
+  proxy-tier:
+    external:
+      name: nginx-proxy
+
+services:
+  searx:
+    image: wonderfall/searx
+    environment:
+      - BASE_URL="https://${DOMAIN}"
+      - IMAGE_PROXY=True
+      - VIRTUAL_HOST=${DOMAIN}
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=8888
+      - LETSENCRYPT_HOST=${DOMAIN},mail.banditlair.com,gitlab.banditlair.com,grafana.banditlair.com,cloud.banditlair.com,office.banditlair.com,plex.banditlair.com,sonar.banditlair.com,deluge.banditlair.com,rpg.banditlair.com,matrix.banditlair.com,emby.banditlair.com
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    networks:
+      - proxy-tier
+    restart: always

@@ -1,0 +1,10 @@
+---
+- name: Copy proxy config
+  copy: src=proxy dest={{docker_compose_files_folder}}
+- name: Copy certificates
+  copy: src={{backup_folder}}/{{docker_compose_files_folder}}/proxy/nginx/certs dest={{docker_compose_files_folder}}/proxy/nginx
+- name: Create nginx-proxy docker network
+  docker_network:
+    name: nginx-proxy
+- name: Start proxy docker project
+  docker_service: project_src={{docker_compose_files_folder}}/proxy state=present

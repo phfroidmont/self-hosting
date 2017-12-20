@@ -3,8 +3,10 @@
   become: true
   gather_facts: no
   vars:
-    docker_compose_files_folder: /etc/compose
+    docker_compose_files_folder: /etc/images
+    domain_name: banditlair.com
+    sub_domains:
+      - rpg
   roles:
-    - role: base
-    - role: base-docker
     - role: murmur-docker
+    - role: searx-docker

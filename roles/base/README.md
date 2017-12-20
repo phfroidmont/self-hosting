@@ -1,3 +1,3 @@
 base
 ====
-Installs Ansible prerequisites if needed and than installs basic utility packages
+Installs Ansible prerequisites if needed and then installs basic utility packages
