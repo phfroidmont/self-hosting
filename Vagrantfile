@@ -69,8 +69,9 @@ Vagrant.configure("2") do |config|
   # SHELL
   config.vm.network "private_network", ip: "192.168.33.10"
   config.vm.provider "virtualbox" do |vb|
-    vb.memory = "4096"
+    vb.memory = "8192"
   end
+  config.vm.synced_folder "/mnt/borg", "/mnt/borg"
   # config.vm.provision "ansible" do |ansible|
   #    ansible.playbook =  "playbook.yml"
   # end

@@ -10,3 +10,8 @@
   roles:
     - role: murmur-docker
     - role: searx-docker
+    - role: wiki-docker
+  vars_prompt:
+  - name: "ansible_sudo_pass"
+    prompt: "Sudo password"
+    private: yes
