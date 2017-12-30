@@ -1,0 +1,34 @@
+version: '2.2'
+
+networks:
+  proxy-tier:
+    external:
+      name: nginx-proxy
+
+services:
+  gitlab:
+    image: 'gitlab/gitlab-ce:latest'
+    hostname: ${GITLAB_DOMAIN}
+    environment:
+      - VIRTUAL_HOST=${GITLAB_DOMAIN}
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=9090
+    ports:
+      - "2224:22"
+    expose:
+      - 9090
+    volumes:
+      - ./config:/etc/gitlab
+      - /var/log/gitlab:/var/log/gitlab
+      - /var/lib/gitlab:/var/opt/gitlab
+      - /backups/gitlab:/var/opt/gitlab/backups
+    networks:
+      - proxy-tier
+    restart: always
+
+  runner:
+    image: 'gitlab/gitlab-runner:latest'
+    volumes:
+      - ./runner-config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always

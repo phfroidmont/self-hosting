@@ -11,7 +11,11 @@
     - role: murmur-docker
     - role: searx-docker
     - role: wiki-docker
+    - role: emby-docker
+    - role: gitlab-docker
   vars_prompt:
-  - name: "ansible_sudo_pass"
-    prompt: "Sudo password"
-    private: yes
+    - name: "ansible_sudo_pass"
+      prompt: "Sudo password"
+      private: yes
+  vars_files:
+    - "passwords.yml"

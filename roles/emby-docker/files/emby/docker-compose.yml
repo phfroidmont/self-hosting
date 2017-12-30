@@ -1,0 +1,22 @@
+version: '2.2'
+
+networks:
+  proxy-tier:
+    external:
+      name: nginx-proxy
+
+services:
+  emby:
+    image: nvllsvm/emby-unlocked
+    volumes:
+        - ./config:/config
+        - /media:/media:ro
+    environment:
+      - PUID=33
+      - PGID=33
+      - VIRTUAL_HOST=emby.banditlair.com
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=8096
+    networks:
+      - proxy-tier
+    restart: always
