@@ -1,7 +1,7 @@
 version: '2.2'
 
 networks:
-  proxy-tier:
+  default:
     external:
       name: nginx-proxy
 
@@ -17,8 +17,6 @@ services:
       - ./nginx/html:/usr/share/nginx/html
       - ./nginx/certs:/etc/nginx/certs:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
-    networks:
-      - proxy-tier
     restart: always
 
   letsencrypt-companion:

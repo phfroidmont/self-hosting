@@ -1,0 +1,7 @@
+---
+- name: Copy mailu config
+  copy: src=mailu dest={{docker_compose_files_folder}}
+- name: Create mailu config
+  template: src=mailu/.env dest={{docker_compose_files_folder}}/mailu/.env
+- name: Start mailu docker project
+  docker_service: project_src={{docker_compose_files_folder}}/mailu state=present

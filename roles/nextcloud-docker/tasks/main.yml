@@ -1,0 +1,36 @@
+---
+- name: Copy nextcloud docker files
+  copy:
+    src: nextcloud
+    dest: "{{docker_compose_files_folder}}"
+- name: Create nextcloud .env
+  template:
+    src: nextcloud/.env
+    dest: "{{docker_compose_files_folder}}/nextcloud/.env"
+- name: Create nextcloud config
+  template:
+    src: nextcloud/config/config.php
+    dest: "{{docker_compose_files_folder}}/nextcloud/config/config.php"
+- name: Change config folder owner to http
+  file:
+    path: "{{docker_compose_files_folder}}/nextcloud/config"
+    owner: http
+    group: http
+    recurse: yes
+- name: Build and start nextcloud docker project
+  docker_service:
+    project_src: "{{docker_compose_files_folder}}/nextcloud"
+    build: yes
+    state: present
+- name: Check if database tables exist
+  command: docker-compose exec -T db mysql -u nextcloud -p{{nextcloud_mysql_password}} nextcloud -e "show tables;"
+  args:
+      chdir: "{{docker_compose_files_folder}}/nextcloud/"
+  register: db_tables_exist
+  ignore_errors: true
+  changed_when: db_tables_exist.stdout_lines|length == 0
+- name: Restore database
+  command: docker-compose exec -T db sh -c "mysql -u nextcloud -p{{nextcloud_mysql_password}} nextcloud < /backups/database.dmp"
+  args:
+    chdir: "{{docker_compose_files_folder}}/nextcloud/"
+  when: db_tables_exist.stdout_lines|length == 0

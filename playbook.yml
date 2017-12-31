@@ -13,6 +13,8 @@
     - role: wiki-docker
     - role: emby-docker
     - role: gitlab-docker
+    - role: mailu-docker
+    - role: nextcloud-docker
   vars_prompt:
     - name: "ansible_sudo_pass"
       prompt: "Sudo password"

@@ -1,0 +1,108 @@
+version: '2'
+
+networks:
+  proxy-tier:
+    external:
+      name: nginx-proxy
+
+services:
+  redis:
+    image: redis:latest
+    restart: always
+    volumes:
+      - "$ROOT/redis:/data"
+
+  imap:
+    image: mailu/dovecot:$VERSION
+    restart: always
+    env_file: .env
+    ports:
+      - "$BIND_ADDRESS:110:110"
+      - "$BIND_ADDRESS:143:143"
+      - "$BIND_ADDRESS:993:993"
+      - "$BIND_ADDRESS:995:995"
+      - "$BIND_ADDRESS:4190:4190"
+    volumes:
+      - "$ROOT/data:/data"
+      - "$ROOT/mail:/mail"
+      - "../proxy/nginx/certs/${DOMAIN}.crt:/certs/cert.pem"
+      - "../proxy/nginx/certs/${DOMAIN}.key:/certs/key.pem"
+      - "$ROOT/overrides:/overrides"
+
+  smtp:
+    image: mailu/postfix:$VERSION
+    restart: always
+    env_file: .env
+    ports:
+      - "$BIND_ADDRESS:25:25"
+      - "$BIND_ADDRESS:465:465"
+      - "$BIND_ADDRESS:587:587"
+    volumes:
+      - "$ROOT/data:/data"
+      - "../proxy/nginx/certs/${DOMAIN}.crt:/certs/cert.pem"
+      - "../proxy/nginx/certs/${DOMAIN}.key:/certs/key.pem"
+      - "$ROOT/overrides:/overrides"
+
+  milter:
+    image: mailu/rmilter:$VERSION
+    restart: always
+    env_file: .env
+    volumes:
+      - "$ROOT/filter:/data"
+      - "$ROOT/dkim:/dkim"
+      - "$ROOT/overrides:/overrides"
+
+  antispam:
+    image: mailu/rspamd:$VERSION
+    restart: always
+    env_file: .env
+    volumes:
+      - "$ROOT/filter:/var/lib/rspamd"
+
+  antivirus:
+    image: mailu/clamav:$VERSION
+    restart: always
+    env_file: .env
+    volumes:
+      - "$ROOT/filter:/data"
+
+  webdav:
+    image: mailu/$WEBDAV:$VERSION
+    restart: always
+    env_file: .env
+    volumes:
+      - "$ROOT/dav:/data"
+
+  admin:
+    image: mailu/admin:$VERSION
+    restart: always
+    env_file: .env
+    #hostname: mailu.banditlair.com
+    ports:
+      - "127.0.0.1:8000:80"
+    environment:
+      - VIRTUAL_HOST=${HOSTNAME}
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=8000
+    volumes:
+      - "$ROOT/data:/data"
+      - "$ROOT/dkim:/dkim"
+      - "../proxy/nginx/certs/${DOMAIN}.crt:/certs/cert.pem"
+      - "../proxy/nginx/certs/${DOMAIN}.key:/certs/key.pem"
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - proxy-tier
+
+  #webmail:
+  #  image: "mailu/$WEBMAIL:$VERSION"
+  #  restart: always
+  #  env_file: .env
+  #  volumes:
+  #    - "$ROOT/webmail:/data"
+
+  fetchmail:
+    image: mailu/fetchmail:$VERSION
+    restart: always
+    env_file: .env
+    volumes:
+      - "$ROOT/data:/data"
