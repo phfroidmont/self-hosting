@@ -1,0 +1,24 @@
+---
+- name: Copy matrix docker files
+  copy:
+    src: matrix
+    dest: "{{docker_compose_files_folder}}"
+- name: Create matrix-network docker network
+  docker_network:
+    name: matrix-network
+- name: Start matrix docker project
+  docker_service:
+    project_src: "{{docker_compose_files_folder}}/matrix"
+    state: present
+- name: Check if database tables exist
+  command: docker-compose exec -T db psql -U synapse synapse -c "\dt"
+  args:
+      chdir: "{{docker_compose_files_folder}}/matrix/"
+  register: db_tables_exist
+  ignore_errors: false
+  changed_when: '"No relations found." in db_tables_exist.stdout_lines'
+- name: Restore Matrix database
+  command: docker-compose exec -T db sh -c "psql -U synapse synapse < /backups/database.dmp"
+  args:
+    chdir: "{{docker_compose_files_folder}}/matrix/"
+  when: '"No relations found." in db_tables_exist.stdout_lines'

@@ -1,0 +1,43 @@
+version: '2.2'
+
+networks:
+  proxy-tier:
+    external:
+      name: nginx-proxy
+  sonarnet:
+    driver: bridge
+
+services:
+  sonarqube:
+    image: sonarqube
+    expose:
+      - 9000
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+      - VIRTUAL_HOST=${SONAR_DOMAIN}
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=9000
+#      - LETSENCRYPT_HOST=${SONAR_DOMAIN}
+#      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    volumes:
+      - ./sonarqube:/opt/sonarqube/conf
+      - /var/lib/sonarqube/data:/opt/sonarqube/data
+      - /var/lib/sonarqube/extensions:/opt/sonarqube/extensions
+      - /var/lib/sonarqube/lib/bundled-plugins:/opt/sonarqube/lib/bundled-plugins
+    links:
+      - db
+    networks:
+      - sonarnet
+      - proxy-tier
+    restart: unless-stopped
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    volumes:
+      - /var/lib/sonaqube/db:/var/lib/postgresql
+    networks:
+      - sonarnet
+    restart: unless-stopped

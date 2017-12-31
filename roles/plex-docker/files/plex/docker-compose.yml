@@ -1,0 +1,24 @@
+version: '2.2'
+
+networks:
+  proxy-tier:
+    external:
+      name: nginx-proxy
+
+services:
+  plex:
+    image: plexinc/pms-docker:plexpass
+    hostname: ${PLEX_DOMAIN}
+    volumes:
+      - /var/lib/plex/database:/config
+      - /media:/data
+      - /var/lib/plex/transcode:/transcode
+      - /tmp:/tmp
+    environment:
+      - VIRTUAL_HOST=${PLEX_DOMAIN}
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=32400
+      - ADVERTISE_IP=https://plex.banditlair.com/
+    networks:
+      - proxy-tier
+    restart: always

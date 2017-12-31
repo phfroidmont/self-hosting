@@ -1,0 +1,13 @@
+---
+- name: Copy deluge docker files
+  copy:
+    src: deluge
+    dest: "{{docker_compose_files_folder}}"
+- name: Create deluge .env
+  template:
+    src: deluge/.env
+    dest: "{{docker_compose_files_folder}}/deluge/.env"
+- name: Start deluge docker project
+  docker_service:
+    project_src: "{{docker_compose_files_folder}}/deluge"
+    state: present

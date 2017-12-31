@@ -1,0 +1,39 @@
+version: '2.2'
+
+networks:
+  proxy-tier:
+    external:
+      name: nginx-proxy
+
+services:
+  deluge:
+    image: binhex/arch-delugevpn
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8118:8118
+      - 58846:58846
+    volumes:
+      - /var/lib/deluge:/data
+      - ./config:/config
+      - /media:/media
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - VPN_ENABLED=yes
+      - VPN_USER=${VPN_USER}
+      - VPN_PASS=${VPN_PASS}
+      - VPN_REMOTE=${VPN_REMOTE}
+      - VPN_PORT=${VPN_PORT}
+      - VPN_PROTOCOL=${VPN_PROTOCOL}
+      - VPN_PROV=${VPN_PROV}
+      - ENABLE_PRIVOXY=yes
+      - LAN_NETWORK=10.90.86.0/26
+      - DEBUG=true
+      - PUID=33
+      - PGID=33
+      - VIRTUAL_HOST=${DELUGE_DOMAIN}
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=8112
+    restart: always
+    networks:
+      - proxy-tier

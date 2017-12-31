@@ -29,7 +29,7 @@
   register: db_tables_exist
   ignore_errors: true
   changed_when: db_tables_exist.stdout_lines|length == 0
-- name: Restore database
+- name: Restore Nextcloud database
   command: docker-compose exec -T db sh -c "mysql -u nextcloud -p{{nextcloud_mysql_password}} nextcloud < /backups/database.dmp"
   args:
     chdir: "{{docker_compose_files_folder}}/nextcloud/"
