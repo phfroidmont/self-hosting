@@ -1227,8 +1227,8 @@ nginx['proxy_set_headers'] = {
 ##! Docs: https://docs.gitlab.com/ce/administration/monitoring/prometheus/
 ################################################################################
 
-# prometheus['enable'] = true
-# prometheus['monitor_kubernetes'] = true
+prometheus['enable'] = false
+prometheus['monitor_kubernetes'] = false
 # prometheus['username'] = 'gitlab-prometheus'
 # prometheus['uid'] = nil
 # prometheus['gid'] = nil

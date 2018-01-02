@@ -1,6 +1,8 @@
 ---
-- name: Copy gitlab config
+- name: Copy docker-compose.yml
   copy: src=gitlab dest={{docker_compose_files_folder}}
+- name: Create gitlab config folder
+  file: dest={{docker_compose_files_folder}}/gitlab/config state=directory
 - name: Create gitlab config
   template: src=gitlab/config/gitlab.rb dest={{docker_compose_files_folder}}/gitlab/config/gitlab.rb
 - name: Start gitlab docker project

@@ -10,15 +10,16 @@
   docker_service:
     project_src: "{{docker_compose_files_folder}}/matrix"
     state: present
-- name: Check if database tables exist
-  command: docker-compose exec -T db psql -U synapse synapse -c "\dt"
+- name: Wait for database to start and count matrix users
+  shell: docker-compose exec -T db psql -U synapse synapse -c "select count(*) from users;" -t
   args:
       chdir: "{{docker_compose_files_folder}}/matrix/"
-  register: db_tables_exist
-  ignore_errors: false
-  changed_when: '"No relations found." in db_tables_exist.stdout_lines'
-- name: Restore Matrix database
+  register: matrix_users_count
+  until: matrix_users_count.rc == 0
+  retries: 10
+  changed_when: false
+- name: Restore Matrix database if needed
   command: docker-compose exec -T db sh -c "psql -U synapse synapse < /backups/database.dmp"
   args:
     chdir: "{{docker_compose_files_folder}}/matrix/"
-  when: '"No relations found." in db_tables_exist.stdout_lines'
+  when: matrix_users_count.stdout|int == 0

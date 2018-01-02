@@ -1,0 +1,21 @@
+---
+- name: Create fullBackup.sh
+  template:
+    src: fullBackup.sh
+    dest: /root/fullBackup.sh
+    mode: 0700
+- name: Create dockerComposeAll.sh
+  template:
+    src: dockerComposeAll.sh
+    dest: /root/dockerComposeAll.sh
+    mode: 0700
+- name: Create syncData.sh
+  template:
+    src: syncData.sh
+    dest: /root/syncData.sh
+    mode: 0700
+- name: Create updateAll.sh
+  template:
+    src: updateAll.sh
+    dest: /root/updateAll.sh
+    mode: 0700

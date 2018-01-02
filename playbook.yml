@@ -8,6 +8,7 @@
     sub_domains:
       - rpg
   roles:
+    - role: scripts
     - role: murmur-docker
     - role: searx-docker
     - role: wiki-docker
@@ -18,9 +19,10 @@
     - role: matrix-docker
     - role: plex-docker
     - role: deluge-docker
-  vars_prompt:
-    - name: "ansible_sudo_pass"
-      prompt: "Sudo password"
-      private: yes
+    - role: monit
+#  vars_prompt:
+#    - name: "ansible_sudo_pass"
+#      prompt: "Sudo password"
+#      private: yes
   vars_files:
     - "passwords.yml"

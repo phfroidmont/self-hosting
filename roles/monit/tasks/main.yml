@@ -1,0 +1,14 @@
+---
+- name: Install monit
+  package: name=monit state=present update_cache=yes
+- name: Enable and start monit service
+  systemd:
+    name: monit.service
+    state: started
+    enabled: True
+- name: Copy monit config
+  template:
+    src: monitrc
+    dest: /etc/monitrc
+  notify:
+      - reload monit
