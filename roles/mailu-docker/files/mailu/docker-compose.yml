@@ -17,11 +17,11 @@ services:
     restart: always
     env_file: .env
     ports:
-      - "$BIND_ADDRESS:110:110"
-      - "$BIND_ADDRESS:143:143"
-      - "$BIND_ADDRESS:993:993"
-      - "$BIND_ADDRESS:995:995"
-      - "$BIND_ADDRESS:4190:4190"
+      - "110:110"
+      - "143:143"
+      - "993:993"
+      - "995:995"
+      - "4190:4190"
     volumes:
       - "$ROOT/data:/data"
       - "$ROOT/mail:/mail"
@@ -34,9 +34,9 @@ services:
     restart: always
     env_file: .env
     ports:
-      - "$BIND_ADDRESS:25:25"
-      - "$BIND_ADDRESS:465:465"
-      - "$BIND_ADDRESS:587:587"
+      - "25:25"
+      - "465:465"
+      - "587:587"
     volumes:
       - "$ROOT/data:/data"
       - "../proxy/nginx/certs/${DOMAIN}.crt:/certs/cert.pem"
