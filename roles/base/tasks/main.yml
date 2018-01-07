@@ -12,4 +12,4 @@
     - vim
     - wget
     - borg
-
+    - openbsd-netcat
