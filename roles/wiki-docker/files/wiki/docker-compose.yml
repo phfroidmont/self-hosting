@@ -16,6 +16,7 @@ services:
       - VIRTUAL_PORT=80
     volumes:
       - '/var/lib/wiki/rpg:/bitnami'
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - proxy-tier
     restart: always

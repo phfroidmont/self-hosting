@@ -9,6 +9,7 @@ services:
     volumes:
       - /var/lib/matrix/db:/var/lib/postgresql/data
       - /backups/matrix:/backups
+      - /etc/localtime:/etc/localtime:ro
     environment:
       - POSTGRES_PASSWORD=synapse
       - POSTGRES_USER=synapse
@@ -29,6 +30,7 @@ services:
       - /var/lib/matrix/media_store:/data/media_store
       - /var/log/synapse:/data/log
       - ./synapse:/data
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - matrix
       - proxy-tier

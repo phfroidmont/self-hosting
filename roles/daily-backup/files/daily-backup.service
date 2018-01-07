@@ -1,0 +1,7 @@
+[Unit]
+Description=Full server backup
+
+[Service]
+Type=simple
+ExecStart=/root/fullBackup.sh
+

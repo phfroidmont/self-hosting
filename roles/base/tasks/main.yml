@@ -11,3 +11,5 @@
     - ufw
     - vim
     - wget
+    - borg
+

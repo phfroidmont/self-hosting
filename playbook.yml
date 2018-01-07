@@ -9,6 +9,7 @@
       - rpg
   roles:
     - role: scripts
+    - role: daily-backup
     - role: murmur-docker
     - role: searx-docker
     - role: wiki-docker

@@ -14,6 +14,7 @@ services:
       - /media:/data
       - /var/lib/plex/transcode:/transcode
       - /tmp:/tmp
+      - /etc/localtime:/etc/localtime:ro
     environment:
       - VIRTUAL_HOST=${PLEX_DOMAIN}
       - VIRTUAL_NETWORK=nginx-proxy

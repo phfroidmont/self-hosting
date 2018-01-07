@@ -1,9 +1,4 @@
 ---
-- name: Create fullBackup.sh
-  template:
-    src: fullBackup.sh
-    dest: /root/fullBackup.sh
-    mode: 0700
 - name: Create dockerComposeAll.sh
   template:
     src: dockerComposeAll.sh

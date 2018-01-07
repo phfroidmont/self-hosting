@@ -23,13 +23,16 @@ echo 'Starting Borg backup'
 borg create -v --stats --compression lz4           \
     ${REPOSITORY}::'{hostname}-{now:%Y-%m-%d}'     \
     /root                                          \
+    /home                                          \
+    /media                                         \
     /etc                                           \
-    /var                                           \
+    /var/lib/deluge                                \
+    /var/lib/mailu                                 \
+    /var/lib/matrix/media_store                    \
+    /var/lib/nextcloud                             \
+    /var/lib/wiki                                  \
     /backups                                       \
-    --exclude '/var/lib/nextcloud/db'              \
-    --exclude '/var/lib/plex/transcode'            \
-    --exclude '/var/lib/prometheus'                \
-    --exclude '/var/lib/gitlab/data'
+    --exclude '/var/lib/nextcloud/db'
 
 # Route the normal process logging to journalctl
 2>&1

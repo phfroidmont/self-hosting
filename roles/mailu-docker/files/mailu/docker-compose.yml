@@ -28,6 +28,7 @@ services:
       - "../proxy/nginx/certs/${DOMAIN}.crt:/certs/cert.pem"
       - "../proxy/nginx/certs/${DOMAIN}.key:/certs/key.pem"
       - "$ROOT/overrides:/overrides"
+      - /etc/localtime:/etc/localtime:ro
 
   smtp:
     image: mailu/postfix:$VERSION
@@ -42,6 +43,7 @@ services:
       - "../proxy/nginx/certs/${DOMAIN}.crt:/certs/cert.pem"
       - "../proxy/nginx/certs/${DOMAIN}.key:/certs/key.pem"
       - "$ROOT/overrides:/overrides"
+      - /etc/localtime:/etc/localtime:ro
 
   milter:
     image: mailu/rmilter:$VERSION
@@ -51,6 +53,7 @@ services:
       - "$ROOT/filter:/data"
       - "$ROOT/dkim:/dkim"
       - "$ROOT/overrides:/overrides"
+      - /etc/localtime:/etc/localtime:ro
 
   antispam:
     image: mailu/rspamd:$VERSION
@@ -58,6 +61,7 @@ services:
     env_file: .env
     volumes:
       - "$ROOT/filter:/var/lib/rspamd"
+      - /etc/localtime:/etc/localtime:ro
 
   antivirus:
     image: mailu/clamav:$VERSION
@@ -65,6 +69,7 @@ services:
     env_file: .env
     volumes:
       - "$ROOT/filter:/data"
+      - /etc/localtime:/etc/localtime:ro
 
   webdav:
     image: mailu/$WEBDAV:$VERSION
@@ -72,6 +77,7 @@ services:
     env_file: .env
     volumes:
       - "$ROOT/dav:/data"
+      - /etc/localtime:/etc/localtime:ro
 
   admin:
     image: mailu/admin:$VERSION
@@ -90,6 +96,7 @@ services:
       - "../proxy/nginx/certs/${DOMAIN}.crt:/certs/cert.pem"
       - "../proxy/nginx/certs/${DOMAIN}.key:/certs/key.pem"
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - proxy-tier
 
@@ -106,3 +113,4 @@ services:
     env_file: .env
     volumes:
       - "$ROOT/data:/data"
+      - /etc/localtime:/etc/localtime:ro

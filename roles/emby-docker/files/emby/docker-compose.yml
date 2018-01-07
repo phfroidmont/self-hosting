@@ -11,6 +11,7 @@ services:
     volumes:
         - ./config:/config
         - /media:/media:ro
+        - /etc/localtime:/etc/localtime:ro
     environment:
       - PUID=33
       - PGID=33
