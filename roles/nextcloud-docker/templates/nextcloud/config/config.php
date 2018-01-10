@@ -50,12 +50,4 @@ $CONFIG = array (
   'mail_smtpname' => 'noreply@banditlair.com',
   'mail_smtppassword' => '{{email_password}}',
   'filelocking.enabled' => true,
-  'memcache.locking' => '\\OC\\Memcache\\Redis',
-  'redis' => 
-  array (
-    'host' => 'redis',
-    'port' => 6379,
-    'timeout' => 0.0,
-    'password' => '',
-  ),
 );

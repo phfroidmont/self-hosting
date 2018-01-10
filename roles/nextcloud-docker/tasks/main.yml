@@ -3,10 +3,10 @@
   copy:
     src: nextcloud
     dest: "{{docker_compose_files_folder}}"
-- name: Create nextcloud .env
+- name: Create db.env
   template:
-    src: nextcloud/.env
-    dest: "{{docker_compose_files_folder}}/nextcloud/.env"
+    src: nextcloud/db.env
+    dest: "{{docker_compose_files_folder}}/nextcloud/db.env"
 - name: Create nextcloud config
   template:
     src: nextcloud/config/config.php
