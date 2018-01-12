@@ -34,7 +34,7 @@ services:
     volumes:
       - "$ROOT/data:/data"
       - "$ROOT/mail:/mail"
-      - "$ROOT/overrides:/overrides"
+      - "./overrides:/overrides"
 
   smtp:
     image: mailu/postfix:$VERSION
@@ -42,7 +42,7 @@ services:
     env_file: .env
     volumes:
       - "$ROOT/data:/data"
-      - "$ROOT/overrides:/overrides"
+      - "./overrides:/overrides"
 
   antispam:
     image: mailu/rspamd:$VERSION
@@ -51,7 +51,7 @@ services:
     volumes:
       - "$ROOT/filter:/var/lib/rspamd"
       - "$ROOT/dkim:/dkim"
-      - "$ROOT/overrides/rspamd:/etc/rspamd/override.d"
+      - "./overrides/rspamd:/etc/rspamd/override.d"
 
   antivirus:
     image: mailu/$ANTIVIRUS:$VERSION
