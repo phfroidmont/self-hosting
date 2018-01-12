@@ -19,23 +19,7 @@ $CONFIG = array (
   'dbuser' => 'nextcloud',
   'dbpassword' => '{{nextcloud_mysql_password}}',
   'installed' => true,
-  'memcache.local' => '\\OC\\Memcache\\APCu',
   'htaccess.RewriteBase' => '/',
-  'apps_paths' => 
-  array (
-    0 => 
-    array (
-      'path' => '/var/www/html/apps',
-      'url' => '/apps',
-      'writable' => false,
-    ),
-    1 => 
-    array (
-      'path' => '/var/www/html/custom_apps',
-      'url' => '/custom_apps',
-      'writable' => true,
-    ),
-  ),
   'maintenance' => false,
   'updater.release.channel' => 'stable',
   'loglevel' => '1',
