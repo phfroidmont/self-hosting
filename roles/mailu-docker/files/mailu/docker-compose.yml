@@ -6,8 +6,23 @@ networks:
       name: nginx-proxy
 
 services:
+  front:
+    image: mailu/nginx:$VERSION
+    restart: always
+    env_file: .env
+    ports:
+      - "$BIND_ADDRESS4:110:110"
+      - "$BIND_ADDRESS4:143:143"
+      - "$BIND_ADDRESS4:993:993"
+      - "$BIND_ADDRESS4:995:995"
+      - "$BIND_ADDRESS4:25:25"
+      - "$BIND_ADDRESS4:465:465"
+      - "$BIND_ADDRESS4:587:587"
+    volumes:
+      - "../proxy/nginx/certs/${DOMAIN}.crt:/certs/cert.pem"
+      - "../proxy/nginx/certs/${DOMAIN}.key:/certs/key.pem"
   redis:
-    image: redis:latest
+    image: redis:alpine
     restart: always
     volumes:
       - "$ROOT/redis:/data"
@@ -16,44 +31,18 @@ services:
     image: mailu/dovecot:$VERSION
     restart: always
     env_file: .env
-    ports:
-      - "110:110"
-      - "143:143"
-      - "993:993"
-      - "995:995"
-      - "4190:4190"
     volumes:
       - "$ROOT/data:/data"
       - "$ROOT/mail:/mail"
-      - "../proxy/nginx/certs/${DOMAIN}.crt:/certs/cert.pem"
-      - "../proxy/nginx/certs/${DOMAIN}.key:/certs/key.pem"
       - "$ROOT/overrides:/overrides"
-      - /etc/localtime:/etc/localtime:ro
 
   smtp:
     image: mailu/postfix:$VERSION
     restart: always
     env_file: .env
-    ports:
-      - "25:25"
-      - "465:465"
-      - "587:587"
     volumes:
       - "$ROOT/data:/data"
-      - "../proxy/nginx/certs/${DOMAIN}.crt:/certs/cert.pem"
-      - "../proxy/nginx/certs/${DOMAIN}.key:/certs/key.pem"
       - "$ROOT/overrides:/overrides"
-      - /etc/localtime:/etc/localtime:ro
-
-  milter:
-    image: mailu/rmilter:$VERSION
-    restart: always
-    env_file: .env
-    volumes:
-      - "$ROOT/filter:/data"
-      - "$ROOT/dkim:/dkim"
-      - "$ROOT/overrides:/overrides"
-      - /etc/localtime:/etc/localtime:ro
 
   antispam:
     image: mailu/rspamd:$VERSION
@@ -61,15 +50,15 @@ services:
     env_file: .env
     volumes:
       - "$ROOT/filter:/var/lib/rspamd"
-      - /etc/localtime:/etc/localtime:ro
+      - "$ROOT/dkim:/dkim"
+      - "$ROOT/overrides/rspamd:/etc/rspamd/override.d"
 
   antivirus:
-    image: mailu/clamav:$VERSION
+    image: mailu/$ANTIVIRUS:$VERSION
     restart: always
     env_file: .env
     volumes:
       - "$ROOT/filter:/data"
-      - /etc/localtime:/etc/localtime:ro
 
   webdav:
     image: mailu/$WEBDAV:$VERSION
@@ -77,35 +66,42 @@ services:
     env_file: .env
     volumes:
       - "$ROOT/dav:/data"
-      - /etc/localtime:/etc/localtime:ro
 
   admin:
     image: mailu/admin:$VERSION
     restart: always
     env_file: .env
-    #hostname: mailu.banditlair.com
-    ports:
-      - "127.0.0.1:8000:80"
+    expose:
+      - 80
     environment:
-      - VIRTUAL_HOST=${HOSTNAME}
+      - VIRTUAL_HOST=mailu.banditlair.com
       - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=8000
+      - VIRTUAL_PORT=80
     volumes:
       - "$ROOT/data:/data"
       - "$ROOT/dkim:/dkim"
-      - "../proxy/nginx/certs/${DOMAIN}.crt:/certs/cert.pem"
-      - "../proxy/nginx/certs/${DOMAIN}.key:/certs/key.pem"
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - redis
     networks:
       - proxy-tier
+      - default
 
-  #webmail:
-  #  image: "mailu/$WEBMAIL:$VERSION"
-  #  restart: always
-  #  env_file: .env
-  #  volumes:
-  #    - "$ROOT/webmail:/data"
+  webmail:
+    image: "mailu/$WEBMAIL:$VERSION"
+    restart: always
+    env_file: .env
+    expose:
+      - 80
+    environment:
+      - VIRTUAL_HOST=webmail.banditlair.com
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=80
+    volumes:
+      - "$ROOT/webmail:/data"
+    networks:
+      - proxy-tier
+      - default
 
   fetchmail:
     image: mailu/fetchmail:$VERSION
@@ -113,4 +109,3 @@ services:
     env_file: .env
     volumes:
       - "$ROOT/data:/data"
-      - /etc/localtime:/etc/localtime:ro

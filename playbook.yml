@@ -15,7 +15,7 @@
     - role: wiki-docker
     - role: emby-docker
     - role: gitlab-docker
-    - role: mailu-docker
+    - { role: mailu-docker, tags: [ 'mailu', 'docker' ] }
     - { role: nextcloud-docker, tags: [ 'nextcloud', 'docker' ] }
     - role: matrix-docker
     - role: plex-docker
