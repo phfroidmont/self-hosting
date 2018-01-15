@@ -8,19 +8,19 @@
     sub_domains:
       - rpg
   roles:
-    - role: scripts
-    - role: daily-backup
-    - role: murmur-docker
-    - role: searx-docker
-    - role: wiki-docker
-    - role: emby-docker
-    - role: gitlab-docker
+    - { role: scripts, tags: [ 'scripts' ] }
+    - { role: daily-backup, tags: [ 'backup' ] }
+    - { role: murmur-docker, tags: [ 'murmur', 'docker' ] }
+    - { role: searx-docker, tags: [ 'searx', 'docker' ] }
+    - { role: wiki-docker, tags: [ 'wiki', 'docker' ] }
+    - { role: emby-docker, tags: [ 'emby', 'docker' ] }
+    - { role: gitlab-docker, tags: [ 'gitlab', 'docker' ] }
     - { role: mailu-docker, tags: [ 'mailu', 'docker' ] }
     - { role: nextcloud-docker, tags: [ 'nextcloud', 'docker' ] }
-    - role: matrix-docker
-    - role: plex-docker
-    - role: deluge-docker
-    - role: monit
+    - { role: matrix-docker, tags: [ 'matrix', 'docker' ] }
+    - { role: plex-docker, tags: [ 'plex', 'docker' ] }
+    - { role: deluge-docker, tags: [ 'deluge', 'docker' ] }
+    - { role: monit, tags: [ 'monit' ] }
 #  vars_prompt:
 #    - name: "ansible_sudo_pass"
 #      prompt: "Sudo password"
