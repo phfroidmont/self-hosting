@@ -66,10 +66,10 @@ set log syslog
 ## Set global SSL options (just most common options showed, see manual for
 ## full list).
 #
-# set ssl {
-#     verify     : enable, # verify SSL certificates (disabled by default but STRONGLY RECOMMENDED)
-#     selfsigned : allow   # allow self signed SSL certificates (reject by default)
-# }
+set ssl {
+    verify     : enable, # verify SSL certificates (disabled by default but STRONGLY RECOMMENDED)
+    #selfsigned : allow   # allow self signed SSL certificates (reject by default)
+}
 #
 #
 ## Set the list of mail servers for alert delivery. Multiple servers may be
@@ -145,7 +145,7 @@ set mail-format { from: monit@banditlair.com }
 # set alert sysadm@foo.bar                       # receive all alerts
 #
 set alert self.alert@banditlair.com
-set alert pascal.falbo@hotmail.fr
+#set alert pascal.falbo@hotmail.fr # Fucking Microshit blacklists my mail server
 ## Do not alert when Monit starts, stops or performs a user initiated action.
 ## This filter is recommended to avoid getting alerts for trivial cases.
 #
@@ -332,8 +332,8 @@ check host Gitlab-ui with address gitlab.banditlair.com
 check host mail-admin with address mail.banditlair.com
     if failed port 443 protocol https with timeout 20 seconds then alert
 
-check host Grafana with address grafana.banditlair.com
-    if failed port 443 protocol https with timeout 20 seconds then alert
+#check host Grafana with address grafana.banditlair.com
+#    if failed port 443 protocol https with timeout 20 seconds then alert
 
 #check host Plex with address plex.banditlair.com
 #    if failed port 443 protocol https with timeout 20 seconds then alert

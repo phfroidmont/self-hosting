@@ -409,7 +409,7 @@ gitlab_rails['smtp_port'] = 465
 gitlab_rails['smtp_user_name'] = "noreply@banditlair.com"
 gitlab_rails['smtp_password'] = "{{email_password}}"
 gitlab_rails['smtp_domain'] = "banditlair.com"
-gitlab_rails['smtp_authentication'] = "login"
+gitlab_rails['smtp_authentication'] = "plain"
 gitlab_rails['smtp_enable_starttls_auto'] = true
 gitlab_rails['smtp_tls'] = true
 
