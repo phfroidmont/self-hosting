@@ -88,17 +88,16 @@ services:
       - default
 
   webmail:
-    image: "mailu/$WEBMAIL:$VERSION"
+    image: hardware/rainloop
     restart: always
-    env_file: .env
     expose:
-      - 80
+      - 8888
     environment:
       - VIRTUAL_HOST=webmail.banditlair.com
       - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=80
+      - VIRTUAL_PORT=8888
     volumes:
-      - "$ROOT/webmail:/data"
+      - "$ROOT/webmail:/rainloop/data"
     networks:
       - proxy-tier
       - default
