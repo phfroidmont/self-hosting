@@ -59,21 +59,21 @@ services:
     image: redis
     restart: always
 
-#  collabora:
-#    image: collabora/code
-#    cap_add:
-#      - MKNOD
-#    expose:
-#      - 9980
-#    environment:
-#      - domain=${CLOUD_DOMAIN}
-#      - VIRTUAL_HOST=${COLLABORA_DOMAIN}
-#      - VIRTUAL_NETWORK=nginx-proxy
-#      - VIRTUAL_PORT=9980
-    #  - VIRTUAL_PROTO=https
-#      - LETSENCRYPT_HOST=${COLLABORA_DOMAIN}
-#      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
-#    networks:
-#      - proxy-tier
-#      - default
-#    restart: always
+  collabora:
+    image: collabora/code:3.0.0.4
+    cap_add:
+      - MKNOD
+    expose:
+      - 9980
+    environment:
+      - domain=${CLOUD_DOMAIN}
+      - VIRTUAL_HOST=${COLLABORA_DOMAIN}
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=9980
+      - VIRTUAL_PROTO=https
+      - LETSENCRYPT_HOST=${COLLABORA_DOMAIN}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    networks:
+      - proxy-tier
+      - default
+    restart: always
