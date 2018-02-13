@@ -6,6 +6,11 @@
     name: monit.service
     state: started
     enabled: True
+- name: Create fullBackup.sh
+  copy:
+    src: checkBackupStatus.sh
+    dest: /usr/local/bin/checkBackupStatus.sh
+    mode: 0700
 - name: Copy monit config
   template:
     src: monitrc

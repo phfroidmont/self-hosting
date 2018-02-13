@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+touch /backups/backup-ongoing
+
 REPOSITORY=ssh://backup@phf.ddns.net:2222/./backup
 
 export BORG_PASSPHRASE='{{backup_borg_passphrase}}'
@@ -53,6 +55,7 @@ borg prune -v --list ${REPOSITORY} --prefix '{hostname}-' \
 # Unset the password
 export BORG_PASSPHRASE=""
 
+rm -f /backups/backup-ongoing
 touch /backups/backup-ok
 
 exit 0

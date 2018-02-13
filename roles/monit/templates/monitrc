@@ -310,9 +310,11 @@ check system $HOST
 #
 #
 
-check file daily-backup with path /backups/backup-ok
-    if timestamp > 25 hours then alert
+check file daily-backup-done with path /backups/backup-ok
     if changed timestamp then alert
+
+check program checkBackupStatus with path /usr/local/bin/checkBackupStatus.sh
+       if status != 0 then alert
 
 check host home-ssh with address phf.ddns.net
     if failed port 2222 protocol ssh with timeout 20 seconds then alert
