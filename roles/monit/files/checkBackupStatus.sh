@@ -6,7 +6,7 @@ ONGOING_FILE="/backups/backup-ongoing"
 
 if [ -f "$ONGOING_FILE" ]
 then
-	if test `find "$ONGOING_FILE" -mmin +1`
+	if test `find "$ONGOING_FILE" -mmin +180`
 	then
 		LAST_MODIFICATION_HOURS=`expr "$(($(date +%s) - $(date +%s -r $ONGOING_FILE)))" / 3600`
     		echo "Backup not finished after more than $LAST_MODIFICATION_HOURS hours"

@@ -256,6 +256,10 @@ check system $HOST
 #    if write rate > 500 operations/s for 5 cycles then alert
 #    if service time > 10 milliseconds for 3 times within 5 cycles then alert
 #    group server
+
+check filesystem root with path /
+    if SPACE usage > 90% then alert 
+
 #
 #
 ## Check a file's timestamp. In this example, we test if a file is older
@@ -295,8 +299,8 @@ check system $HOST
 ## Check a network link status (up/down), link capacity changes, saturation
 ## and bandwidth usage.
 #
-#  check network public with interface eth0
-#    if failed link then alert
+check network public with interface eno1
+    if failed link then alert
 #    if changed link then alert
 #    if saturation > 90% then alert
 #    if download > 10 MB/s then alert
@@ -314,7 +318,7 @@ check file daily-backup-done with path /backups/backup-ok
     if changed timestamp then alert
 
 check program checkBackupStatus with path /usr/local/bin/checkBackupStatus.sh
-       if status != 0 then alert
+    if status != 0 then alert
 
 check host home-ssh with address phf.ddns.net
     if failed port 2222 protocol ssh with timeout 20 seconds then alert
