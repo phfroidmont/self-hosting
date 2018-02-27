@@ -11,7 +11,7 @@ $CONFIG = array (
   'datadirectory' => '/var/www/html/data',
   'overwrite.cli.url' => 'https://cloud.banditlair.com',
   'dbtype' => 'mysql',
-  'version' => '12.0.4.3',
+  'version' => '13.0.0.14',
   'dbname' => 'nextcloud',
   'dbhost' => 'db',
   'dbport' => '3306',
@@ -24,7 +24,7 @@ $CONFIG = array (
   'updater.release.channel' => 'stable',
   'loglevel' => '1',
   'mail_smtpmode' => 'smtp',
-  'mail_smtpauthtype' => 'LOGIN',
+  'mail_smtpauthtype' => 'PLAIN',
   'mail_smtpsecure' => 'ssl',
   'mail_smtpauth' => 1,
   'mail_from_address' => 'noreply',
@@ -34,4 +34,27 @@ $CONFIG = array (
   'mail_smtpname' => 'noreply@banditlair.com',
   'mail_smtppassword' => '{{email_password}}',
   'filelocking.enabled' => true,
+  'memcache.local' => '\\OC\\Memcache\\Redis',
+  'apps_paths' => 
+  array (
+    0 => 
+    array (
+      'path' => '/var/www/html/apps',
+      'url' => '/apps',
+      'writable' => false,
+    ),
+    1 => 
+    array (
+      'path' => '/var/www/html/custom_apps',
+      'url' => '/custom_apps',
+      'writable' => true,
+    ),
+  ),
+  'memcache.locking' => '\\OC\\Memcache\\Redis',
+  'redis' => 
+  array (
+    'host' => 'redis',
+    'port' => 6379,
+  ),
+  'theme' => '',
 );

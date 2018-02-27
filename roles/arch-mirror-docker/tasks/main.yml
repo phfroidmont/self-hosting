@@ -1,0 +1,5 @@
+---
+- name: Copy Arch Linux mirror config
+  copy: src=arch-mirror dest={{docker_compose_files_folder}}
+- name: Start Arch mirror project
+  docker_service: project_src={{docker_compose_files_folder}}/arch-mirror state=present

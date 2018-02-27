@@ -21,6 +21,7 @@
     - { role: plex-docker, tags: [ 'plex', 'docker' ] }
     - { role: deluge-docker, tags: [ 'deluge', 'docker' ] }
     - { role: monit, tags: [ 'monit' ] }
+    - { role: arch-mirror-docker, tags: [ 'mirror', 'docker' ] }
 #  vars_prompt:
 #    - name: "ansible_sudo_pass"
 #      prompt: "Sudo password"
