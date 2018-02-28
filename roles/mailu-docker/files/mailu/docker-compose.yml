@@ -74,7 +74,7 @@ services:
     expose:
       - 80
     environment:
-      - VIRTUAL_HOST=mailu.banditlair.com
+      - VIRTUAL_HOST=mailu.banditlair.com,mail.banditlair.com
       - VIRTUAL_NETWORK=nginx-proxy
       - VIRTUAL_PORT=80
     volumes:
