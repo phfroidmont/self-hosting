@@ -1,0 +1,114 @@
+version: '2.2'
+
+networks:
+  proxy-tier:
+    external:
+      name: nginx-proxy
+
+services:
+  deluge:
+    image: binhex/arch-delugevpn
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8118:8118
+      - 58846:58846
+    volumes:
+      - /var/lib/deluge:/data
+      - ./config/deluge:/config
+      - /media:/media
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - VPN_ENABLED=yes
+      - VPN_USER=${VPN_USER}
+      - VPN_PASS=${VPN_PASS}
+      - VPN_REMOTE=${VPN_REMOTE}
+      - VPN_PORT=${VPN_PORT}
+      - VPN_PROTOCOL=${VPN_PROTOCOL}
+      - VPN_PROV=${VPN_PROV}
+      - ENABLE_PRIVOXY=yes
+      - LAN_NETWORK=10.90.86.0/26
+      - DEBUG=false
+      - PUID=33
+      - PGID=33
+      - VIRTUAL_HOST=${DELUGE_DOMAIN}
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=8112
+    restart: always
+    networks:
+      - proxy-tier
+
+  sonarr:
+    image: linuxserver/sonarr
+    expose:
+      - 8989
+    environment:
+      - PUID=33
+      - PGID=33
+      - VIRTUAL_HOST=sonarr.banditlair.com
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=8989
+    volumes:
+      - /var/lib/deluge/completed:/downloads
+      - ./config/sonarr:/config
+      - /media/TV:/tv
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    networks:
+      - proxy-tier
+
+  radarr:
+    image: linuxserver/radarr
+    expose:
+      - 7878
+    environment:
+      - PUID=33
+      - PGID=33
+      - VIRTUAL_HOST=radarr.banditlair.com
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=7878
+    volumes:
+      - /var/lib/deluge/completed:/downloads
+      - ./config/radarr:/config
+      - /media/Movies:/movies
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    networks:
+      - proxy-tier
+
+  headphones:
+    image: linuxserver/headphones
+    expose:
+      - 8181
+    environment:
+      - PUID=33
+      - PGID=33
+      - VIRTUAL_HOST=headphones.banditlair.com
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=8181
+    volumes:
+      - /var/lib/deluge/completed:/downloads
+      - ./config/headphones:/config
+      - /media/Music:/music
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    networks:
+      - proxy-tier
+
+  jackett:
+    image: linuxserver/jackett
+    expose:
+      - 9117
+    environment:
+      - PUID=33
+      - PGID=33
+      - VIRTUAL_HOST=jackett.banditlair.com
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=9117
+    volumes:
+#      - /var/lib/deluge/completed:/downloads
+      - ./config/jackett:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    networks:
+      - proxy-tier

@@ -1,0 +1,13 @@
+---
+- name: Copy torrent docker files
+  copy:
+    src: torrent
+    dest: "{{docker_compose_files_folder}}"
+- name: Create torrent .env
+  template:
+    src: torrent/.env
+    dest: "{{docker_compose_files_folder}}/torrent/.env"
+- name: Start torrent docker project
+  docker_service:
+    project_src: "{{docker_compose_files_folder}}/torrent"
+    state: present
