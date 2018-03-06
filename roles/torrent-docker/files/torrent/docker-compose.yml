@@ -50,6 +50,7 @@ services:
       - VIRTUAL_PORT=8989
     volumes:
       - /var/lib/deluge/completed:/downloads
+      - /var/lib/nzbget/downloads:/nzbget
       - ./config/sonarr:/config
       - /media/TV:/tv
       - /etc/localtime:/etc/localtime:ro
@@ -69,6 +70,7 @@ services:
       - VIRTUAL_PORT=7878
     volumes:
       - /var/lib/deluge/completed:/downloads
+      - /var/lib/nzbget/downloads:/nzbget
       - ./config/radarr:/config
       - /media/Movies:/movies
       - /etc/localtime:/etc/localtime:ro
@@ -90,6 +92,24 @@ services:
       - /var/lib/deluge/completed:/downloads
       - ./config/headphones:/config
       - /media/Music:/music
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    networks:
+      - proxy-tier
+
+  nzbget:
+    image: linuxserver/nzbget
+    expose:
+      - 6789
+    environment:
+      - PUID=33
+      - PGID=33
+      - VIRTUAL_HOST=nzbget.banditlair.com
+      - VIRTUAL_NETWORK=nginx-proxy
+      - VIRTUAL_PORT=6789
+    volumes:
+      - /var/lib/nzbget/downloads:/downloads
+      - ./config/nzbget:/config
       - /etc/localtime:/etc/localtime:ro
     restart: always
     networks:
