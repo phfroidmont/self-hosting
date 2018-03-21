@@ -33,6 +33,7 @@ borg create -v --stats --compression lz4           \
     /var/lib/matrix/media_store                    \
     /var/lib/nextcloud                             \
     /var/lib/wiki                                  \
+    /var/lib/nzbget                                \
     /backups                                       \
     --exclude '/var/lib/nextcloud/db'
 
