@@ -7,14 +7,14 @@ networks:
 
 services:
   emby:
-    image: nvllsvm/emby-unlocked
+    image: emby/embyserver:latest
     volumes:
         - ./config:/config
         - /media:/media:ro
         - /etc/localtime:/etc/localtime:ro
     environment:
-      - PUID=33
-      - PGID=33
+      - UID=33
+      - GID=33
       - VIRTUAL_HOST=emby.banditlair.com
       - VIRTUAL_NETWORK=nginx-proxy
       - VIRTUAL_PORT=8096
