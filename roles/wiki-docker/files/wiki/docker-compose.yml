@@ -7,7 +7,7 @@ networks:
 
 services:
   rpg_wiki:
-    image: 'bitnami/dokuwiki:0.20170219.201708232029-r0'
+    image: 'bitnami/dokuwiki:0.20170219.201708232029-r7'
     expose:
       - 80
     environment:
