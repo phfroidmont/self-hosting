@@ -6,12 +6,13 @@ $CONFIG = array (
   'trusted_domains' => 
   array (
     0 => 'localhost',
+    1 => 'web',
     2 => 'cloud.banditlair.com',
   ),
   'datadirectory' => '/var/www/html/data',
   'overwrite.cli.url' => 'https://cloud.banditlair.com',
   'dbtype' => 'mysql',
-  'version' => '13.0.0.14',
+  'version' => '13.0.1.1',
   'dbname' => 'nextcloud',
   'dbhost' => 'db',
   'dbport' => '3306',
