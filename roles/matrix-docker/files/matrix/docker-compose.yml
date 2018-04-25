@@ -3,7 +3,6 @@ services:
   db:
     image: postgres:9.6
     restart: always
-    # Adding 127.0.0.1 ensures the port isn't exposed ON the host
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
@@ -22,10 +21,13 @@ services:
       - "127.0.0.1:8008:8008"
       - "8448:8448"
       - "3478:3478"
-    environment:
-      - VIRTUAL_HOST=matrix.banditlair.com
-      - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=8008
+    labels:
+      - "traefik.backend=synapse"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:matrix.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=8008"
+      - "traefik.default.protocol=http"
     volumes:
       - /var/lib/matrix/media_store:/data/media_store
       - /var/log/synapse:/data/log
@@ -33,13 +35,13 @@ services:
       - /etc/localtime:/etc/localtime:ro
     networks:
       - matrix
-      - proxy-tier
+      - web
     restart: always
 
 networks:
   matrix:
     external:
       name: matrix-network
-  proxy-tier:
+  web:
     external:
-      name: nginx-proxy
+      name: web

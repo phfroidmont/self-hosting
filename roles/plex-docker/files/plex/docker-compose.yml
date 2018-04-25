@@ -1,9 +1,9 @@
 version: '2.2'
 
 networks:
-  proxy-tier:
+  web:
     external:
-      name: nginx-proxy
+      name: web
 
 services:
   plex:
@@ -16,10 +16,14 @@ services:
       - /tmp:/tmp
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - VIRTUAL_HOST=${PLEX_DOMAIN}
-      - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=32400
       - ADVERTISE_IP=https://plex.banditlair.com/
+    labels:
+      - "traefik.backend=plex"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:plex.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=32400"
+      - "traefik.default.protocol=http"
     networks:
-      - proxy-tier
+      - web
     restart: always

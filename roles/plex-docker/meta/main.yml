@@ -1,2 +1,2 @@
 dependencies:
-  - nginx-proxy-docker
+  - traefik-proxy-docker

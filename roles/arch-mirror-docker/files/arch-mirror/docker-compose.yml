@@ -1,21 +1,24 @@
 version: '2.2'
 
 networks:
-  proxy-tier:
+  web:
     external:
-      name: nginx-proxy
+      name: web
 
 services:
   arch-mirror:
     image: nginx:latest
     expose:
       - 80
-    environment:
-      - VIRTUAL_HOST=arch.banditlair.com
-      - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=80
+    labels:
+      - "traefik.backend=arch-mirror"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:arch.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.default.protocol=http"
     volumes:
       - /srv/repo:/usr/share/nginx/html:ro
     networks:
-      - proxy-tier
+      - web
     restart: always

@@ -1,9 +1,9 @@
 version: '2.2'
 
 networks:
-  proxy-tier:
+  web:
     external:
-      name: nginx-proxy
+      name: web
 
 services:
   deluge:
@@ -31,12 +31,16 @@ services:
       - DEBUG=false
       - PUID=33
       - PGID=33
-      - VIRTUAL_HOST=${DELUGE_DOMAIN}
-      - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=8112
+    labels:
+      - "traefik.backend=deluge"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:deluge.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=8112"
+      - "traefik.default.protocol=http"
     restart: always
     networks:
-      - proxy-tier
+      - web
 
   sonarr:
     image: linuxserver/sonarr
@@ -45,9 +49,13 @@ services:
     environment:
       - PUID=33
       - PGID=33
-      - VIRTUAL_HOST=sonarr.banditlair.com
-      - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=8989
+    labels:
+      - "traefik.backend=sonarr"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:sonarr.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=8989"
+      - "traefik.default.protocol=http"
     volumes:
       - /var/lib/deluge/completed:/downloads
       - /var/lib/nzbget/downloads:/nzbget
@@ -56,7 +64,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     restart: always
     networks:
-      - proxy-tier
+      - web
 
   radarr:
     image: linuxserver/radarr
@@ -65,9 +73,13 @@ services:
     environment:
       - PUID=33
       - PGID=33
-      - VIRTUAL_HOST=radarr.banditlair.com
-      - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=7878
+    labels:
+      - "traefik.backend=radarr"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:radarr.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=7878"
+      - "traefik.default.protocol=http"
     volumes:
       - /var/lib/deluge/completed:/downloads
       - /var/lib/nzbget/downloads:/nzbget
@@ -76,7 +88,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     restart: always
     networks:
-      - proxy-tier
+      - web
 
   headphones:
     image: linuxserver/headphones
@@ -85,9 +97,13 @@ services:
     environment:
       - PUID=33
       - PGID=33
-      - VIRTUAL_HOST=headphones.banditlair.com
-      - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=8181
+    labels:
+      - "traefik.backend=headphones"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:headphones.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=8181"
+      - "traefik.default.protocol=http"
     volumes:
       - /var/lib/deluge/completed:/downloads
       - ./config/headphones:/config
@@ -95,7 +111,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     restart: always
     networks:
-      - proxy-tier
+      - web
 
   nzbget:
     image: linuxserver/nzbget
@@ -104,16 +120,20 @@ services:
     environment:
       - PUID=33
       - PGID=33
-      - VIRTUAL_HOST=nzbget.banditlair.com
-      - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=6789
+    labels:
+      - "traefik.backend=nzbget"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:nzbget.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=6789"
+      - "traefik.default.protocol=http"
     volumes:
       - /var/lib/nzbget/downloads:/downloads
       - ./config/nzbget:/config
       - /etc/localtime:/etc/localtime:ro
     restart: always
     networks:
-      - proxy-tier
+      - web
 
   jackett:
     image: linuxserver/jackett
@@ -122,13 +142,17 @@ services:
     environment:
       - PUID=33
       - PGID=33
-      - VIRTUAL_HOST=jackett.banditlair.com
-      - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=9117
+    labels:
+      - "traefik.backend=jackett"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:jackett.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=9117"
+      - "traefik.default.protocol=http"
     volumes:
 #      - /var/lib/deluge/completed:/downloads
       - ./config/jackett:/config
       - /etc/localtime:/etc/localtime:ro
     restart: always
     networks:
-      - proxy-tier
+      - web

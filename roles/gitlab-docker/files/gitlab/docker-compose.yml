@@ -1,18 +1,21 @@
 version: '2.2'
 
 networks:
-  proxy-tier:
+  web:
     external:
-      name: nginx-proxy
+      name: web
 
 services:
   gitlab:
     image: 'gitlab/gitlab-ce:latest'
     hostname: ${GITLAB_DOMAIN}
-    environment:
-      - VIRTUAL_HOST=${GITLAB_DOMAIN}
-      - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=9090
+    labels:
+      - "traefik.backend=gitlab"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:gitlab.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=9090"
+      - "traefik.default.protocol=http"
     ports:
       - "2224:22"
     expose:
@@ -24,7 +27,7 @@ services:
       - /backups/gitlab:/var/opt/gitlab/backups
       - /etc/localtime:/etc/localtime:ro
     networks:
-      - proxy-tier
+      - web
     restart: always
 
   runner:

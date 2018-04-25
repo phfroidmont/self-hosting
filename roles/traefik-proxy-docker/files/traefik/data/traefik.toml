@@ -1,0 +1,40 @@
+debug = false
+
+logLevel = "ERROR"
+defaultEntryPoints = ["https","http"]
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+  [entryPoints.https.tls]
+  [entryPoints.traefik]
+  address = ":8080"
+
+# Activate API and Dashboard
+[api]
+entryPoint = "traefik"
+dashboard = true
+
+[retry]
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "banditlair.com"
+watch = true
+exposedbydefault = false
+
+[acme]
+email = "letsencrypt.account@banditlair.com"
+storage = "acme.json"
+entryPoint = "https"
+OnHostRule = true
+[acme.httpChallenge]
+entryPoint = "http"
+
+[[acme.domains]]
+main = "banditlair.com"
+sans = ["mail.banditlair.com"]

@@ -1,22 +1,25 @@
 version: '2.2'
 
 networks:
-  proxy-tier:
+  web:
     external:
-      name: nginx-proxy
+      name: web
 
 services:
   rpg_wiki:
     image: 'bitnami/dokuwiki:0.20170219.201708232029-r7'
     expose:
       - 80
-    environment:
-      - VIRTUAL_HOST=rpg.banditlair.com
-      - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=80
     volumes:
       - '/var/lib/wiki/rpg:/bitnami'
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.backend=rpg_wiki"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:rpg.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.default.protocol=http"
     networks:
-      - proxy-tier
+      - web
     restart: always

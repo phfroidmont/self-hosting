@@ -1,9 +1,9 @@
 version: '2.2'
 
 networks:
-  proxy-tier:
+  web:
     external:
-      name: nginx-proxy
+      name: web
 
 services:
   emby:
@@ -15,9 +15,13 @@ services:
     environment:
       - UID=33
       - GID=33
-      - VIRTUAL_HOST=emby.banditlair.com
-      - VIRTUAL_NETWORK=nginx-proxy
-      - VIRTUAL_PORT=8096
+    labels:
+      - "traefik.backend=emby"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:emby.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=8096"
+      - "traefik.default.protocol=http"
     networks:
-      - proxy-tier
+      - web
     restart: always

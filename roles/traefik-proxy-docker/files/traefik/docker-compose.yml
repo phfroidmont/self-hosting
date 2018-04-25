@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  traefik:
+    container_name: traefik
+    image: traefik:1.6.0-rc6-alpine
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data:/etc/traefik
+      - ./certs/acme.json:/acme.json
+    labels:
+      - "traefik.backend=traefik"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:traefik.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=8080"
+      - "traefik.default.protocol=http"
+      - "traefik.frontend.auth.basic=admin:${TRAEFIK_DASHBOARD_PASSWORD_HASH}"
+    networks:
+      - web
+    restart: always
+
+  # Watch acme.json and dump certificates to files
+  certdumper:
+    container_name: traefik_certdumper
+    image: alpine:latest
+    depends_on:
+      - traefik
+    restart: unless-stopped
+    volumes:
+      - ./certs:/traefik
+    command: >
+      ash -c " \
+        apk --no-cache add inotify-tools jq openssl util-linux bash && \
+        wget https://raw.githubusercontent.com/containous/traefik/master/contrib/scripts/dumpcerts.sh -O dumpcerts.sh && \
+        mkdir -p /traefik/ssl/ && \
+        while true; do \
+          inotifywait -e modify /traefik/acme.json && \
+            bash dumpcerts.sh /traefik/acme.json /traefik/ssl/ && \
+            ln -f /traefik/ssl/certs/* /traefik/ssl/ && \
+            ln -f /traefik/ssl/private/* /traefik/ssl/; \
+        done"
+
+networks:
+  web:
+    external: true
