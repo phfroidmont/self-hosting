@@ -1,4 +1,18 @@
 ---
+- name: Copy mirror sync script
+  copy:
+    src: syncArchRepo.sh
+    dest: /home/claude/syncArchRepo.sh
+    mode: 0700
+    owner: claude
+- name: Create mirror sync cron job
+  cron:
+    name: arch mirror sync
+    state: present
+    minute: 0
+    hour: "*/6"
+    job: "/home/claude/syncArchRepo.sh"
+    user: claude
 - name: Copy Arch Linux mirror config
   copy: src=arch-mirror dest={{docker_compose_files_folder}}
 - name: Start Arch mirror project
