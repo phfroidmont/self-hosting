@@ -8,6 +8,7 @@
     sub_domains:
       - rpg
   roles:
+    - { role: base, tags: ['base'] }
     - { role: scripts, tags: [ 'scripts' ] }
     - { role: daily-backup, tags: [ 'backup' ] }
     - { role: murmur-docker, tags: [ 'murmur', 'docker' ] }

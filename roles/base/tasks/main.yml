@@ -13,3 +13,10 @@
     - wget
     - borg
     - openbsd-netcat
+    - cronie
+- name: Enable and start cronie
+  service:
+    name: cronie
+    enabled: true
+    state: started
+

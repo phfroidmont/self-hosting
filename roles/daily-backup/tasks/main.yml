@@ -4,20 +4,11 @@
     src: fullBackup.sh
     dest: /root/fullBackup.sh
     mode: 0700
-- name: Copy daily-backup.service
-  copy:
-    src: daily-backup.service
-    dest: /etc/systemd/system/
-    mode: 0700
-- name: Copy daily-backup.timer
-  copy:
-    src: daily-backup.timer
-    dest: /etc/systemd/system/
-    mode: 0700
-- name: Enable and start daily-backup
-  systemd:
-    name: daily-backup.timer
-    state: started
-    enabled: yes
-    daemon_reload: yes
+- name: Create backup cron job
+  cron:
+    name: daily backup
+    state: present
+    minute: 0
+    hour: 4
+    job: "/root/fullBackup.sh"
 
