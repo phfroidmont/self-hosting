@@ -1,0 +1,3 @@
+[submodule "ansible-kubernetes-playbooks"]
+	path = ansible-kubernetes-playbooks
+	url = https://github.com/githubixx/ansible-kubernetes-playbooks

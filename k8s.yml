@@ -1,4 +1,16 @@
 ---
+- hosts: k8s_kubectl
+  roles:
+    - role: githubixx.kubectl
+      tags: role-kubectl
+- hosts: k8s_ca
+  roles:
+    - role: githubixx.cfssl
+      tags: role-cfssl
+    - role: githubixx.kubernetes-ca
+      tags: role-kubernetes-ca
+    - role: githubixx.kubernetes-ca
+      tags: role-kubernetes-ca
 - hosts: k8s
   roles:
     - role: githubixx.harden-linux
@@ -7,4 +19,3 @@
       tags: role-peervpn
   vars_files:
     - "passwords.yml"
-
