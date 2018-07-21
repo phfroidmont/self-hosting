@@ -11,6 +11,10 @@
       tags: role-kubernetes-ca
     - role: githubixx.kubernetes-ca
       tags: role-kubernetes-ca
+- hosts: k8s_etcd
+  roles:
+    - role: githubixx.etcd
+      tags: role-etcd
 - hosts: k8s
   roles:
     - role: githubixx.harden-linux
