@@ -15,11 +15,15 @@
   roles:
     - role: githubixx.etcd
       tags: role-etcd
+- hosts: k8s_controller
+  roles:
+    - role: githubixx.kubernetes-controller
+      tags: role-kubernetes-controller
 - hosts: k8s
   roles:
     - role: githubixx.harden-linux
       tags: role-harden-linux
+- hosts: all
+  roles:
     - role: githubixx.peervpn
       tags: role-peervpn
-  vars_files:
-    - "passwords.yml"

@@ -1,3 +1,6 @@
 [submodule "ansible-kubernetes-playbooks"]
 	path = ansible-kubernetes-playbooks
 	url = https://github.com/githubixx/ansible-kubernetes-playbooks
+[submodule "roles/githubixx.kubernetes-controller"]
+	path = roles/githubixx.kubernetes-controller
+	url = https://github.com/githubixx/ansible-role-kubernetes-controller.git

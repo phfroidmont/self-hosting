@@ -36,11 +36,3 @@ harden_linux_sshguard_whitelist:
   - "10.3.0.0/24"
   - "10.200.0.0/16"
 
-peervpn_conf_networkname: "peervpn"
-peervpn_conf_psk: "{{k8s_peervpn_pre_shared_key}}"
-peervpn_conf_initpeers: "master1.banditlair.com 7000"
-peervpn_conf_enabletunneling: "yes"
-peervpn_conf_interface: "tap0"
-peervpn_conf_port: 7000
-peervpn_conf_enableipv6: "no"
-

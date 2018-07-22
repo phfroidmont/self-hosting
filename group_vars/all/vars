@@ -1,5 +1,6 @@
 ---
 kubectl_version: "1.11.0"
+k8s_release: "1.11.1"
 k8s_apiserver_secure_port: "6443"
 k8s_ca_conf_directory: "{{ '~/k8s/certs' | expanduser }}"
 k8s_config_directory: "{{ '~/k8s/configs' | expanduser }}"
@@ -7,4 +8,13 @@ k8s_ca_certificate_owner: "root"
 k8s_ca_certificate_group: "root"
 k8s_config_cluster_name: banditlair.com
 k8s_encryption_config_directory: "{{k8s_config_directory}}"
+k8s_interface: "{{peervpn_conf_interface}}"
 etcd_version: "3.2.18"
+peervpn_conf_networkname: "peervpn"
+peervpn_conf_psk: "{{k8s_peervpn_pre_shared_key}}"
+peervpn_conf_initpeers: "master1.banditlair.com 7000"
+peervpn_conf_enabletunneling: "yes"
+peervpn_conf_interface: "tap0"
+peervpn_conf_port: 7000
+peervpn_conf_enableipv6: "no"
+
