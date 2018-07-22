@@ -19,11 +19,9 @@
   roles:
     - role: githubixx.kubernetes-controller
       tags: role-kubernetes-controller
-- hosts: k8s
+- hosts: all
   roles:
     - role: githubixx.harden-linux
       tags: role-harden-linux
-- hosts: all
-  roles:
     - role: githubixx.peervpn
       tags: role-peervpn

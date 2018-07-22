@@ -1,2 +1,12 @@
 ---
 peervpn_conf_ifconfig4: "10.3.0.100/24"
+harden_linux_sshd_settings_user:
+  "^Port ": "Port 22"
+harden_linux_ufw_rules:
+  - rule: "allow"
+    to_port: "22"
+    protocol: "tcp"
+  - rule: "allow"
+    to_port: "7000"
+    protocol: "udp"
+
