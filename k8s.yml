@@ -19,6 +19,16 @@
   roles:
     - role: githubixx.kubernetes-controller
       tags: role-kubernetes-controller
+- hosts: k8s_worker
+  roles:
+    - role: githubixx.kubernetes-worker
+      tags: role-kubernetes-worker
+- hosts: k8s
+  roles:
+    - role: githubixx.flanneld
+      tags: role-kubernetes-flanneld
+    - role: githubixx.docker
+      tags: role-docker
 - hosts: all
   roles:
     - role: githubixx.harden-linux
