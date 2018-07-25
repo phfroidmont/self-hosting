@@ -9,8 +9,6 @@
       tags: role-cfssl
     - role: githubixx.kubernetes-ca
       tags: role-kubernetes-ca
-    - role: githubixx.kubernetes-ca
-      tags: role-kubernetes-ca
 - hosts: k8s_etcd
   roles:
     - role: githubixx.etcd

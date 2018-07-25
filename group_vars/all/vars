@@ -9,7 +9,12 @@ k8s_ca_certificate_group: "root"
 k8s_config_cluster_name: banditlair.com
 k8s_encryption_config_directory: "{{k8s_config_directory}}"
 k8s_interface: "{{peervpn_conf_interface}}"
+k8s_conf_dir: /var/lib/kubernetes
+
 etcd_version: "3.2.18"
+etcd_bin_dir: "/usr/local/bin"
+etcd_client_port: "2379"
+
 harden_linux_root_password: "{{k8s_scaleway_root_password}}"
 harden_linux_deploy_user: deploy
 harden_linux_deploy_user_password: "{{k8s_scaleway_deploy_user_password}}"
@@ -35,7 +40,6 @@ harden_linux_sshguard_whitelist:
   - "212.83.165.111"
   - "10.3.0.0/24"
   - "10.200.0.0/16"
-
 
 peervpn_conf_networkname: "peervpn"
 peervpn_conf_psk: "{{k8s_peervpn_pre_shared_key}}"

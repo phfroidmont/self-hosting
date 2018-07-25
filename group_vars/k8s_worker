@@ -1,0 +1,13 @@
+harden_linux_ufw_rules:
+  - rule: "allow"
+    to_port: "2242"
+    protocol: "tcp"
+  - rule: "allow"
+    to_port: "7000"
+    protocol: "udp"
+  - rule: "allow"
+    to_port: "80"
+    protocol: "tcp"
+  - rule: "allow"
+    to_port: "443"
+    protocol: "tcp"
