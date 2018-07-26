@@ -1,4 +1,8 @@
 ---
+- hosts: localhost
+  roles:
+    - role: scaleway-provision
+      tags: role-provision
 - hosts: k8s_kubectl
   roles:
     - role: githubixx.kubectl
