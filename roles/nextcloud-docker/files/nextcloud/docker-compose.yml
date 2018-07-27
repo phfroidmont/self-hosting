@@ -62,26 +62,26 @@ services:
     image: redis
     restart: always
 
-  onlyoffice:
-    image: onlyoffice/documentserver:latest
-    stdin_open: true
-    tty: true
-    expose:
-      - '80'
-    labels:
-      - "traefik.backend=onlyoffice"
-      - "traefik.docker.network=web"
-      - "traefik.frontend.rule=Host:office.banditlair.com"
-      - "traefik.enable=true"
-      - "traefik.port=80"
-      - "traefik.default.protocol=http"
-    volumes:
-      - /var/lib/onlyoffice:/var/www/onlyoffice/Data
-      - /var/log/onlyoffice:/var/log/onlyoffice
-    networks:
-      - web
-      - default
-    restart: always
+#  onlyoffice:
+#    image: onlyoffice/documentserver:latest
+#    stdin_open: true
+#    tty: true
+#    expose:
+#      - '80'
+#    labels:
+#      - "traefik.backend=onlyoffice"
+#      - "traefik.docker.network=web"
+#      - "traefik.frontend.rule=Host:office.banditlair.com"
+#      - "traefik.enable=true"
+#      - "traefik.port=80"
+#      - "traefik.default.protocol=http"
+#    volumes:
+#      - /var/lib/onlyoffice:/var/www/onlyoffice/Data
+#      - /var/log/onlyoffice:/var/log/onlyoffice
+#    networks:
+#      - web
+#      - default
+#    restart: always
 
 #  collabora:
 #    image: collabora/code:3.0.0.4

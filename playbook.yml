@@ -24,9 +24,4 @@
     - { role: monit, tags: [ 'monit' ] }
     - { role: arch-mirror-docker, tags: [ 'mirror', 'docker' ] }
     - { role: traefik-proxy-docker, tags: [ 'traefik', 'docker' ] }
-#  vars_prompt:
-#    - name: "ansible_sudo_pass"
-#      prompt: "Sudo password"
-#      private: yes
-  vars_files:
-    - "passwords.yml"
+

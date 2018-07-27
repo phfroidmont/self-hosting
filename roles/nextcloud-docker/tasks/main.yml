@@ -9,8 +9,12 @@
     dest: "{{docker_compose_files_folder}}/nextcloud/db.env"
 - name: Create nextcloud config
   template:
-    src: nextcloud/config/config.php
-    dest: "{{docker_compose_files_folder}}/nextcloud/config/config.php"
+    src: nextcloud/config/{{item}}
+    dest: "{{docker_compose_files_folder}}/nextcloud/config/{{item}}"
+  with_items:
+    - base.config.php
+    - database.config.php
+    - mail.config.php
 - name: Change config folder owner to http
   file:
     path: "{{docker_compose_files_folder}}/nextcloud/config"
