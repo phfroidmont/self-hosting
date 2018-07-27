@@ -1,0 +1,10 @@
+plugin: scaleway
+oauth_token: "{{ scw_token }}"
+regions: 
+  - ams1
+  - par1
+tags:
+  - staging
+hostnames: 
+  - hostname
+  - public_ipv4

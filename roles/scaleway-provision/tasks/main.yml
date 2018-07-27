@@ -1,4 +1,11 @@
 ---
+- name: Adding authorized SSH keys
+  scaleway_sshkey:
+    ssh_pub_key: "{{ item }}"
+    oauth_token: "{{ scw_token }}"
+    state: present
+  loop: "{{ scw_authorized_keys|flatten(levels=1) }}"
+
 - name: Provision master nodes
   scaleway_compute:
     name: k8s-{{ k8s_scw_environment_short }}-master{{ item }}
@@ -29,3 +36,5 @@
       - k8s_worker
       - "{{ k8s_scw_environment }}"
   loop: "{{ range(1,k8s_scw_worker_nodes_count+1)|list }}"
+
+- meta: refresh_inventory
