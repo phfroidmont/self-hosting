@@ -341,9 +341,6 @@ check host mail-admin with address mailu.banditlair.com
 #check host Grafana with address grafana.banditlair.com
 #    if failed port 443 protocol https with timeout 20 seconds then alert
 
-#check host Plex with address plex.banditlair.com
-#    if failed port 443 protocol https with timeout 20 seconds then alert
-
 #check host sonar with address sonar.banditlair.com
 #    if failed port 443 protocol https with timeout 20 seconds then alert
 
