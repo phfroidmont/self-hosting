@@ -1,0 +1,29 @@
+---
+- name: Create config folder
+  file:
+    state: directory
+    dest: "{{docker_compose_files_folder}}/stb"
+- name: Copy STB docker-compose
+  copy:
+    src: docker-compose.yml
+    dest: "{{docker_compose_files_folder}}/stb/"
+- name: Create db.env
+  template:
+    src: db.env
+    dest: "{{docker_compose_files_folder}}/stb/db.env"
+- name: Pull and start docker project
+  docker_service:
+    project_src: "{{docker_compose_files_folder}}/stb"
+    state: present
+- name: Check if database tables exist
+  command: docker-compose exec -T db mysql -u stb -p{{stb_mysql_password}} stb -e "show tables;"
+  args:
+      chdir: "{{docker_compose_files_folder}}/stb/"
+  register: db_tables_exist
+  ignore_errors: true
+  changed_when: db_tables_exist.stdout_lines|length == 0
+- name: Restore STB database
+  command: docker-compose exec -T db sh -c "mysql -u stb -p{{stb_mysql_password}} stb < /backups/database.dmp"
+  args:
+    chdir: "{{docker_compose_files_folder}}/stb/"
+  when: db_tables_exist.stdout_lines|length == 0

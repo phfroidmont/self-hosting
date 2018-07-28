@@ -1,0 +1,43 @@
+version: '3'
+
+networks:
+  web:
+    external:
+      name: web
+
+services:
+  db:
+    image: mariadb:10.3.8
+    volumes:
+      - /var/lib/mariadb/stb:/var/lib/mysql
+      - /backups/stb:/backups
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    env_file:
+      - db.env
+    restart: always
+  wordpress:
+    image: wordpress:4.9.4-php7.1-apache
+    volumes:
+      - /var/lib/stb:/var/www/html
+    labels:
+      - "traefik.backend=wordpress"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:stb.froidmont.org"
+#      - "traefik.frontend.rule=Host:societe-de-tir-bertrix.com,www.societe-de-tir-bertrix.com"
+#      - "traefik.frontend.redirect.regex=^https?://societe-de-tir-bertrix.com/(.*)"
+#      - "traefik.frontend.redirect.replacement=https://www.societe-de-tir-bertrix.com/$${1}"
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.default.protocol=http"
+    depends_on:
+      - db
+    networks:
+      - web
+      - default
+    restart: always
+
