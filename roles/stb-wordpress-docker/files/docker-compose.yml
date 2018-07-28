@@ -27,10 +27,9 @@ services:
     labels:
       - "traefik.backend=wordpress"
       - "traefik.docker.network=web"
-      - "traefik.frontend.rule=Host:stb.froidmont.org"
-#      - "traefik.frontend.rule=Host:societe-de-tir-bertrix.com,www.societe-de-tir-bertrix.com"
-#      - "traefik.frontend.redirect.regex=^https?://societe-de-tir-bertrix.com/(.*)"
-#      - "traefik.frontend.redirect.replacement=https://www.societe-de-tir-bertrix.com/$${1}"
+      - "traefik.frontend.rule=Host:societe-de-tir-bertrix.com,www.societe-de-tir-bertrix.com"
+      - "traefik.frontend.redirect.regex=^https?://societe-de-tir-bertrix.com/(.*)"
+      - "traefik.frontend.redirect.replacement=https://www.societe-de-tir-bertrix.com/$${1}"
       - "traefik.enable=true"
       - "traefik.port=80"
       - "traefik.default.protocol=http"
