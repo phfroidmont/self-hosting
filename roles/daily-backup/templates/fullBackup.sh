@@ -10,6 +10,9 @@ export BORG_PASSPHRASE='{{backup_borg_passphrase}}'
 echo 'Dumping NextCloud database'
 docker exec nextcloud_db_1 sh -c "mysqldump -u nextcloud -p{{nextcloud_mysql_password}} nextcloud > /backups/database.dmp"
 
+echo 'Dumping S.T.B. wordpress database'
+docker exec stb_db_1 sh -c "mysqldump -u stb -p{{stb_mysql_password}} stb > /backups/database.dmp"
+
 echo 'Dumping matrix database'
 docker exec matrix_db_1 sh -c "pg_dump -U synapse synapse > /backups/database.dmp"
 
@@ -33,6 +36,7 @@ borg create -v --stats --compression lz4           \
     /var/lib/matrix/media_store                    \
     /var/lib/nextcloud                             \
     /var/lib/wiki                                  \
+    /var/lib/stb                                   \
     /var/lib/nzbget                                \
     /backups                                       \
     --exclude '/var/lib/nextcloud/db'
