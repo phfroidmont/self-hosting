@@ -17,9 +17,9 @@
     commercial_type: VC1S
     wait: true
     tags:
-      - k8s_master
-      - k8s_etcd
-      - "{{ k8s_scw_environment }}"
+      - group:k8s_master
+      - group:k8s_etcd
+      - env:{{ k8s_scw_environment }}
   loop: "{{ range(1,k8s_scw_master_nodes_count+1)|list }}"
 
 - name: Provision worker nodes
@@ -33,8 +33,8 @@
     commercial_type: VC1S
     wait: true
     tags:
-      - k8s_worker
-      - "{{ k8s_scw_environment }}"
+      - group:k8s_worker
+      - env:{{ k8s_scw_environment }}
   loop: "{{ range(1,k8s_scw_worker_nodes_count+1)|list }}"
 
 - meta: refresh_inventory
