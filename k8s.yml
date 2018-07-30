@@ -1,39 +1,60 @@
 ---
 - hosts: localhost
+  gather_facts: no
   roles:
     - role: scaleway-provision
       tags: role-provision
+- hosts: localhost
+  become: yes
+  gather_facts: no
+  roles:
+    - role: harden-linux
+      tags: role-harden-linux
+    - role: githubixx.peervpn
+      tags: role-peervpn
+- hosts: k8s
+  vars:
+    ansible_user: ubuntu
+  gather_facts: no
+  roles:
+    - role: harden-linux
+      tags: role-harden-linux
+- hosts: k8s
+  gather_facts: no
+  roles:
+    - role: githubixx.peervpn
+      tags: role-peervpn
 - hosts: k8s_kubectl
+  gather_facts: no
   roles:
     - role: githubixx.kubectl
       tags: role-kubectl
 - hosts: k8s_ca
+  gather_facts: no
   roles:
     - role: githubixx.cfssl
       tags: role-cfssl
     - role: githubixx.kubernetes-ca
       tags: role-kubernetes-ca
 - hosts: k8s_etcd
+  gather_facts: no
   roles:
     - role: githubixx.etcd
       tags: role-etcd
 - hosts: k8s_controller
+  gather_facts: no
   roles:
     - role: githubixx.kubernetes-controller
       tags: role-kubernetes-controller
 - hosts: k8s_worker
+  gather_facts: no
   roles:
     - role: githubixx.kubernetes-worker
       tags: role-kubernetes-worker
 - hosts: k8s
+  gather_facts: no
   roles:
     - role: githubixx.flanneld
       tags: role-kubernetes-flanneld
     - role: githubixx.docker
       tags: role-docker
-- hosts: all
-  roles:
-    - role: githubixx.harden-linux
-      tags: role-harden-linux
-    - role: githubixx.peervpn
-      tags: role-peervpn

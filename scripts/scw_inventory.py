@@ -55,8 +55,9 @@ class SCWInventory(object):
             if 'env:'+self.environment in tags:
                 if ip_info:
                     self.response['_meta']['hostvars'][host] = {
-                        'ansible_host': private_ip,
-                        'public_ip': ip_info['address']
+                        'ansible_host': ip_info['address'],
+                        'public_ip': ip_info['address'],
+                        'private_ip': private_ip
                     }
                 if tags:
                     for tag in tags:
