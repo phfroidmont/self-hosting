@@ -24,12 +24,6 @@
   roles:
     - role: peervpn
       tags: role-peervpn
-- hosts: k8s_kubectl
-  gather_facts: no
-  become: yes
-  roles:
-    - role: kubectl
-      tags: role-kubectl
 - hosts: k8s_ca
   become: yes
   roles:
@@ -37,6 +31,11 @@
       tags: role-cfssl
     - role: kubernetes-ca
       tags: role-kubernetes-ca
+- hosts: k8s_kubectl
+  become: yes
+  roles:
+    - role: kubectl
+      tags: role-kubectl
 - hosts: k8s_etcd
   gather_facts: no
   roles:
