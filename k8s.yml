@@ -27,8 +27,9 @@
       tags: role-peervpn
 - hosts: k8s_kubectl
   gather_facts: no
+  become: yes
   roles:
-    - role: githubixx.kubectl
+    - role: kubectl
       tags: role-kubectl
 - hosts: k8s_ca
   gather_facts: no
