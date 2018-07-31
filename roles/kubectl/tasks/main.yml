@@ -52,3 +52,26 @@
     - k8s_worker
   tags:
     - k8s-auth-config-kubelet
+
+- name: Get IP address of first host in k8s_master group and use as API server
+  set_fact:
+    apiServer: |
+      {% set item = groups["k8s_master"][0] %}
+      {{ hostvars[item]["ansible_"+hostvars[item]["peervpn_conf_interface"]].ipv4.address }}
+
+- name: Remove newline from API server IP address
+  set_fact:
+    apiServer: "{{apiServer |replace('\n', '')}}"
+
+- include_tasks: kubectl-config.yml
+  loop:
+    - name: kube-proxy
+      client_cert: k8s-proxy
+    - name: kube-controller-manager
+      client_cert: k8s-controller-manager
+    - name: kube-scheduler
+      client_cert: k8s-scheduler
+    - name: admin
+      client_cert: admin
+  loop_control:
+    loop_var: service
