@@ -37,22 +37,18 @@
     - role: kubectl
       tags: role-kubectl
 - hosts: k8s_etcd
-  gather_facts: no
   roles:
-    - role: githubixx.etcd
+    - role: etcd
       tags: role-etcd
 - hosts: k8s_controller
-  gather_facts: no
   roles:
     - role: githubixx.kubernetes-controller
       tags: role-kubernetes-controller
 - hosts: k8s_worker
-  gather_facts: no
   roles:
     - role: githubixx.kubernetes-worker
       tags: role-kubernetes-worker
 - hosts: k8s
-  gather_facts: no
   roles:
     - role: githubixx.flanneld
       tags: role-kubernetes-flanneld
