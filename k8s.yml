@@ -20,7 +20,6 @@
     - role: harden-linux
       tags: role-harden-linux
 - hosts: all
-  gather_facts: no
   become: yes
   roles:
     - role: peervpn
@@ -32,12 +31,11 @@
     - role: kubectl
       tags: role-kubectl
 - hosts: k8s_ca
-  gather_facts: no
   become: yes
   roles:
     - role: cfssl
       tags: role-cfssl
-    - role: githubixx.kubernetes-ca
+    - role: kubernetes-ca
       tags: role-kubernetes-ca
 - hosts: k8s_etcd
   gather_facts: no
