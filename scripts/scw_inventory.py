@@ -66,6 +66,8 @@ class SCWInventory(object):
                                 tag.split(':')[1],
                                 host
                             )
+                        if tag.startswith('fact'):
+                           self.response['_meta']['hostvars'][host][tag.split(':')[1]] = tag.split(':')[2]
 
     def _add_to_response(self, group, hostname):
         '''

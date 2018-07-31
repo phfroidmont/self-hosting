@@ -19,10 +19,11 @@
   roles:
     - role: harden-linux
       tags: role-harden-linux
-- hosts: k8s
+- hosts: all
   gather_facts: no
+  become: yes
   roles:
-    - role: githubixx.peervpn
+    - role: peervpn
       tags: role-peervpn
 - hosts: k8s_kubectl
   gather_facts: no

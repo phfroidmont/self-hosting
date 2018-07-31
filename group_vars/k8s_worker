@@ -1,3 +1,4 @@
+peervpn_conf_ifconfig4: "10.3.0.{{ 100+(index|int) }}/24"
 harden_linux_ufw_rules:
   - rule: "allow"
     to_port: "22"
