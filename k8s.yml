@@ -33,8 +33,9 @@
       tags: role-kubectl
 - hosts: k8s_ca
   gather_facts: no
+  become: yes
   roles:
-    - role: githubixx.cfssl
+    - role: cfssl
       tags: role-cfssl
     - role: githubixx.kubernetes-ca
       tags: role-kubernetes-ca
