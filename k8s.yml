@@ -40,9 +40,9 @@
   roles:
     - role: etcd
       tags: role-etcd
-- hosts: k8s_controller
+- hosts: k8s_master
   roles:
-    - role: githubixx.kubernetes-controller
+    - role: kubernetes-controller
       tags: role-kubernetes-controller
 - hosts: k8s_worker
   roles:
