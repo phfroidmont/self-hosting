@@ -8,110 +8,93 @@ k8s_ca_conf_directory: "{{ '~/k8s/certs' | expanduser }}"
 k8s_ca_certificate_owner: "root"
 k8s_ca_certificate_group: "root"
 
-# Expiry for etcd root certificate
-ca_etcd_expiry: "87600h"
-
-# Certificate authority for etcd certificates
-ca_etcd_csr_cn: "Etcd"
-ca_etcd_csr_key_algo: "rsa"
-ca_etcd_csr_key_size: "2048"
-ca_etcd_csr_names_c: "DE"
-ca_etcd_csr_names_l: "The_Internet"
-ca_etcd_csr_names_o: "Kubernetes"
-ca_etcd_csr_names_ou: "BY"
-ca_etcd_csr_names_st: "Bayern"
 
 # Expiry for Kubernetes API server root certificates
-ca_k8s_apiserver_expiry: "87600h"
+ca_expiry: "87600h"
 
-# Certificate authority for Kubernetes API server
-ca_k8s_apiserver_csr_cn: "Kubernetes"
-ca_k8s_apiserver_csr_key_algo: "rsa"
-ca_k8s_apiserver_csr_key_size: "2048"
-ca_k8s_apiserver_csr_names_c: "DE"
-ca_k8s_apiserver_csr_names_l: "The_Internet"
-ca_k8s_apiserver_csr_names_o: "Kubernetes"
-ca_k8s_apiserver_csr_names_ou: "BY"
-ca_k8s_apiserver_csr_names_st: "Bayern"
-
-# CSR parameter for etcd certificate
-etcd_csr_cn: "Etcd"
-etcd_csr_key_algo: "rsa"
-etcd_csr_key_size: "2048"
-etcd_csr_names_c: "DE"
-etcd_csr_names_l: "The_Internet"
-etcd_csr_names_o: "Kubernetes"
-etcd_csr_names_ou: "BY"
-etcd_csr_names_st: "Bayern"
-
-# CSR parameter for Kubernetes API server certificate
-k8s_apiserver_csr_cn: "Kubernetes"
-k8s_apiserver_csr_key_algo: "rsa"
-k8s_apiserver_csr_key_size: "2048"
-k8s_apiserver_csr_names_c: "DE"
-k8s_apiserver_csr_names_l: "The_Internet"
-k8s_apiserver_csr_names_o: "Kubernetes"
-k8s_apiserver_csr_names_ou: "BY"
-k8s_apiserver_csr_names_st: "Bayern"
-
-# CSR parameter for the admin user
-k8s_admin_csr_cn: "admin"
-k8s_admin_csr_key_algo: "rsa"
-k8s_admin_csr_key_size: "2048"
-k8s_admin_csr_names_c: "DE"
-k8s_admin_csr_names_l: "The_Internet"
-k8s_admin_csr_names_o: "system:masters" # DO NOT CHANGE!
-k8s_admin_csr_names_ou: "BY"
-k8s_admin_csr_names_st: "Bayern"
-
-# CSR parameter for kubelet client certificates
-k8s_worker_csr_key_algo: "rsa"
-k8s_worker_csr_key_size: "2048"
-k8s_worker_csr_names_c: "DE"
-k8s_worker_csr_names_l: "The_Internet"
-k8s_worker_csr_names_o: "system:nodes" # DO NOT CHANGE!
-k8s_worker_csr_names_ou: "BY"
-k8s_worker_csr_names_st: "Bayern"
-
-# CSR parameter for the kube-proxy client certificate
-k8s_kube_proxy_csr_cn: "system:kube-proxy" # DO NOT CHANGE!
-k8s_kube_proxy_csr_key_algo: "rsa"
-k8s_kube_proxy_csr_key_size: "2048"
-k8s_kube_proxy_csr_names_c: "DE"
-k8s_kube_proxy_csr_names_l: "The_Internet"
-k8s_kube_proxy_csr_names_o: "system:node-proxier" # DO NOT CHANGE!
-k8s_kube_proxy_csr_names_ou: "BY"
-k8s_kube_proxy_csr_names_st: "Bayern"
-
-# CSR parameter for the kube-controller-manager client certificate
-k8s_controller_manager_csr_cn: "system:kube-controller-manager" # DO NOT CHANGE!
-k8s_controller_manager_csr_key_algo: "rsa"
-k8s_controller_manager_csr_key_size: "2048"
-k8s_controller_manager_csr_names_c: "DE"
-k8s_controller_manager_csr_names_l: "The_Internet"
-k8s_controller_manager_csr_names_o: "system:kube-controller-manager" # DO NOT CHANGE!
-k8s_controller_manager_csr_names_ou: "BY"
-k8s_controller_manager_csr_names_st: "Bayern"
-
-# CSR parameter for the kube-scheduler client certificate
-k8s_scheduler_csr_cn: "system:kube-scheduler" # DO NOT CHANGE!
-k8s_scheduler_csr_key_algo: "rsa"
-k8s_scheduler_csr_key_size: "2048"
-k8s_scheduler_csr_names_c: "DE"
-k8s_scheduler_csr_names_l: "The_Internet"
-k8s_scheduler_csr_names_o: "system:kube-scheduler" # DO NOT CHANGE!
-k8s_scheduler_csr_names_ou: "BY"
-k8s_scheduler_csr_names_st: "Bayern"
-
-# CSR parameter for kube-controller-manager service account key pair. Used to generate and sign service account tokens.
-k8s_controller_manager_sa_csr_cn: "service-accounts"
-k8s_controller_manager_sa_csr_key_algo: "rsa"
-k8s_controller_manager_sa_csr_key_size: "2048"
-k8s_controller_manager_sa_csr_names_c: "DE"
-k8s_controller_manager_sa_csr_names_l: "The_Internet"
-k8s_controller_manager_sa_csr_names_o: "Kubernetes"
-k8s_controller_manager_sa_csr_names_ou: "BY"
-k8s_controller_manager_sa_csr_names_st: "Bayern"
+k8s_csr:
+  master:
+    - name: "ca"
+      cn: "Kubernetes"
+      key_algo: "rsa"
+      key_size: "2048"
+      names_c: "BE"
+      names_l: "The_Internet"
+      names_o: "Kubernetes"
+      names_ou: "CA"
+      names_st: "Luxembourg"
+    - name: "etcd"
+      cn: "Etcd"
+      key_algo: "rsa"
+      key_size: "2048"
+      names_c: "BE"
+      names_l: "The_Internet"
+      names_o: "Kubernetes"
+      names_ou: "{{ k8s_config_cluster_name }}"
+      names_st: "Luxembourg"
+    - name: "apiserver"    
+      cn: "Kubernetes"
+      key_algo: "rsa"
+      key_size: "2048"
+      names_c: "BE"
+      names_l: "The_Internet"
+      names_o: "Kubernetes"
+      names_ou: "{{ k8s_config_cluster_name }}"
+      names_st: "Luxembourg"
+    - name: "admin"
+      cn: "admin"
+      key_algo: "rsa"
+      key_size: "2048"
+      names_c: "BE"
+      names_l: "The_Internet"
+      names_o: "system:masters" # DO NOT CHANGE!
+      names_ou: "{{ k8s_config_cluster_name }}"
+      names_st: "Luxembourg"
+    - name: "kube-proxy"
+      cn: "system:kube-proxy" # DO NOT CHANGE!
+      key_algo: "rsa"
+      key_size: "2048"
+      names_c: "BE"
+      names_l: "The_Internet"
+      names_o: "system:node-proxier" # DO NOT CHANGE!
+      names_ou: "{{ k8s_config_cluster_name }}"
+      names_st: "Luxembourg"
+    - name: "kube-controller-manager"
+      cn: "system:kube-controller-manager" # DO NOT CHANGE!
+      key_algo: "rsa"
+      key_size: "2048"
+      names_c: "BE"
+      names_l: "The_Internet"
+      names_o: "system:kube-controller-manager" # DO NOT CHANGE!
+      names_ou: "{{ k8s_config_cluster_name }}"
+      names_st: "Luxembourg"
+    - name: "kube-scheduler"
+      cn: "system:kube-scheduler" # DO NOT CHANGE!
+      key_algo: "rsa"
+      key_size: "2048"
+      names_c: "BE"
+      names_l: "The_Internet"
+      names_o: "system:kube-scheduler" # DO NOT CHANGE!
+      names_ou: "{{ k8s_config_cluster_name }}"
+      names_st: "Luxembourg"
+    - name: "service-account"
+      cn: "service-accounts"
+      key_algo: "rsa"
+      key_size: "2048"
+      names_c: "BE"
+      names_l: "The_Internet"
+      names_o: "Kubernetes"
+      names_ou: "{{ k8s_config_cluster_name }}"
+      names_st: "Luxembourg"
+  worker:
+    name: "worker"
+    key_algo: "rsa"
+    key_size: "2048"
+    names_c: "BE"
+    names_l: "The_Internet"
+    names_o: "system:nodes" # DO NOT CHANGE!
+    names_ou: "{{ k8s_config_cluster_name }}"
+    names_st: "Luxembourg"
 
 etcd_cert_hosts:
   - 127.0.0.1

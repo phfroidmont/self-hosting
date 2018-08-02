@@ -1,7 +1,7 @@
 {
   "signing": {
     "default": {
-      "expiry": "{{ ca_k8s_apiserver_expiry }}"
+      "expiry": "{{ ca_expiry }}"
     },
     "profiles": {
       "kubernetes": {
@@ -11,7 +11,7 @@
             "server auth",
             "client auth"
           ],
-          "expiry": "{{ ca_k8s_apiserver_expiry }}"
+          "expiry": "{{ ca_expiry }}"
       }
     }
   }
