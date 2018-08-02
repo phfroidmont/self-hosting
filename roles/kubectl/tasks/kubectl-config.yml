@@ -1,11 +1,11 @@
-- name: Generate a kubeconfig file for the {{service.name}} service (set-cluster)
-  shell: "kubectl config set-cluster {{k8s_config_cluster_name}} --certificate-authority={{k8s_ca_conf_directory}}/ca-k8s-apiserver.pem --embed-certs=true --server=https://{{apiServer}}:{{k8s_apiserver_secure_port}} --kubeconfig={{k8s_config_directory}}/{{service.name}}.kubeconfig"
+- name: Generate a kubeconfig file for the {{service}} service (set-cluster)
+  shell: "kubectl config set-cluster {{k8s_config_cluster_name}} --certificate-authority={{k8s_ca_conf_directory}}/ca.pem --embed-certs=true --server=https://{{apiServer}}:{{k8s_apiserver_secure_port}} --kubeconfig={{k8s_config_directory}}/{{service}}.kubeconfig"
 
-- name: Generate a kubeconfig file for the {{service.name}} service (set-credentials)
-  shell: "kubectl config set-credentials system:{{service.name}} --client-certificate={{k8s_ca_conf_directory}}/cert-{{service.client_cert}}.pem --client-key={{k8s_ca_conf_directory}}/cert-{{service.client_cert}}-key.pem --embed-certs=true --kubeconfig={{k8s_config_directory}}/{{service.name}}.kubeconfig"
+- name: Generate a kubeconfig file for the {{service}} service (set-credentials)
+  shell: "kubectl config set-credentials system:{{service}} --client-certificate={{k8s_ca_conf_directory}}/{{service}}.pem --client-key={{k8s_ca_conf_directory}}/{{service}}-key.pem --embed-certs=true --kubeconfig={{k8s_config_directory}}/{{service}}.kubeconfig"
 
-- name: Generate a kubeconfig file for the {{service.name}} service (set-context)
-  shell: "kubectl config set-context default --cluster={{k8s_config_cluster_name}} --user=system:{{service.name}} --kubeconfig={{k8s_config_directory}}/{{service.name}}.kubeconfig"
+- name: Generate a kubeconfig file for the {{service}} service (set-context)
+  shell: "kubectl config set-context default --cluster={{k8s_config_cluster_name}} --user=system:{{service}} --kubeconfig={{k8s_config_directory}}/{{service}}.kubeconfig"
 
 - name: Set use-context
-  shell: "kubectl config use-context default --kubeconfig={{k8s_config_directory}}/{{service.name}}.kubeconfig"
+  shell: "kubectl config use-context default --kubeconfig={{k8s_config_directory}}/{{service}}.kubeconfig"

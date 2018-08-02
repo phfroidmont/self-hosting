@@ -31,11 +31,6 @@
       tags: role-cfssl
     - role: kubernetes-ca
       tags: role-kubernetes-ca
-- hosts: k8s_kubectl
-  become: yes
-  roles:
-    - role: kubectl
-      tags: role-kubectl
 - hosts: k8s_etcd
   roles:
     - role: etcd

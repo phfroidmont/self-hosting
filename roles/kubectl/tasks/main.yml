@@ -26,14 +26,14 @@
     - kubectl
 
 - name: Generate a kubeconfig file for each worker node (set-cluster)
-  shell: "kubectl config set-cluster {{k8s_config_cluster_name}} --certificate-authority={{k8s_ca_conf_directory}}/ca-k8s-apiserver.pem --embed-certs=true --server=https://{{hostvars[groups['k8s_master'][0]]['ansible_'+hostvars[item]['peervpn_conf_interface']].ipv4.address}}:{{k8s_apiserver_secure_port}} --kubeconfig={{k8s_config_directory}}/{{item}}.kubeconfig"
+  shell: "kubectl config set-cluster {{k8s_config_cluster_name}} --certificate-authority={{k8s_ca_conf_directory}}/ca.pem --embed-certs=true --server=https://{{hostvars[groups['k8s_master'][0]]['ansible_'+hostvars[item]['peervpn_conf_interface']].ipv4.address}}:{{k8s_apiserver_secure_port}} --kubeconfig={{k8s_config_directory}}/{{item}}.kubeconfig"
   with_inventory_hostnames:
     - k8s_worker
   tags:
     - k8s-auth-config-kubelet
 
 - name: Generate a kubeconfig file for each worker node (set-credentials)
-  shell: "kubectl config set-credentials system:node:{{hostvars[item]['ansible_hostname']}} --client-certificate={{k8s_ca_conf_directory}}/cert-{{item}}.pem --client-key={{k8s_ca_conf_directory}}/cert-{{item}}-key.pem --embed-certs=true --kubeconfig={{k8s_config_directory}}/{{item}}.kubeconfig"
+  shell: "kubectl config set-credentials system:node:{{hostvars[item]['ansible_hostname']}} --client-certificate={{k8s_ca_conf_directory}}/{{item}}.pem --client-key={{k8s_ca_conf_directory}}/{{item}}-key.pem --embed-certs=true --kubeconfig={{k8s_config_directory}}/{{item}}.kubeconfig"
   with_inventory_hostnames:
     - k8s_worker
   tags:
@@ -65,16 +65,14 @@
 
 - include_tasks: kubectl-config.yml
   loop:
-    - name: kube-proxy
-      client_cert: k8s-proxy
-    - name: kube-controller-manager
-      client_cert: k8s-controller-manager
-    - name: kube-scheduler
-      client_cert: k8s-scheduler
-    - name: admin
-      client_cert: admin
+    - kube-proxy
+    - kube-controller-manager
+    - kube-scheduler
+    - admin
   loop_control:
     loop_var: service
+
+- include_tasks: kubectl-cluster-config.yml
 
 - name: Create encryption config file
   template:

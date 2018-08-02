@@ -1,7 +1,7 @@
 - name: kubectl config set-cluster
   shell: |
     kubectl config set-cluster {{k8s_config_cluster_name}} \
-      --certificate-authority={{k8s_ca_conf_directory}}/ca-k8s-apiserver.pem \
+      --certificate-authority={{k8s_ca_conf_directory}}/ca.pem \
       --embed-certs=true \
       --server=https://{{hostvars[groups.k8s_master|first]['ansible_' + k8s_interface].ipv4.address}}:6443
   register: set_cluster
@@ -12,8 +12,8 @@
 - name: kubectl config set-credentials admin
   shell: |
     kubectl config set-credentials admin \
-      --client-certificate={{k8s_ca_conf_directory}}/cert-admin.pem \
-      --client-key={{k8s_ca_conf_directory}}/cert-admin-key.pem
+      --client-certificate={{k8s_ca_conf_directory}}/admin.pem \
+      --client-key={{k8s_ca_conf_directory}}/admin-key.pem
   register: set_credentials
 
 - debug:
