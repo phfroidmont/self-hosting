@@ -1,7 +1,4 @@
 ---
-#- name: Display hostvars
-#  debug: var=hostvars
-
 - name: Generate list of IP addresses and hostnames needed for Kubernetes API server certificate
   set_fact:
     tmpK8sHosts: |
@@ -85,6 +82,8 @@
   tags:
     - kubernetes-ca
   loop: "{{ k8s_csr.master|flatten(levels=1)}}"
+  loop_control:
+    label: "{{ item.name }}"
 
 - name: Generate CA and private key
   shell: cfssl gencert -initca ca-csr.json | cfssljson -bare ca
@@ -108,24 +107,19 @@
   tags:
     - kubernetes-ca
 
-- name: Generate TLS certificate for etcd
-  shell: "cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname={{etcdHosts}} -profile=kubernetes etcd-csr.json | cfssljson -bare etcd"
+- name: Generate TLS certificates whith hostname
+  shell: "cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname={{item.hostnames}} -profile=kubernetes {{item.name}}-csr.json | cfssljson -bare {{item.name}}"
   args:
     chdir: "{{k8s_ca_conf_directory}}"
-    creates: "{{k8s_ca_conf_directory}}/etcd-key.pem"
+    creates: "{{k8s_ca_conf_directory}}/{{item.name}}-key.pem"
   tags:
     - kubernetes-ca
+  loop: "{{ k8s_csr.master|flatten(levels=1)}}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.hostnames is defined
 
-
-- name: Generate TLS certificate for Kubernetes API server
-  shell: "cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname={{k8sHosts}} -profile=kubernetes apiserver-csr.json | cfssljson -bare apiserver"
-  args:
-    chdir: "{{k8s_ca_conf_directory}}"
-    creates: "{{k8s_ca_conf_directory}}/apiserver-key.pem"
-  tags:
-    - kubernetes-ca
-
-- name: Generate TLS certificates
+- name: Generate TLS certificates whithout hostname
   shell: "cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes {{item.name}}-csr.json | cfssljson -bare {{item.name}}"
   args:
     chdir: "{{k8s_ca_conf_directory}}"
@@ -133,12 +127,15 @@
   tags:
     - kubernetes-ca
   loop: "{{ k8s_csr.master|flatten(levels=1)}}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.hostnames is not defined
 
 - name: Generate TLS certificates for Kubernetes worker hosts
   shell: "cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname={{hostvars[item]['ansible_hostname']}},{{hostvars[item]['ansible_default_ipv4']['address']}},{{hostvars[item]['ansible_'+hostvars[item]['peervpn_conf_interface']].ipv4.address}} -profile=kubernetes {{item}}-csr.json | cfssljson -bare {{item}}"
   args:
     chdir: "{{k8s_ca_conf_directory}}"
-    creates: "{{k8s_ca_conf_directory}}/cert-{{item}}-key.pem"
+    creates: "{{k8s_ca_conf_directory}}/{{item}}-key.pem"
   with_inventory_hostnames:
     - k8s_worker
   tags:
