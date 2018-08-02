@@ -26,14 +26,14 @@ etcd_data_dir: "/var/lib/etcd"
 
 etcd_settings:
   "name": "{{ansible_hostname}}"
-  "cert-file": "{{etcd_conf_dir}}/cert-etcd.pem"
-  "key-file": "{{etcd_conf_dir}}/cert-etcd-key.pem"
-  "peer-cert-file": "{{etcd_conf_dir}}/cert-etcd.pem"
-  "peer-key-file": "{{etcd_conf_dir}}/cert-etcd-key.pem"
-  "peer-trusted-ca-file": "{{etcd_conf_dir}}/ca-etcd.pem"
+  "cert-file": "{{etcd_conf_dir}}/etcd.pem"
+  "key-file": "{{etcd_conf_dir}}/etcd-key.pem"
+  "peer-cert-file": "{{etcd_conf_dir}}/etcd.pem"
+  "peer-key-file": "{{etcd_conf_dir}}/etcd-key.pem"
+  "peer-trusted-ca-file": "{{etcd_conf_dir}}/ca.pem"
   "peer-client-cert-auth": "true" # # Enable peer client cert authentication
   "client-cert-auth": "true" # Enable client cert authentication
-  "trusted-ca-file": "{{etcd_conf_dir}}/ca-etcd.pem"
+  "trusted-ca-file": "{{etcd_conf_dir}}/ca.pem"
   "advertise-client-urls": "{{'https://' + hostvars[inventory_hostname]['ansible_' + etcd_interface].ipv4.address + ':' + etcd_client_port}}"
   "initial-advertise-peer-urls": "{{'https://' + hostvars[inventory_hostname]['ansible_' + etcd_interface].ipv4.address + ':' + etcd_peer_port}}"
   "listen-peer-urls": "{{'https://' + hostvars[inventory_hostname]['ansible_' + etcd_interface].ipv4.address + ':' + etcd_peer_port}}"
@@ -55,7 +55,6 @@ etcd_settings:
 
 # Certificate authority and certificate files for etcd
 etcd_certificates:
-  - ca-etcd.pem        # client server TLS trusted CA key file/peer server TLS trusted CA file
-  - ca-etcd-key.pem    # CA key file
-  - cert-etcd.pem      # peer server TLS cert file
-  - cert-etcd-key.pem  # peer server TLS key file
+  - ca.pem        # client server TLS trusted CA key file/peer server TLS trusted CA file
+  - etcd.pem      # peer server TLS cert file
+  - etcd-key.pem  # peer server TLS key file

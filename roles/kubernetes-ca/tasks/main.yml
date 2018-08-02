@@ -140,3 +140,9 @@
     - k8s_worker
   tags:
     - kubernetes-ca
+- name: Allow ansible_user to read private keys
+  file:
+    path: "{{k8s_ca_conf_directory}}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    recurse: yes
