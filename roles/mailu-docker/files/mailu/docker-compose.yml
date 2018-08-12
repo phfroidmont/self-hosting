@@ -18,9 +18,20 @@ services:
       - "$BIND_ADDRESS4:25:25"
       - "$BIND_ADDRESS4:465:465"
       - "$BIND_ADDRESS4:587:587"
+    labels:
+      - "traefik.backend=mailu-admin"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:mailu.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.default.protocol=http"
     volumes:
       - "../traefik/certs/ssl/banditlair.com.crt:/certs/cert.pem"
       - "../traefik/certs/ssl/banditlair.com.key:/certs/key.pem"
+    networks:
+      - web
+      - default
+
   redis:
     image: redis:alpine
     restart: always
@@ -73,22 +84,12 @@ services:
     env_file: .env
     expose:
       - 80
-    labels:
-      - "traefik.backend=mailu-admin"
-      - "traefik.docker.network=web"
-      - "traefik.frontend.rule=Host:mailu.banditlair.com"
-      - "traefik.enable=true"
-      - "traefik.port=80"
-      - "traefik.default.protocol=http"
     volumes:
       - "$ROOT/data:/data"
       - "$ROOT/dkim:/dkim"
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
       - redis
-    networks:
-      - web
-      - default
 
   webmail:
     image: hardware/rainloop
