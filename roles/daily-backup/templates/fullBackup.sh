@@ -38,6 +38,7 @@ borg create -v --stats --compression lz4           \
     /var/lib/wiki                                  \
     /var/lib/stb                                   \
     /var/lib/nzbget                                \
+    /opt/factorio                                  \
     /backups                                       \
     --exclude '/var/lib/nextcloud/db'
 
