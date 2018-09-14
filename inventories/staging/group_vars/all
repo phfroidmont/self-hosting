@@ -1,4 +1,0 @@
-k8s_scw_master_nodes_count: 3
-k8s_scw_worker_nodes_count: 2
-k8s_scw_environment: staging
-k8s_scw_environment_short: test
