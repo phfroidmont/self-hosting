@@ -52,22 +52,17 @@ class SCWInventory(object):
             [i['name'], i['public_ip'], i['tags'], i['private_ip']] for i in result_par1['servers'] + result_ams1['servers']
         ]
         for host, ip_info, tags, private_ip in self.inventory:
-            if 'env:'+self.environment in tags:
-                if ip_info:
-                    self.response['_meta']['hostvars'][host] = {
-                        'ansible_host': ip_info['address'],
-                        'public_ip': ip_info['address'],
-                        'private_ip': private_ip
-                    }
-                if tags:
-                    for tag in tags:
-                        if tag.startswith('group:'):
-                            self._add_to_response(
-                                tag.split(':')[1],
-                                host
-                            )
-                        if tag.startswith('fact'):
-                           self.response['_meta']['hostvars'][host][tag.split(':')[1]] = tag.split(':')[2]
+            self.response['_meta']['hostvars'][host] = {
+                'ansible_host': ip_info['address'] if ip_info else private_ip,
+                'public_ip': ip_info['address'] if ip_info else None,
+                'private_ip': private_ip
+            }
+            if tags:
+                for tag in tags:
+                    self._add_to_response(
+                        tag,
+                        host
+                    )
 
     def _add_to_response(self, group, hostname):
         '''
