@@ -52,17 +52,27 @@ class SCWInventory(object):
             [i['name'], i['public_ip'], i['tags'], i['private_ip']] for i in result_par1['servers'] + result_ams1['servers']
         ]
         for host, ip_info, tags, private_ip in self.inventory:
-            self.response['_meta']['hostvars'][host] = {
-                'ansible_host': ip_info['address'] if ip_info else private_ip,
-                'public_ip': ip_info['address'] if ip_info else None,
-                'private_ip': private_ip
+            host_vars = {
+                'private_ip': private_ip,
+                'ansible_python_interpreter': '/usr/bin/python3'
             }
+            if ip_info:
+                host_vars['ansible_host'] = ip_info['address']
+                host_vars['public_ip'] = ip_info['address']
+            else:
+                host_vars['ansible_host'] = private_ip
+
+            self.response['_meta']['hostvars'][host] = host_vars
             if tags:
                 for tag in tags:
                     self._add_to_response(
                         tag,
                         host
                     )
+
+        for host, variables in self.response['_meta']['hostvars'].items():
+            if host != 'proxy1':
+                variables['ansible_ssh_common_args'] = '-o ProxyCommand="ssh -W %h:%p -q root@' + self.response['_meta']['hostvars']['proxy1']['public_ip'] + '"'
 
     def _add_to_response(self, group, hostname):
         '''
