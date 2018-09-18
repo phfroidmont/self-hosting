@@ -1,0 +1,2 @@
+---
+vpn_ip: 192.168.66.{{ 10 +( inventory_hostname|regex_replace('\D+','')|int) }}

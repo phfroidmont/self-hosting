@@ -1,9 +1,0 @@
-[ansible-controller]
-localhost ansible_connection=local
-
-[k8s_kubectl]
-localhost ansible_connection=local
-
-[k8s_ca]
-localhost ansible_connection=local
-
