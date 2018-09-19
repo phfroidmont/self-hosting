@@ -16,9 +16,7 @@ k8s_encryption_config_directory: "{{k8s_config_directory}}"
 k8s_interface: "{{peervpn_conf_interface}}"
 k8s_conf_dir: /etc/kubernetes
 
-etcd_version: "3.1.12"
-etcd_bin_dir: "/usr/local/bin"
-etcd_client_port: "2379"
+etcd_version: "3.2.24"
 
 harden_linux_root_password: "{{k8s_scaleway_root_password}}"
 harden_linux_deploy_user: deploy

@@ -5,6 +5,10 @@
       tags: proxy
     - role: docker
       tags: docker
+- hosts: k8s_masters
+  roles:
+  - role: etcd
+    tags: etcd
 #- hosts: localhost
 #  become: yes
 #  gather_facts: no
