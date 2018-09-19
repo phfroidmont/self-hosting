@@ -3,6 +3,8 @@
   roles:
     - role: proxy
       tags: proxy
+    - role: docker
+      tags: docker
 #- hosts: localhost
 #  become: yes
 #  gather_facts: no
