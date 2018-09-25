@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: keepalived
+  namespace: kube-system
+spec:
+  hostNetwork: true
+  volumes:
+    - hostPath:
+        path: /etc/keepalived/keepalived.conf
+        type: File
+      name: keepalived-config
+  containers:
+  - name: keepalived
+    image: chmod666/keepalived:latest
+    # if tag is latest imagePullPolicy is always
+    # but when keepalived is backup a proxy may have no connection to the internet
+    # to avoid keepalived not starting in that case, we're putting imagePullPolicy: IfNotPresent
+    # assuming the image was already be pulled at cluster creation. Neat.
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: "/usr/local/etc/keepalived/keepalived.conf"
+        name: keepalived-config
+    securityContext:
+      capabilities:
+        add:
+          - NET_ADMIN
+    #env:
+    #  - name: KEEPALIVED_INTERFACE
+    #    value: tun0
+    #  - name: KEEPALIVED_UNICAST_PEERS
+    #    value: "#PYTHON2BASH:['{{ groups['masters'] | map('extract', hostvars, ['vpn_ip']) | join("', '") }}']"
+    #  - name: KEEPALIVED_VIRTUAL_IPS
+    #    value: "#PYTHON2BASH:['{{ api_floating_ip }}/{{ api_floating_mask }}']"
+    #  - name: KEEPALIVED_PRIORITY
+    #    value: "{{ groups['masters'].index(inventory_hostname) + 1 }}"

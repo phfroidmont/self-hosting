@@ -11,5 +11,5 @@ harden_linux_ufw_rules:
   - rule: "allow"
     to_port: "7000"
     protocol: "udp"
-docker_version: 18.06.*
+docker_version: 17.03.*
 

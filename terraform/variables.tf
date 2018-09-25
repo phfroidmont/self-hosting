@@ -7,7 +7,11 @@ variable "architecture" {
 }
 
 variable "image" {
-  default = "Ubuntu Bionic"
+  default = "Ubuntu Xenial"
+}
+
+variable "mini_image" {
+  default = "Ubuntu Mini Xenial 25G"
 }
 
 variable "master_instance_type" {
@@ -19,7 +23,7 @@ variable "master_instance_count" {
 }
 
 variable "proxy_instance_type" {
-  default = "START1-S"
+  default = "START1-XS"
 }
 
 variable "worker_instance_type" {

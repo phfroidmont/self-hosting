@@ -6,9 +6,17 @@
     - role: docker
       tags: docker
 - hosts: k8s_masters
+  gather_facts: false
   roles:
   - role: etcd
     tags: etcd
+- hosts: k8s_proxy:k8s_masters:k8s_workers
+  gather_facts: false
+  roles:
+  - role: kubernetes
+    tags: kubernetes
+
+
 #- hosts: localhost
 #  become: yes
 #  gather_facts: no

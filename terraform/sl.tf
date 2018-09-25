@@ -7,6 +7,11 @@ data "scaleway_image" "ubuntu" {
   name         = "${var.image}"
 }
 
+data "scaleway_image" "ubuntu_mini" {
+  architecture = "${var.architecture}"
+  name         = "${var.mini_image}"
+}
+
 //resource "scaleway_ip" "public_ip" {
 //  count = 1
 //}
@@ -37,7 +42,7 @@ resource "scaleway_server" "master" {
 resource "scaleway_server" "proxy1" {
   count = 1
   name  = "proxy1"
-  image = "${data.scaleway_image.ubuntu.id}"
+  image = "${data.scaleway_image.ubuntu_mini.id}"
   type  = "${var.proxy_instance_type}"
   public_ip  = "51.158.77.6"
   state  = "running"
@@ -47,7 +52,7 @@ resource "scaleway_server" "proxy1" {
 resource "scaleway_server" "proxy2" {
   count = 1
   name  = "proxy2"
-  image = "${data.scaleway_image.ubuntu.id}"
+  image = "${data.scaleway_image.ubuntu_mini.id}"
   type  = "${var.proxy_instance_type}"
   state  = "running"
   tags  = ["k8s","k8s_proxy","secondary"]

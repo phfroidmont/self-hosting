@@ -1,0 +1,75 @@
+---
+- set_fact: kube_arch="{{ ansible_architecture | replace('x86_64', 'amd64') | replace('arm', 'armhf') }}"
+
+- include: modules.yml
+
+- include: keepalived.yml
+  when:
+  - "'k8s_masters' in group_names"
+  - groups.k8s_masters | length > 1
+
+# at this point everyone should be able to ping the api floating ip if multimaster
+# add a test here and don't continue until everyone does not ping the api ip
+
+- name: Install iputils-ping
+  apt:
+    name: iputils-ping
+    state: latest
+    cache_valid_time: 3600
+  register: result
+  retries: 3
+  until: result is success
+
+- name: Check all hosts can ping API floating IP
+  shell: "ping {{ api_floating_ip }} -c 1"
+  register: result
+  changed_when: no
+  failed_when: ('100.0% packet loss' in result.stdout)
+
+
+- include: packages.yml
+
+- include: kubeadm-token.yml
+  when: inventory_hostname == initial_master
+
+- include: kubeadm-config.yml
+
+# add masters
+- block:
+    # docker-in-docker sometimes hangs pulling images so explicitly do it here
+    - include: docker-images.yml
+
+    - include: kubeadm-master.yml
+      when: inventory_hostname == initial_master
+
+    # then we create the other masters
+    - include: kubeadm-multi.yml
+      when: inventory_hostname != initial_master
+
+  when: "'k8s_masters' in group_names"
+
+- name: Wait for coredns to be running
+  shell: "kubectl get pods --namespace=kube-system | grep coredns | grep Running | wc -l"
+  register: result
+  until: result.stdout.find("2") != -1
+  retries: 180
+  delay: 10
+  when: inventory_hostname == initial_master
+
+- include: kubeadm-token.yml
+  when: inventory_hostname == initial_master
+
+# add non masters
+- include: kubeadm-worker.yml
+  when: "'k8s_masters' not in group_names"
+
+# remove this wait and had a test to check all nodes are ready
+- name: Wait for all nodes to be ready
+  shell: "kubectl get nodes {{ ansible_hostname }} | tail -n+2 | awk '{ print $2 }'"
+  register: result
+  until: result.stdout.find("Ready") == 0
+  retries: 36
+  delay: 10
+  delegate_to: "{{ initial_master }}"
+
+- debug: var=result
