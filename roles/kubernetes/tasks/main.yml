@@ -54,6 +54,7 @@
   until: result.stdout.find("2") != -1
   retries: 180
   delay: 10
+  changed_when: no
   when: inventory_hostname == initial_master
 
 - include: kubeadm-token.yml
@@ -70,6 +71,7 @@
   until: result.stdout.find("Ready") == 0
   retries: 36
   delay: 10
+  changed_when: no
   delegate_to: "{{ initial_master }}"
 
 - debug: var=result

@@ -1,24 +1,11 @@
 global_defs {
-{% if ansible_tun0 is defined %}
-  default_interface tun0
-{% else %}
-  default_interface eth0
-{% endif %}
+  default_interface {{vpn_interface}}
 }
 
 vrrp_instance VI_1 {
-{% if ansible_tun0 is defined %}
-  interface tun0
-{% else %}
-  interface eth0
-{% endif %}
-
+  interface {{vpn_interface}}
   track_interface {
-{% if ansible_tun0 is defined %}
-    tun0
-{% else %}
-    eth0
-{% endif %}
+    {{vpn_interface}}
   }
 
 {% if inventory_hostname == initial_master %}

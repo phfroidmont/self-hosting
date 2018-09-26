@@ -1,6 +1,0 @@
----
-
-- name: Restart PeerVPN
-  service:
-    name: peervpn
-    state: restarted

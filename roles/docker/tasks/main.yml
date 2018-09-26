@@ -40,11 +40,11 @@
       state: present
       filename: 'docker'
 
-  # TODO fix this - fails when ip route is using tun0 in scaleway
-  - name: Explictly create docker0
+  - name: Explicitly create docker0
     shell: |
       ip link add name docker0 type bridge || true
       ip addr add dev docker0 172.17.0.1/16 || true
+    changed_when: no
 
   - name: Install docker-ce
     apt:
@@ -86,6 +86,7 @@
   - name: Getting Docker version
     shell: "docker --version"
     register: docker_version
+    changed_when: no
 
   - name: Printing Docker version
     debug: var=docker_version

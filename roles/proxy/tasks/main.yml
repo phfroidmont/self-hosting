@@ -38,6 +38,7 @@
     value: 1
     sysctl_set: True
     reload: True
+  when: inventory_hostname == tinc_primary_router
 
 - name: Allow ip forwarding (iptables)
   iptables:

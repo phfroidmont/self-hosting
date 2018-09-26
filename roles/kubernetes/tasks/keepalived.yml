@@ -28,3 +28,4 @@
   until: result.stdout.find("chmod666/keepalived") != -1
   retries: 18
   delay: 10
+  changed_when: no

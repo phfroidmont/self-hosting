@@ -37,3 +37,4 @@
   until: result.stdout.find("Ready") == 0
   retries: 36
   delay: 10
+  changed_when: no

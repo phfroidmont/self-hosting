@@ -3,6 +3,7 @@
   shell: "ps -ef | grep [k]ube-proxy"
   register: kube_proxy_running
   ignore_errors: True
+  changed_when: no
 
 - block:
     - name: Joining cluster on other nodes
