@@ -1,104 +1,42 @@
 ---
-- name: Create etcd config directory
-  file:
-    path: "{{etcd_conf_dir}}"
-    state: directory
-  tags:
-    - etcd
+- name: etcd replicated and outiside of kubeadm when multimasters
+  block:
+    - name: Install python3-pip
+      apt:
+        name: python3-pip
+        state: latest
+        cache_valid_time: 3600
+      register: result
+      retries: 3
+      until: result is success
 
-- name: Create etcd download directory
-  file:
-    path: "{{etcd_download_dir}}"
-    state: directory
-  tags:
-    - etcd
+    - name: Install docker-compose
+      pip:
+        name: docker-compose
 
-- name: Create etcd bin directory
-  file:
-    path: "{{etcd_bin_dir}}"
-    state: directory
-  tags:
-    - etcd
+    - name: Running etcd container on masters nodes
+      docker_container:
+        name: etcd
+        image: "quay.io/coreos/etcd:v{{etcd_version}}"
+        state: started
+        detach: True
+        ports:
+          - "0.0.0.0:2380:2380"
+          - "0.0.0.0:2379:2379"
+        command: [
+          "etcd",
+          "--name {{ etcd_name }}",
+          "--initial-advertise-peer-urls {{ etcd_initial_advertise_peer_urls }}",
+          "--listen-peer-urls {{ etcd_listen_peer_urls }}",
+          "--advertise-client-urls {{ etcd_advertise_client_urls }}",
+          "--listen-client-urls {{ etcd_listen_client_urls }}",
+          "--initial-cluster {{ etcd_initial_cluster }}",
+          "--initial-cluster-state {{ etcd_initial_cluster_state }}",
+          "--initial-cluster-token {{ etcd_initial_cluster_token }}"
+        ]
+        network_mode: host
+        restart_policy: always
 
-- name: Create etcd data directory
-  file:
-    path: "{{etcd_data_dir}}"
-    state: directory
-  tags:
-    - etcd
-
-- name: Copy certificates
-  copy:
-    src: "{{k8s_ca_conf_directory}}/{{item}}"
-    dest: "{{etcd_conf_dir}}/{{item}}"
-    mode: 0640
-    owner: root
-    group: root
-  with_items:
-    - "{{etcd_certificates}}"
-  tags:
-    - etcd
-
-- name: Downloading official etcd release
-  get_url:
-    url: https://github.com/coreos/etcd/releases/download/v{{etcd_version}}/etcd-v{{etcd_version}}-linux-amd64.tar.gz
-    dest: "{{etcd_download_dir}}/etcd-v{{etcd_version}}-linux-amd64.tar.gz"
-    mode: 0755
-  tags:
-    - etcd
-
-- name: Unzip downloaded file
-  unarchive:
-    src: "{{etcd_download_dir}}/etcd-v{{etcd_version}}-linux-amd64.tar.gz"
-    dest: "{{etcd_download_dir}}/"
-    remote_src: yes
-    owner: "root"
-    group: "root"
-    creates: "{{etcd_download_dir}}/etcd-v{{etcd_version}}-linux-amd64/etcd"
-  tags:
-    - etcd
-
-- name: Copy etcd binaries to destination directory
-  copy:
-    src: "{{etcd_download_dir}}/etcd-v{{etcd_version}}-linux-amd64/{{item}}"
-    dest: "{{etcd_bin_dir}}/{{item}}"
-    mode: 0755
-    owner: root
-    group: root
-    remote_src: yes
-  with_items:
-    - etcd
-    - etcdctl
-  tags:
-    - etcd
-
-- name: Combine etcd_settings and etcd_settings_user (if defined)
-  set_fact:
-    etcd_settings: "{{etcd_settings | combine(etcd_settings_user|default({})) }}"
-  tags:
-    - etcd
-    - etcd-systemd
-
-- name: Create systemd unit file
-  template:
-    src: etc/systemd/system/etcd.service.j2
-    dest: /etc/systemd/system/etcd.service
-    owner: root
-    group: root
-    mode: 0644
-  notify:
-    - reload systemd
-  tags:
-    - etcd
-    - etcd-systemd
-
-- meta: flush_handlers
-
-- name: Enable and start etcd
-  service:
-    name: etcd
-    enabled: yes
-    state: started
-  tags:
-    - etcd
+  when:
+    - groups.k8s_masters|length > 1
 

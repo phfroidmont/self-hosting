@@ -1,9 +1,7 @@
 ---
-scw_token: "{{ scw_token_vault }}"
-scw_authorized_keys:
-  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDRX1scknsDkFvi1DRfNzYKPpyn9x4tiPjqkSlCQnXtmZUmK8ssYAQrM9iSIszT1tr5nQERBAHtUMjSJN8Ofi42LCJWakdYiSQSaSx3kM4TpYx8bKTEX2oxdifOovaGyn7jz8DmTipJLlrxjkQZ0HU8f6lhNPpke/jGioH6lvVtUVVDb1Ny+ygvoJsZHPuU/KSSnFED91sNrSoE8NGa29gPBrDMUZHSZVJW8+c0DWENxKpu7TKx/s64SsT3jX6gx76J/umvS7OfDu1SXg9lX6+1OUQMexjRImmzUy4VFrJAf9iAVvwYI5RlcLR9j2DbNBg0gikLAc+1OeBQcGrwYzid froidmpa@froidmpa-2017-07-31
-  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMPhCld0dsDzpdkMvPRdiwd6IX8HF8Mb2V6uQzBl8/syeny8FbZxlZR8gk39RGxNYcLaZ+nA50DS6mOIplXCGdtozfw0Vm+FdITN3apMufWIdobG7Igs1vxKBBbkAb5lwxkEFUCUMzPdCLFHd5zabVH0WE42Be8+hYPLd5W/ikPCOgxRaGwryHHroxRMdkD3PcNE8upSEMdGl51pzgXhO6Fcig8UokOYHxV92SiQ0KEsCbc+oe8e9Gkr7g78tz+6YcTYLY2p2ygR7Vrh/WyTaUVnrNNqL8NIqp+Lc2kVtnqGXHFBJ0Wggaly+AeKWygy+dnOMEGSirhQ6/dUcB/Phz phfroidmont@archdesktop-2017-07-31
-  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDJqXLGhN77S73f6hpyWZ7j/coHVPQ9fWWfNnyi2It8uh1mjaNDoO2VtLRaNcWc0novaYjB1ijTSTmpHw9ZUaGApXBdHuOgG+YA7gKtPrA6pxzevI1AAsJDljje0ph6D2GBzj8NvPxYXqrG4huOrREkRRQQC6qa8wNoDQljO6Qzv67OPr/Efgs/TknTSFufthu6FSn5TOejM+us4QEy7+4twSVTMLTAOYmqLzQUj2NfJ0qIGduIovwxYqt5eWdYw4EUtjdYK8BTbFE1ZPGmhTcuqPZUo5EmZcD5/ir+wJZ5ILtu6KiN/MDM5HBUQthTo8jR0cFwt/Nu7vfhcxR/KRZoPuxmg4wStrT1fMCgbmHMP4JDecnOoZZgnmelaABDjWfE2gMUq5Fz5mTx5CQAT5ebtf8NiiwSEyV72q3KTbh4MJVf8y/eWLlH1qcraMLZL/iXXfChx7tNwBO8qoKV6LsbMts3OYqbFVFOd2Df8l7PQ+1AnUK0sAuJYCUdAUFyFjF7P5amHul9Z+iUDcNDMXYme73pOOvF1T8bEHinkU66YtZHFYm9W6HmqB8HgaUgeZVInoZ4fdzxvhsh4wjGIRkhK5i0Pq/AHUXg9uevDxdWPifFlNCG3nR3BKolM4EeL0JrGO++igrXmxuk+T9Xss27bumViM3Fi/q71ft3SlxwUQ== root@ansible-controller-2018-07-22
+initial_master: master1
+tinc_primary_router: proxy1
+vpn_interface: tun0
 
 k8s_release: "1.10.6"
 k8s_apiserver_secure_port: "6443"
@@ -16,9 +14,7 @@ k8s_encryption_config_directory: "{{k8s_config_directory}}"
 k8s_interface: "{{peervpn_conf_interface}}"
 k8s_conf_dir: /etc/kubernetes
 
-etcd_version: "3.1.12"
-etcd_bin_dir: "/usr/local/bin"
-etcd_client_port: "2379"
+etcd_version: "3.2.24"
 
 harden_linux_root_password: "{{k8s_scaleway_root_password}}"
 harden_linux_deploy_user: deploy
@@ -42,12 +38,4 @@ harden_linux_sshguard_whitelist:
   - "212.83.165.111"
   - "10.3.0.0/24"
   - "10.200.0.0/16"
-
-peervpn_conf_networkname: "peervpn"
-peervpn_conf_psk: "{{k8s_peervpn_pre_shared_key}}"
-peervpn_conf_initpeers: "{{ hostvars[groups['k8s_worker'][0]].public_ip }} {{ peervpn_conf_port }}"
-peervpn_conf_enabletunneling: "yes"
-peervpn_conf_interface: "tap0"
-peervpn_conf_port: 7000
-peervpn_conf_enableipv6: "no"
 

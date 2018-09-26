@@ -1,0 +1,94 @@
+---
+- name: Docker installation for Ubuntu distribution
+  block:
+
+  - name: Ensure docker packages are not present
+    apt:
+      state: absent
+      name: ['docker', 'docker-engine', 'docker.io']
+
+  - name: Install docker package dependencies
+    apt:
+      state: latest
+      name: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common']
+      update_cache: yes
+      cache_valid_time: 86400
+    register: result
+    retries: 3
+    until: result is success
+
+  - name: Adding Docker official gpg key
+    apt_key:
+      url: "{{ docker_apt_key }}"
+      state: present
+
+  - name: Setting Docker repository depending on arch
+    set_fact:
+      docker_repository: "deb [arch={{ item.apt_arch }}] {{ docker_apt_repository }} {{ ansible_distribution_release }} {{ docker_apt_channel }}"
+    when: ansible_architecture == item.system_arch
+    with_items:
+      - { system_arch: 'x86_64', apt_arch: 'amd64' }
+      - { system_arch: 'arm', apt_arch: 'armhf' }
+
+  - name: Printing Docker repository
+    debug:
+      var: docker_repository
+
+  - name: Adding Docker repository
+    apt_repository:
+      repo: "{{ docker_repository }}"
+      state: present
+      filename: 'docker'
+
+  - name: Explicitly create docker0
+    shell: |
+      ip link add name docker0 type bridge || true
+      ip addr add dev docker0 172.17.0.1/16 || true
+    changed_when: no
+
+  - name: Install docker-ce
+    apt:
+      name: docker-ce={{ docker_version }}
+      update_cache: yes
+    register: result
+    retries: 3
+    until: result is success
+
+  - name: Pin docker-ce release
+    copy:
+      dest: /etc/apt/preferences.d/docker-ce
+      content: |
+        Package: docker-ce
+        Pin: version {{ docker_version }}
+        Pin-Priority: 1002
+
+  - name: Fixing systemd unit for Docker config file
+    template:
+      src: docker.service.j2
+      dest: /lib/systemd/system/docker.service
+    notify: reload systemd
+
+  - name: Create docker config directory
+    file:
+      path: /etc/docker
+      mode: 0700
+      recurse: yes
+
+  - name: Templating /etc/docker/daemon.json
+    template:
+      src: daemon.json.j2
+      dest: /etc/docker/daemon.json
+    notify: restart docker
+
+  - name: Flushing handlers 2
+    meta: flush_handlers
+
+  - name: Getting Docker version
+    shell: "docker --version"
+    register: docker_version
+    changed_when: no
+
+  - name: Printing Docker version
+    debug: var=docker_version
+
+  when: ansible_distribution == "Ubuntu"

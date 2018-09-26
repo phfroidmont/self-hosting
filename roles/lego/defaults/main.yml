@@ -1,0 +1,4 @@
+---
+lego_email: deckard@chmod666.org
+lego_image: jetstack/kube-lego
+lego_version: 0.1.5
