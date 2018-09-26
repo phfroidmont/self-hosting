@@ -24,7 +24,7 @@
   shell: "ping {{ api_floating_ip }} -c 1"
   register: result
   changed_when: no
-  failed_when: ('100.0% packet loss' in result.stdout)
+  failed_when: ('100% packet loss' in result.stdout)
 
 
 - include: packages.yml

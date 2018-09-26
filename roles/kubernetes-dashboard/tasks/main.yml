@@ -1,0 +1,105 @@
+---
+- block:
+  - name: Installing python-passlib
+    apt:
+      name: python-passlib
+      state: latest
+    register: result
+    retries: 3
+    until: result is success
+
+  - name: Creating htpasswd file if k8s has basic auth
+    htpasswd:
+      path: /tmp/auth
+      name: "{{ basic_auth_user }}"
+      password: "{{ basic_auth_password }}"
+    when: inventory_hostname == initial_master
+
+  - name: Getting secrets
+    command: kubectl get secrets --namespace=kube-system
+    register: secrets
+    when: inventory_hostname == initial_master
+
+  - name: Creating secret
+    command: kubectl create secret generic dashboard-basic-auth --namespace=kube-system --from-file=/tmp/auth
+    when:
+      - inventory_hostname == initial_master
+      - '"dashboard-basic-auth" not in secrets.stdout'
+
+  - name: Deleting basic_auth file
+    file:
+      path: /tmp/auth
+      state: absent
+    when: inventory_hostname == initial_master
+
+  when: basic_auth_user | length > 0
+
+- name: Templating manifests
+  template: 
+    src: "{{ item }}"
+    dest: "/tmp/{{ item | regex_replace('.j2', '') }}"
+  with_items:
+    - dashboard-ingress.yml.j2
+    - dashboard-deployment.yml.j2
+  when: inventory_hostname == initial_master
+
+- name: Copying manifests files
+  copy:
+    src: "{{ item }}"
+    dest: "/tmp/{{ item }}"
+  with_items:
+    - dashboard-rolebinding.yml
+    - dashboard-role.yml
+    - dashboard-sa.yml
+    - dashboard-clusterrolebinding.yml
+    - dashboard-secret.yml
+    - dashboard-service.yml
+    - heapster-rolebinding.yml
+    - heapster-clusterrolebinding.yml
+    - heapster-role.yml
+    - heapster-sa.yml
+    - heapster-service.yml
+    - heapster-deployment.yml
+  when: inventory_hostname == initial_master
+
+- name: Deploying kubernetes-dashboard
+  kube:
+    name: "{{ item.name }}"
+    resource: "{{ item.type }}"
+    filename: "{{ item.file }}"
+    state: latest
+  with_items:
+    - { 'name': 'kubernetes-dashboard', 'type': 'sa', 'file': '/tmp/dashboard-sa.yml' }
+    - { 'name': 'kubernetes-dashboard', 'type': 'clusterrolebinding', 'file': '/tmp/dashboard-clusterrolebinding.yml' }
+    - { 'name': 'kubernetes-dashboard', 'type': 'secret', 'file': '/tmp/dashboard-secret.yml' }
+    - { 'name': 'kubernetes-dashboard', 'type': 'service', 'file': '/tmp/dashboard-service.yml' }
+    - { 'name': 'kubernetes-dashboard', 'type': 'deployment', 'file': '/tmp/dashboard-deployment.yml' }
+    - { 'name': 'kubernetes-dashboard', 'type': 'ingress', 'file': '/tmp/dashboard-ingress.yml' }
+    - { 'name': 'heapster', 'type': 'sa', 'file': '/tmp/heapster-sa.yml' }
+    - { 'name': 'heapster', 'type': 'clusterrolebinding', 'file': '/tmp/heapster-clusterrolebinding.yml' }
+    - { 'name': 'heapster', 'type': 'rolebinding', 'file': '/tmp/heapster-rolebinding.yml' }
+    - { 'name': 'heapster', 'type': 'role', 'file': '/tmp/heapster-role.yml' }
+    - { 'name': 'heapster', 'type': 'service', 'file': '/tmp/heapster-service.yml' }
+    - { 'name': 'heapster', 'type': 'deployment', 'file': '/tmp/heapster-deployment.yml' }
+  when: inventory_hostname == initial_master
+
+- name: Removing manifest
+  file:
+    path: "/tmp/{{ item }}"
+    state: absent
+  with_items:
+    - dashboard-ingress.yml.j2
+    - dashboard-deployment.yml.j2
+    - dashboard-clusterrolebinding.yml
+    - dashboard-rolebinding.yml
+    - dashboard-role.yml
+    - dashboard-sa.yml
+    - dashboard-secret.yml
+    - dashboard-service.yml
+    - heapster-rolebinding.yml
+    - heapster-clusterrolebinding.yml
+    - heapster-role.yml
+    - heapster-sa.yml
+    - heapster-service.yml
+    - heapster-deployment.yml
+  when: inventory_hostname == initial_master

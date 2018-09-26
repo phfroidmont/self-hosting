@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: keepalived
+  namespace: kube-system
+spec:
+  hostNetwork: true
+  volumes:
+    - hostPath:
+        path: /usr/local/bin/scaleway-ipmove/
+      name: scaleway-moveip
+  containers:
+  - name: keepalived
+    image: chmod666/keepalived:latest
+    # if tag is latest imagePullPolicy is always
+    # but when keepalived is backup a proxy may have no connection to the internet
+    # to avoid keepalived not starting in that case, we're putting imagePullPolicy: IfNotPresent
+    # assuming the image was already be pulled at cluster creation. Neat.
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: "/mnt"
+        name: scaleway-moveip
+    securityContext:
+      capabilities:
+        add:
+          - NET_ADMIN
+    env:
+      - name: KEEPALIVED_INTERFACE
+        value: tun0
+      - name: KEEPALIVED_UNICAST_PEERS
+        value: "#PYTHON2BASH:['{{ groups['k8s_proxy'] | map('extract', hostvars, ['vpn_ip']) | join("', '") }}']"
+      - name: KEEPALIVED_VIRTUAL_IPS
+        value: "#PYTHON2BASH:['{{ keepalived_ip }}']"
+      - name: KEEPALIVED_PRIORITY
+        value: "{{ groups['k8s_proxy'].index(inventory_hostname) + 1 }}"
+      - name: KEEPALIVED_NOTIFY
+        value: "/mnt/notify.sh"

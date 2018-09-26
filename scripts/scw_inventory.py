@@ -21,7 +21,7 @@ class SCWInventory(object):
     """
 
     response: Dict[str, Any]
-    
+
     def __init__(self):
         self.inventory = None
         self.auth_token = None
@@ -78,7 +78,8 @@ class SCWInventory(object):
         for host, variables in self.response['_meta']['hostvars'].items():
             if host != 'proxy1':
                 variables['ansible_ssh_common_args'] = '-o ProxyCommand="ssh -W %h:%p -q root@' + \
-                                                       self.response['_meta']['hostvars']['proxy1']['public_ip'] + '"'
+                                                       self.response['_meta']['hostvars']['proxy1'][
+                                                           'public_ip'] + ' -o StrictHostKeyChecking=no"'
 
     def _add_to_response(self, group, hostname):
         """

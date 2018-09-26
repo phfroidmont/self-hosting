@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-ingress-cfg
+  namespace: kube-system
+  labels:
+    app: nginx-ingress-cfg
+data:
+  enable-sticky-sessions: 'true'   ## use ROUTE cookie to provide session affinity
+  enable-vts-status: 'true' ## Allows the replacement of the default status page nginx-module-vts

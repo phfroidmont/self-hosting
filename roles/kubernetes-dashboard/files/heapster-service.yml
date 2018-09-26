@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: heapster
+  namespace: kube-system
+  labels:
+    k8s-addon: monitoring-standalone.addons.k8s.io
+    kubernetes.io/name: "Heapster"
+    kubernetes.io/cluster-service: "true"
+spec:
+  ports:
+    - port: 80
+      targetPort: 8082
+  selector:
+    k8s-app: heapster
