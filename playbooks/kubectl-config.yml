@@ -1,8 +1,0 @@
----
-- hosts: all
-  tasks: [ ]
-- hosts: k8s_kubectl
-  become: yes
-  roles:
-    - role: kubectl
-      tags: role-kubectl

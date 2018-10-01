@@ -10,7 +10,7 @@ etcd:
 {% endfor %}
 networking:
   podSubnet: "{{ pod_subnet }}"
-kubernetesVersion: "{{ kubernetes_version }}"
+kubernetesVersion: "v{{ kubernetes_version }}"
 apiServerCertSANs:
 {% for host in groups['k8s_masters'] %}
 - "{{ hostvars[host]['vpn_ip'] }}"

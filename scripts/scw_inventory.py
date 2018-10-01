@@ -78,8 +78,8 @@ class SCWInventory(object):
         for host, variables in self.response['_meta']['hostvars'].items():
             if host != 'proxy1':
                 variables['ansible_ssh_common_args'] = '-o ProxyCommand="ssh -W %h:%p -q root@' + \
-                                                       self.response['_meta']['hostvars']['proxy1'][
-                                                           'public_ip'] + ' -o StrictHostKeyChecking=no"'
+                                                       self.response['_meta']['hostvars']['proxy1']['public_ip'] \
+                                                       + ' -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"'
 
     def _add_to_response(self, group, hostname):
         """

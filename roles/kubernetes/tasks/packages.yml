@@ -12,8 +12,7 @@
 
 - name: Installing kubernetes core components (kubectl, kubelet ...)
   apt:
-    name: ['kubelet', 'kubeadm', 'kubectl', 'kubernetes-cni']
-    state: latest
+    name: ['kubelet={{kubernetes_version_apt}}', 'kubeadm={{kubernetes_version_apt}}', 'kubectl={{kubernetes_version_apt}}']
   register: result
   retries: 3
   until: result is success
