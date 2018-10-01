@@ -83,23 +83,3 @@
     - { 'name': 'heapster', 'type': 'deployment', 'file': '/tmp/heapster-deployment.yml' }
   when: inventory_hostname == initial_master
 
-- name: Removing manifest
-  file:
-    path: "/tmp/{{ item }}"
-    state: absent
-  with_items:
-    - dashboard-ingress.yml.j2
-    - dashboard-deployment.yml.j2
-    - dashboard-clusterrolebinding.yml
-    - dashboard-rolebinding.yml
-    - dashboard-role.yml
-    - dashboard-sa.yml
-    - dashboard-secret.yml
-    - dashboard-service.yml
-    - heapster-rolebinding.yml
-    - heapster-clusterrolebinding.yml
-    - heapster-role.yml
-    - heapster-sa.yml
-    - heapster-service.yml
-    - heapster-deployment.yml
-  when: inventory_hostname == initial_master

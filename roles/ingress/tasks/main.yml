@@ -1,14 +1,15 @@
 ---
-- name: nginx_ingress_controller | Getting node labels
+- name: traefik-ingress-controller | Getting node labels
   command: "kubectl get nodes -l role=ingress-controller"
   register: nodes
+  changed_when: no
   when: inventory_hostname == initial_master
 
-- name: nginx_ingress_controller | Printing nodes
+- name: traefik-ingress-controller | Printing nodes
   debug: var=nodes
   when: inventory_hostname == initial_master
 
-- name: nginx_ingress_controller | Labelling proxy nodes with role=ingress_controller
+- name: traefik-ingress-controller  | Labelling proxy nodes with role=ingress-controller
   command: "kubectl label node {{ hostvars[item].ansible_hostname }} role=ingress-controller"
   with_items:
     - "{{ groups['k8s_proxy'] }}"
@@ -16,67 +17,50 @@
     - inventory_hostname == initial_master
     - hostvars[item].ansible_hostname not in nodes.stdout
 
-- name: nginx_ingress_controller | Templating manifests
+- name: traefik-ingress-controller | Templating manifests
   template:
     src: "{{ item }}"
     dest: "/tmp/{{ item | regex_replace('.j2', '') }}"
   with_items:
     - default-backend-controller.yml.j2
     - default-backend-service.yml.j2
-    - nginx-ingress-clusterolebinding.yml.j2
-    - nginx-ingress-configmap.yml.j2
-    - nginx-ingress-sa.yml.j2
-    - nginx-ingress-clusterole.yml.j2
-    - nginx-ingress-controller.yml.j2
-    - nginx-ingress-service.yml.j2
+    - traefik-ingress-clusterolebinding.yml.j2
+    - traefik-ingress-configmap.yml.j2
+    - traefik-ingress-sa.yml.j2
+    - traefik-ingress-clusterole.yml.j2
+    - traefik-ingress-ds.yml.j2
+    - traefik-ingress-service.yml.j2
   when: inventory_hostname == initial_master
 
-- name: nginx_ingress_controller | Deploy the nginx_ingress_controller
+- name: traefik-ingress-controller | Deploy the nginx_ingress_controller
   kube:
-    name: "{{ item.name }}"
-    resource: "{{ item.type }}"
-    filename: "{{ item.file }}"
+    filename: "{{ item }}"
     state: latest
   with_items:
-    - { 'name': 'default-http-backend', 'type': 'deploy', 'file': '/tmp/default-backend-controller.yml' }
-    - { 'name': 'default-http-backend', 'type': 'svc', 'file': '/tmp/default-backend-service.yml' }
-    - { 'name': 'ingress', 'type': 'clusterrolebinding', 'file': '/tmp/nginx-ingress-clusterolebinding.yml' }
-    - { 'name': 'system:ingress', 'type': 'clusterrole', 'file': '/tmp/nginx-ingress-clusterole.yml' }
-    - { 'name': 'ingress', 'type': 'sa', 'file': '/tmp/nginx-ingress-sa.yml' }
-    - { 'name': 'nginx-ingress-cfg', 'type': 'configmap', 'file': '/tmp/nginx-ingress-configmap.yml' }
-    - { 'name': 'nginx-ingress-controller', 'type': 'deploy', 'file': '/tmp/nginx-ingress-controller.yml' }
-    - { 'name': 'nginx-ingress', 'type': 'svc', 'file': '/tmp/nginx-ingress-service.yml' }
+    - '/tmp/default-backend-controller.yml'
+    - '/tmp/default-backend-service.yml'
+    - '/tmp/traefik-ingress-clusterolebinding.yml'
+    - '/tmp/traefik-ingress-configmap.yml'
+    - '/tmp/traefik-ingress-clusterole.yml'
+    - '/tmp/traefik-ingress-sa.yml'
+    - '/tmp/traefik-ingress-ds.yml'
+    - '/tmp/traefik-ingress-service.yml'
   when: inventory_hostname == initial_master
 
-- name: nginx_ingress_controller | Removing manifest
-  file:
-    path: "/tmp/{{ item }}"
-    state: absent
-  with_items:
-    - default-backend-controller.yml
-    - default-backend-service.yml
-    - nginx-ingress-clusterolebinding.yml
-    - nginx-ingress-configmap.yml
-    - nginx-ingress-sa.yml
-    - nginx-ingress-clusterole.yml
-    - nginx-ingress-controller.yml
-    - nginx-ingress-service.yml
-  when: inventory_hostname == initial_master
-
-- name: nginx_ingress_controller | Creating directory for scaleway-ipmove
+- name: traefik-ingress-controller | Creating directory for scaleway-ipmove
   file:
     path: /usr/local/bin/scaleway-ipmove
     state: directory
   when: "'k8s_proxy' in group_names"
 
-- name: nginx_ingress_controller | Getting scaleway-ipmove.py
+- name: traefik-ingress-controller | Getting scaleway-ipmove.py
   git:
     repo: https://github.com/chmod666org/scaleway-ipmove
     dest: /usr/local/bin/scaleway-ipmove
     force: yes
   when: "'k8s_proxy' in group_names"
 
-- name: nginx_ingress_controller | notify.sh
+- name: traefik-ingress-controller | notify.sh
   template:
     src: notify.sh.j2
     dest: /usr/local/bin/scaleway-ipmove/notify.sh
@@ -86,7 +70,7 @@
   when: "'k8s_proxy' in group_names"
 
 # this runs keepalived on proxy nodes
-- name: nginx_ingress_controller | Templating keepalived on proxy node
+- name: traefik-ingress-controller | Templating keepalived on proxy node
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"

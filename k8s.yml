@@ -20,7 +20,5 @@
   roles:
   - role: ingress
     tags: ingress
-  - role: lego
-    tags: lego
   - role: kubernetes-dashboard
     tags: dashboard
