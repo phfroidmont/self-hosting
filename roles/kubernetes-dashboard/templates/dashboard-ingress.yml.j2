@@ -5,12 +5,9 @@ metadata:
   name: kubernetes-dashboard
   annotations:
     kubernetes.io/ingress.class: traefik
-    {% if basic_auth_user | length > 0 %}
-ingress.kubernetes.io/auth-type: basic
-    # name of the secret that contains the user/password definitions
-    ingress.kubernetes.io/auth-secret: dashboard-basic-auth
-    # message to display with an appropiate context why the authentication is required
-    ingress.kubernetes.io/auth-realm: "Authentication is required to access the k8s dashboard "
+    {% if dashboard_basic_auth_user | length > 0 %}
+traefik.ingress.kubernetes.io/auth-type: basic
+    traefik.ingress.kubernetes.io/auth-secret: dashboard-basic-auth
     {% endif %}
 
 spec:

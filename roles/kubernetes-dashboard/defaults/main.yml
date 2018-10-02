@@ -1,7 +1,7 @@
 ---
 # set basic_auth_user as non-empty to enforce basic auth
-basic_auth_user: ""
-basic_auth_password: ""
+dashboard_basic_auth_user: ""
+dashboard_basic_auth_password: ""
 
 # e.g. the fqdn would be k8s.yourdomain.tld if
 #   dashboard_subdomain=k8s

@@ -2,7 +2,7 @@
 - block:
   - name: Installing python-passlib
     apt:
-      name: python-passlib
+      name: python3-passlib
       state: latest
     register: result
     retries: 3
@@ -11,8 +11,8 @@
   - name: Creating htpasswd file if k8s has basic auth
     htpasswd:
       path: /tmp/auth
-      name: "{{ basic_auth_user }}"
-      password: "{{ basic_auth_password }}"
+      name: "{{ dashboard_basic_auth_user }}"
+      password: "{{ dashboard_basic_auth_password }}"
     when: inventory_hostname == initial_master
 
   - name: Getting secrets
@@ -32,7 +32,7 @@
       state: absent
     when: inventory_hostname == initial_master
 
-  when: basic_auth_user | length > 0
+  when: dashboard_basic_auth_user | length > 0
 
 - name: Templating manifests
   template: 
