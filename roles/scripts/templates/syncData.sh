@@ -2,10 +2,10 @@
 
 set -e
 
-SOURCE_HOST=62.210.202.162
+SOURCE_HOST=195.154.134.7
 
 #Sync Media
-rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/plex/data/ /media --delete
+rsync -aAvh --progress root@${SOURCE_HOST}:/media/ /media --delete
 
 #Sync Backups
 rsync -aAvh --progress root@${SOURCE_HOST}:/backups/ /backups --delete
@@ -35,5 +35,5 @@ rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/nextcloud/ /var/lib/nextclou
 rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/wiki/ /var/lib/wiki --delete
 
 #Sync certificates
-mkdir -p {{docker_compose_files_folder}}/proxy/nginx
-rsync -aAvh --progress root@${SOURCE_HOST}:{{docker_compose_files_folder}}/proxy/nginx/certs/ {{docker_compose_files_folder}}/proxy/nginx/certs --delete
+mkdir -p {{docker_compose_files_folder}}/traefik/certs/
+rsync -aAvh --progress root@${SOURCE_HOST}:{{docker_compose_files_folder}}/traefik/certs/ {{docker_compose_files_folder}}/traefik/certs --delete
