@@ -5,7 +5,7 @@ set -e
 SOURCE_HOST=195.154.134.7
 
 #Sync Media
-rsync -aAvh --progress root@${SOURCE_HOST}:/media/ /media --delete
+rsync -aAvh --progress root@${SOURCE_HOST}:/media/ /data --delete
 
 #Sync Backups
 rsync -aAvh --progress root@${SOURCE_HOST}:/backups/ /backups --delete
@@ -17,7 +17,7 @@ rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/deluge/ /var/lib/deluge --de
 
 #Sync emby
 mkdir -p {{docker_compose_files_folder}}/emby
-rsync -aAvh --progress root@${SOURCE_HOST}:{{docker_compose_files_folder}}/emby/config/ /etc/images/emby/config --delete
+rsync -aAvh --progress root@${SOURCE_HOST}:{{docker_compose_files_folder}}/emby/config/ {{docker_compose_files_folder}}/emby/config --delete
 
 #Sync Mailu
 rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/mailu/ /var/lib/mailu --delete
@@ -37,3 +37,4 @@ rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/wiki/ /var/lib/wiki --delete
 #Sync certificates
 mkdir -p {{docker_compose_files_folder}}/traefik/certs/
 rsync -aAvh --progress root@${SOURCE_HOST}:{{docker_compose_files_folder}}/traefik/certs/ {{docker_compose_files_folder}}/traefik/certs --delete
+
