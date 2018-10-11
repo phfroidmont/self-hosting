@@ -1,19 +1,6 @@
 ---
 - name: etcd replicated and outiside of kubeadm when multimasters
   block:
-    - name: Install python3-pip
-      apt:
-        name: python3-pip
-        state: latest
-        cache_valid_time: 3600
-      register: result
-      retries: 3
-      until: result is success
-
-    - name: Install docker-compose
-      pip:
-        name: docker-compose
-
     - name: Running etcd container on masters nodes
       docker_container:
         name: etcd

@@ -17,8 +17,6 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    env_file:
-      - db.env
     restart: always
   wordpress:
     image: wordpress:4.9.4-php7.1-apache

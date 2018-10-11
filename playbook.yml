@@ -1,16 +1,18 @@
 ---
 - hosts: all
   become: true
-  gather_facts: no
   vars:
-    docker_compose_files_folder: /etc/images
+    docker_compose_files_folder_previous_server: /etc/images
+    docker_compose_files_folder: /etc/compose
     domain_name: banditlair.com
+    docker_version: 18.06.*
     sub_domains:
       - rpg
   roles:
     - { role: base, tags: ['base'] }
     - { role: scripts, tags: [ 'scripts' ] }
     - { role: daily-backup, tags: [ 'backup' ] }
+    - { role: docker, tags: [ 'docker' ] }
     - { role: murmur-docker, tags: [ 'murmur', 'docker' ] }
     - { role: searx-docker, tags: [ 'searx', 'docker' ] }
     - { role: wiki-docker, tags: [ 'wiki', 'docker' ] }
@@ -21,7 +23,6 @@
     - { role: matrix-docker, tags: [ 'matrix', 'docker' ] }
     - { role: torrent-docker, tags: [ 'torrent', 'docker' ] }
     - { role: monit, tags: [ 'monit' ] }
-    - { role: arch-mirror-docker, tags: [ 'mirror', 'docker' ] }
     - { role: stb-wordpress-docker, tags: [ 'stb', 'docker' ] }
     - { role: traefik-proxy-docker, tags: [ 'traefik', 'docker' ] }
 

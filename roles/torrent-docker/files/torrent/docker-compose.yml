@@ -16,7 +16,7 @@ services:
     volumes:
       - /var/lib/deluge:/data
       - ./config/deluge:/config
-      - /media:/media
+      - /data:/media
       - /etc/localtime:/etc/localtime:ro
     environment:
       - VPN_ENABLED=yes
@@ -60,7 +60,7 @@ services:
       - /var/lib/deluge/completed:/downloads
       - /var/lib/nzbget/downloads:/nzbget
       - ./config/sonarr:/config
-      - /media/TV:/tv
+      - /data/TV:/tv
       - /etc/localtime:/etc/localtime:ro
     restart: always
     networks:
@@ -84,7 +84,7 @@ services:
       - /var/lib/deluge/completed:/downloads
       - /var/lib/nzbget/downloads:/nzbget
       - ./config/radarr:/config
-      - /media/Movies:/movies
+      - /data/Movies:/movies
       - /etc/localtime:/etc/localtime:ro
     restart: always
     networks:
@@ -107,7 +107,7 @@ services:
     volumes:
       - /var/lib/deluge/completed:/downloads
       - ./config/headphones:/config
-      - /media/Music:/music
+      - /data/Music:/music
       - /etc/localtime:/etc/localtime:ro
     restart: always
     networks:

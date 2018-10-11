@@ -10,7 +10,7 @@ services:
     image: emby/embyserver:latest
     volumes:
         - ./config:/config
-        - /media:/media:ro
+        - /data:/media:ro
         - /etc/localtime:/etc/localtime:ro
     environment:
       - UID=33

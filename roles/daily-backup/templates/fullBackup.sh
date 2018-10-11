@@ -29,7 +29,7 @@ borg create -v --stats --compression lz4           \
     ${REPOSITORY}::'{hostname}-{now:%Y-%m-%d}'     \
     /root                                          \
     /home                                          \
-    /media                                         \
+    /data                                          \
     /etc                                           \
     /var/lib/deluge                                \
     /var/lib/mailu                                 \

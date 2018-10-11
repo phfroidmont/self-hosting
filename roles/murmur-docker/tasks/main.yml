@@ -2,7 +2,7 @@
 - name: Copy murmur config
   copy: src=murmur dest={{docker_compose_files_folder}}
 - name: Create murmur data folder
-  file: dest={{docker_compose_persistence_folder}}/murmur state=directory
+  file: dest=/var/lib/murmur state=directory
 - name: Copy murmur database
   copy: src=/backups/murmur/murmur.sqlite dest=/var/lib/murmur/ force=no remote_src=yes
 - name: Start murmur docker project

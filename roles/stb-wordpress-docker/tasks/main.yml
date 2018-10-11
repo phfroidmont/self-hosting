@@ -7,10 +7,10 @@
   copy:
     src: docker-compose.yml
     dest: "{{docker_compose_files_folder}}/stb/"
-- name: Create db.env
+- name: Create .env
   template:
-    src: db.env
-    dest: "{{docker_compose_files_folder}}/stb/db.env"
+    src: .env
+    dest: "{{docker_compose_files_folder}}/stb/.env"
 - name: Pull and start docker project
   docker_service:
     project_src: "{{docker_compose_files_folder}}/stb"
@@ -20,8 +20,10 @@
   args:
       chdir: "{{docker_compose_files_folder}}/stb/"
   register: db_tables_exist
-  ignore_errors: true
-  changed_when: db_tables_exist.stdout_lines|length == 0
+  retries: 15
+  delay: 10
+  until: db_tables_exist.rc == 0
+  changed_when: no
 - name: Restore STB database
   command: docker-compose exec -T db sh -c "mysql -u stb -p{{stb_mysql_password}} stb < /backups/database.dmp"
   args:

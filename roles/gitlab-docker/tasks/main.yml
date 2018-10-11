@@ -20,9 +20,14 @@
   wait_for:
     path: /var/lib/gitlab/postgres-exporter/
     state: present
+    timeout: 600
   when: gitlab_users_repos.matched|int == 0
 - name: Restore backup if no users are found
   script: restore-backup.sh {{gitlab_git_uid.stdout}}
+  register: gitlab_backup_restore
   args:
     chdir: "{{docker_compose_files_folder}}/gitlab/"
+  retries: 5
+  delay: 30
+  until: gitlab_backup_restore.rc == 0
   when: gitlab_users_repos.matched|int == 0

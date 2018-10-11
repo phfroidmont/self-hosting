@@ -31,12 +31,10 @@ services:
     volumes:
       - /var/lib/nextcloud:/var/www/html
       - ./config:/var/www/html/config
-      - /media:/media
+      - /data:/media
       - /etc/localtime:/etc/localtime:ro
     environment:
       - MYSQL_HOST=db
-    env_file:
-      - db.env
     depends_on:
       - db
       - redis
@@ -54,8 +52,6 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    env_file:
-      - db.env
     restart: always
 
   redis:

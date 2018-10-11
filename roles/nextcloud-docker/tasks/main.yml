@@ -3,10 +3,10 @@
   copy:
     src: nextcloud
     dest: "{{docker_compose_files_folder}}"
-- name: Create db.env
+- name: Create .env
   template:
-    src: nextcloud/db.env
-    dest: "{{docker_compose_files_folder}}/nextcloud/db.env"
+    src: nextcloud/.env
+    dest: "{{docker_compose_files_folder}}/nextcloud/.env"
 - name: Create nextcloud config
   template:
     src: nextcloud/config/{{item}}
@@ -18,8 +18,8 @@
 - name: Change config folder owner to http
   file:
     path: "{{docker_compose_files_folder}}/nextcloud/config"
-    owner: http
-    group: http
+    owner: 33
+    group: 33
     recurse: yes
 - name: Build and start nextcloud docker project
   docker_service:
@@ -31,8 +31,10 @@
   args:
       chdir: "{{docker_compose_files_folder}}/nextcloud/"
   register: db_tables_exist
-  ignore_errors: true
-  changed_when: db_tables_exist.stdout_lines|length == 0
+  retries: 15
+  delay: 10
+  until: db_tables_exist.rc == 0
+  changed_when: no
 - name: Restore Nextcloud database
   command: docker-compose exec -T db sh -c "mysql -u nextcloud -p{{nextcloud_mysql_password}} nextcloud < /backups/database.dmp"
   args:

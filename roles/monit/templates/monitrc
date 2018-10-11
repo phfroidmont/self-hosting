@@ -299,7 +299,7 @@ check filesystem root with path /
 ## Check a network link status (up/down), link capacity changes, saturation
 ## and bandwidth usage.
 #
-check network public with interface eno1
+check network public with interface enp4s0
     if failed link then alert
 #    if changed link then alert
 #    if saturation > 90% then alert
