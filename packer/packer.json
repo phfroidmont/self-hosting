@@ -1,0 +1,58 @@
+{
+    "variables": {
+        "api_access_key": "{{ env `SCALEWAY_ORGANIZATION` }}",
+        "api_token": "{{ env `SCALEWAY_TOKEN` }}",
+        "vault_pass_file": ""
+    },
+    "builders": [
+        {
+            "type": "scaleway",
+            "api_access_key": "{{ user `api_access_key` }}",
+            "api_token": "{{ user `api_token` }}",
+            "server_name": "k8s-template",
+            "image_name": "ubuntu-bionic-k8s",
+            "snapshot_name": "ubuntu-bionic-k8s-snapshot",
+            "image": "d4067cdc-dc9d-4810-8a26-0dae51d7df42",
+            "region": "par1",
+            "commercial_type": "START1-S",
+            "ssh_username": "root"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "sleep 30",
+                "apt -y update",
+                "DEBIAN_FRONTEND=noninteractive apt-get -y upgrade",
+                "apt -y install software-properties-common",
+                "apt-add-repository ppa:ansible/ansible",
+                "apt -y update",
+                "apt -y install ansible"
+            ]
+        },
+        {
+            "type": "file",
+            "source": "{{ user `vault_pass_file` }}",
+            "destination": "/tmp/vault-pass"
+        },
+        {
+            "type": "ansible-local",
+            "role_paths": "../roles/docker",
+            "group_vars": "../group_vars",
+            "clean_staging_directory": true,
+            "playbook_file": "common.yml",
+            "extra_arguments": "--vault-password-file=/tmp/vault-pass"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "rm -f /tmp/vault-pass",
+                "apt -y remove --purge ansible",
+                "apt-add-repository --remove ppa:ansible/ansible",
+                "apt autoremove -y",
+                "apt update"
+            ]
+        }
+    ]
+}

@@ -1,18 +1,16 @@
 ---
+ansible_python_interpreter: /usr/bin/python3
 initial_master: master1
 tinc_primary_router: proxy1
 vpn_interface: tun0
 
-k8s_release: "1.10.6"
-k8s_apiserver_secure_port: "6443"
-k8s_ca_conf_directory: "{{ '~/k8s/certs' | expanduser }}"
-k8s_config_directory: "{{ '~/k8s/configs' | expanduser }}"
-k8s_ca_certificate_owner: "{{ harden_linux_deploy_user }}"
-k8s_ca_certificate_group: "root"
-k8s_config_cluster_name: banditlair.com
-k8s_encryption_config_directory: "{{k8s_config_directory}}"
-k8s_interface: "{{peervpn_conf_interface}}"
-k8s_conf_dir: /etc/kubernetes
+# Kubernetes
+kubernetes_apt_key: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+kubernetes_apt_channel: main
+kubernetes_release: xenial
+kubernetes_version: 1.11.3
+kubernetes_version_apt: "{{kubernetes_version}}-00"
+kubernetes_port: 6443
 
 etcd_version: "3.2.24"
 

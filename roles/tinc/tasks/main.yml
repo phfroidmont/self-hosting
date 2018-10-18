@@ -1,9 +1,4 @@
 ---
-- name: Install tinc
-  apt:
-    name: tinc
-    state: latest
-
 - name: Ensure tinc netname directory exists
   file:
     path: /etc/tinc/{{ netname }}/hosts
@@ -126,7 +121,7 @@
 
 - name: Start tinc on boot
   systemd:
-    name: tinc
+    name: tinc@{{ netname }}
     enabled: yes
     state: started
 

@@ -1,0 +1,56 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Install tinc and ping
+      apt:
+        name: [ 'tinc', 'iputils-ping' ]
+        state: latest
+
+    - name: Adding Kubernetes official gpg key
+      apt_key:
+        url: "{{ kubernetes_apt_key }}"
+        state: present
+
+    - name: Adding Kubernetes repository
+      apt_repository:
+        repo: "deb http://apt.kubernetes.io/ kubernetes-{{ kubernetes_release }} {{ kubernetes_apt_channel }}"
+        state: present
+        filename: 'kubernetes'
+
+    - name: Installing kubernetes core components (kubectl, kubelet ...)
+      apt:
+        name: ['kubelet={{kubernetes_version_apt}}', 'kubeadm={{kubernetes_version_apt}}', 'kubectl={{kubernetes_version_apt}}']
+      register: result
+      retries: 3
+      until: result is success
+
+    - name: Get the kernel revision
+      shell: "uname -r"
+      register: kernel
+      changed_when: False
+      check_mode: False
+
+    - name: Try install linux-image
+      apt:
+        state: present
+        name: "{{ 'linux-image-' + kernel.stdout }}"
+      register: result
+      failed_when: False
+
+    - name: modprobe
+      modprobe:
+        name: "{{ item }}"
+        state: present
+      with_items:
+      - ip_vs
+      - nf_conntrack_ipv4
+
+    - name: /etc/modules
+      lineinfile:
+        path: /etc/modules
+        line: "{{ item }}"
+      with_items:
+        - ip_vs
+        - nf_conntrack_ipv4
+  roles:
+    - role: docker

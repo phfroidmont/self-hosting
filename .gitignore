@@ -2,3 +2,6 @@
 .vagrant
 .virtualenv
 *.retry
+.terraform*
+terraform.tfstate
+terraform.tfstate.backup

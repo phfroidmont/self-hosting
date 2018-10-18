@@ -3,7 +3,6 @@
 kubernetes_apt_key: https://packages.cloud.google.com/apt/doc/apt-key.gpg
 kubernetes_apt_channel: main
 kubernetes_release: xenial
-# versions can be found here
 kubernetes_version: 1.11.3
 kubernetes_version_apt: "{{kubernetes_version}}-00"
 kubernetes_port: 6443

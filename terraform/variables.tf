@@ -7,7 +7,7 @@ variable "architecture" {
 }
 
 variable "image" {
-  default = "Ubuntu Xenial"
+  default = "ubuntu-bionic-k8s"
 }
 
 variable "mini_image" {
@@ -23,7 +23,7 @@ variable "master_instance_count" {
 }
 
 variable "proxy_instance_type" {
-  default = "START1-XS"
+  default = "START1-S"
 }
 
 variable "worker_instance_type" {
