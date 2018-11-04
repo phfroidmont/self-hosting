@@ -38,3 +38,6 @@ entryPoint = "http"
 [[acme.domains]]
 main = "banditlair.com"
 sans = ["mail.banditlair.com"]
+
+[accessLog]
+filePath = "/var/log/traefik/access.log"
