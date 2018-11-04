@@ -13,7 +13,7 @@ rsync -aAvh --progress root@${SOURCE_HOST}:/backups/ /backups --delete
 #Sync Torrents
 mkdir -p {{docker_compose_files_folder}}/torrent
 rsync -aAvh --progress root@${SOURCE_HOST}:{{docker_compose_files_folder_previous_server}}/torrent/config/ {{docker_compose_files_folder}}/torrent/config --delete
-rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/deluge/ /var/lib/deluge --delete
+rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/transmission/ /var/lib/transmission --delete
 
 #Sync emby
 mkdir -p {{docker_compose_files_folder}}/emby

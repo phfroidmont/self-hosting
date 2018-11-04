@@ -344,8 +344,13 @@ check host mail-admin with address mailu.banditlair.com
 #check host sonar with address sonar.banditlair.com
 #    if failed port 443 protocol https with timeout 20 seconds then alert
 
-check host deluge-ui with address deluge.banditlair.com
-    if failed port 443 protocol https with timeout 20 seconds then alert
+check host transmission with address transmission.banditlair.com
+    if failed 
+        port 443 
+        protocol https 
+        status = 401 
+        with timeout 20 seconds 
+    then alert
 
 check host rpg-wiki with address rpg.banditlair.com
     if failed port 443 protocol https with timeout 20 seconds then alert

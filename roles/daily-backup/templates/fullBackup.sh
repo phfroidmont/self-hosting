@@ -31,7 +31,7 @@ borg create -v --stats --compression lz4           \
     /home                                          \
     /data                                          \
     /etc                                           \
-    /var/lib/deluge                                \
+    /var/lib/transmission                          \
     /var/lib/mailu                                 \
     /var/lib/matrix/media_store                    \
     /var/lib/nextcloud                             \

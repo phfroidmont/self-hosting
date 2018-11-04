@@ -6,42 +6,6 @@ networks:
       name: web
 
 services:
-  deluge:
-    image: binhex/arch-delugevpn
-    cap_add:
-      - NET_ADMIN
-    ports:
-      - 8118:8118
-      - 58846:58846
-    volumes:
-      - /var/lib/deluge:/data
-      - ./config/deluge:/config
-      - /data:/media
-      - /etc/localtime:/etc/localtime:ro
-    environment:
-      - VPN_ENABLED=yes
-      - VPN_USER=${VPN_USER}
-      - VPN_PASS=${VPN_PASS}
-      - VPN_REMOTE=${VPN_REMOTE}
-      - VPN_PORT=${VPN_PORT}
-      - VPN_PROTOCOL=${VPN_PROTOCOL}
-      - VPN_PROV=${VPN_PROV}
-      - ENABLE_PRIVOXY=yes
-      - LAN_NETWORK=10.90.86.0/26
-      - DEBUG=false
-      - PUID=33
-      - PGID=33
-    labels:
-      - "traefik.backend=deluge"
-      - "traefik.docker.network=web"
-      - "traefik.frontend.rule=Host:deluge.banditlair.com"
-      - "traefik.enable=true"
-      - "traefik.port=8112"
-      - "traefik.default.protocol=http"
-    restart: always
-    networks:
-      - web
-
   transmission:
     image: haugene/transmission-openvpn:latest-alpine
     cap_add:
@@ -95,7 +59,7 @@ services:
       - "traefik.port=8989"
       - "traefik.default.protocol=http"
     volumes:
-      - /var/lib/deluge/completed:/downloads
+      - /var/lib/transmission/completed:/downloads
       - /var/lib/nzbget/downloads:/nzbget
       - ./config/sonarr:/config
       - /data/TV:/tv
@@ -119,7 +83,7 @@ services:
       - "traefik.port=7878"
       - "traefik.default.protocol=http"
     volumes:
-      - /var/lib/deluge/completed:/downloads
+      - /var/lib/transmission/completed:/downloads
       - /var/lib/nzbget/downloads:/nzbget
       - ./config/radarr:/config
       - /data/Movies:/movies
@@ -143,7 +107,7 @@ services:
       - "traefik.port=8181"
       - "traefik.default.protocol=http"
     volumes:
-      - /var/lib/deluge/completed:/downloads
+      - /var/lib/transmission/completed:/downloads
       - ./config/headphones:/config
       - /data/Music:/music
       - /etc/localtime:/etc/localtime:ro
@@ -188,7 +152,6 @@ services:
       - "traefik.port=9117"
       - "traefik.default.protocol=http"
     volumes:
-#      - /var/lib/deluge/completed:/downloads
       - ./config/jackett:/config
       - /etc/localtime:/etc/localtime:ro
     restart: always
