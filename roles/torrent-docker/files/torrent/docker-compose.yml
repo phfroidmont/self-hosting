@@ -107,7 +107,7 @@ services:
       - "traefik.port=8181"
       - "traefik.default.protocol=http"
     volumes:
-      - /var/lib/transmission/completed:/downloads
+      - /var/lib/transmission:/data
       - ./config/headphones:/config
       - /data/Music:/music
       - /etc/localtime:/etc/localtime:ro
