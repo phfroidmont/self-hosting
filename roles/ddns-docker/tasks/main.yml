@@ -1,0 +1,10 @@
+---
+- name: Copy ddns config
+  copy: 
+    src: ddns
+    dest: "{{docker_compose_files_folder}}"
+
+- name: Start ddns docker project
+  docker_service:
+    project_src: "{{docker_compose_files_folder}}/ddns"
+    state: present

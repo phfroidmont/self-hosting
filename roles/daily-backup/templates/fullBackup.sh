@@ -3,7 +3,7 @@ set -e
 
 touch /backups/backup-ongoing
 
-REPOSITORY=ssh://backup@phf.ddns.net:2222/./backup
+REPOSITORY=ssh://backup@phf.ddns.banditlair.com:2222/./backup
 
 export BORG_PASSPHRASE='{{backup_borg_passphrase}}'
 
