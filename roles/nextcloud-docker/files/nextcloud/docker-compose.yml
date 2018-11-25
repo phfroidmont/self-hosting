@@ -15,6 +15,8 @@ services:
       - "traefik.backend=nextcloud"
       - "traefik.docker.network=web"
       - "traefik.frontend.rule=Host:cloud.banditlair.com"
+      - "traefik.frontend.headers.customResponseHeaders=Strict-Transport-Security:max-age=15552000; includeSubDomains"
+      - "traefik.frontend.headers.referrerPolicy=no-referrer"
       - "traefik.enable=true"
       - "traefik.port=80"
       - "traefik.default.protocol=http"

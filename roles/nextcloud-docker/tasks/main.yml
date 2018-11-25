@@ -25,6 +25,7 @@
   docker_service:
     project_src: "{{docker_compose_files_folder}}/nextcloud"
     build: yes
+    pull: yes
     state: present
 - name: Check if database tables exist
   command: docker-compose exec -T db mysql -u nextcloud -p{{nextcloud_mysql_password}} nextcloud -e "show tables;"
