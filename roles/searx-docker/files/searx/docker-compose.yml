@@ -7,7 +7,7 @@ networks:
 
 services:
   searx:
-    image: wonderfall/searx
+    image: hoellen/searx
     environment:
       - BASE_URL="https://banditlair.com"
       - IMAGE_PROXY=True
