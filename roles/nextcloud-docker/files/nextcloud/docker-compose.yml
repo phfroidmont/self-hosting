@@ -37,6 +37,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     environment:
       - MYSQL_HOST=db
+      - NEXTCLOUD_UPDATE=1
     depends_on:
       - db
       - redis
