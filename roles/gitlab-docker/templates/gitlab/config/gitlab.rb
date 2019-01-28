@@ -425,12 +425,12 @@ gitlab_rails['smtp_tls'] = true
 ##! Docs: https://docs.gitlab.com/ce/administration/container_registry.html
 ################################################################################
 
-# registry_external_url 'https://registry.gitlab.example.com'
+registry_external_url 'https://registry.banditlair.com'
 
 ### Settings used by GitLab application
-# gitlab_rails['registry_enabled'] = true
-# gitlab_rails['registry_host'] = "registry.gitlab.example.com"
-# gitlab_rails['registry_port'] = "5005"
+gitlab_rails['registry_enabled'] = true
+gitlab_rails['registry_host'] = "registry.banditlair.com"
+gitlab_rails['registry_port'] = "443"
 # gitlab_rails['registry_path'] = "/var/opt/gitlab/gitlab-rails/shared/registry"
 
 ###! **Do not change the following 3 settings unless you know what you are
@@ -1212,15 +1212,17 @@ nginx['proxy_set_headers'] = {
 # You just have to change the key "nginx['some_settings']" with "registry_nginx['some_settings']"
 
 # Below you can find settings that are exclusive to "Registry NGINX"
-# registry_nginx['enable'] = false
+registry_nginx['enable'] = true
+registry_nginx['listen_port'] = 5005
+registry_nginx['listen_https'] = false
 
-# registry_nginx['proxy_set_headers'] = {
+registry_nginx['proxy_set_headers'] = {
 #  "Host" => "$http_host",
 #  "X-Real-IP" => "$remote_addr",
 #  "X-Forwarded-For" => "$proxy_add_x_forwarded_for",
-#  "X-Forwarded-Proto" => "https",
-#  "X-Forwarded-Ssl" => "on"
-# }
+  "X-Forwarded-Proto" => "https",
+  "X-Forwarded-Ssl" => "on"
+}
 
 ################################################################################
 ## Prometheus
