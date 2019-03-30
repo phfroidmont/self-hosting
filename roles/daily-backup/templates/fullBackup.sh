@@ -3,7 +3,7 @@ set -e
 
 touch /backups/backup-ongoing
 
-REPOSITORY=ssh://backup@phf.ddns.banditlair.com:2222/./backup
+REPOSITORY=ssh://backup@212.129.12.205:22/./
 
 export BORG_PASSPHRASE='{{backup_borg_passphrase}}'
 
@@ -31,7 +31,6 @@ borg create -v --stats --compression lz4           \
     /home                                          \
     /data                                          \
     /etc                                           \
-    /var/lib/transmission                          \
     /var/lib/mailu                                 \
     /var/lib/matrix/media_store                    \
     /var/lib/nextcloud                             \
