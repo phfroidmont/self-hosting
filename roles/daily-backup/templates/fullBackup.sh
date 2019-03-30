@@ -34,14 +34,13 @@ borg create -v --stats --compression lz4           \
     /var/lib/mailu                                 \
     /var/lib/matrix/media_store                    \
     /var/lib/nextcloud                             \
+    /var/lib/transmission                          \
     /var/lib/wiki                                  \
     /var/lib/stb                                   \
     /var/lib/nzbget                                \
     /opt/factorio                                  \
     /backups                                       \
-    --exclude '/var/lib/nextcloud/db'              \
-    --exclude '/data/TV'                           \
-    --exclude '/data/Movies'
+    --exclude '/var/lib/nextcloud/db'
 
 # Route the normal process logging to journalctl
 2>&1
