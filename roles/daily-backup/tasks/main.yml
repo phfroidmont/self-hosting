@@ -10,5 +10,5 @@
     state: present
     minute: 0
     hour: 4
-    job: "/root/fullBackup.sh > /var/log/backup.log 2>&1"
+    job: "/root/fullBackup.sh >> /var/log/backup.log 2>&1"
 

@@ -42,9 +42,6 @@ borg create -v --stats --compression lz4           \
     /backups                                       \
     --exclude '/var/lib/nextcloud/db'
 
-# Route the normal process logging to journalctl
-2>&1
-
 # If there is an error backing up, reset password envvar and exit
 if [ "$?" = "1" ] ; then
     export BORG_PASSPHRASE=""
