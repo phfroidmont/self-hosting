@@ -1,24 +1,27 @@
 ---
-- hosts: k8s_proxy:k8s_masters:k8s_workers
-  roles:
-    - role: proxy
-      tags: proxy
-    - role: docker
-      tags: docker
-- hosts: k8s_masters
-  gather_facts: false
-  roles:
-  - role: etcd
-    tags: etcd
-- hosts: k8s_proxy:k8s_masters:k8s_workers
-  gather_facts: false
-  roles:
-  - role: kubernetes
-    tags: kubernetes
-- hosts: k8s_masters:k8s_proxy
-  gather_facts: false
-  roles:
-  - role: ingress
-    tags: ingress
-  - role: kubernetes-dashboard
-    tags: dashboard
+- name: Include kubespray tasks
+  import_playbook: kubespray/cluster.yml
+
+# - hosts: k8s_proxy:k8s_masters:k8s_workers
+#   roles:
+#     - role: proxy
+#       tags: proxy
+#     - role: docker
+#       tags: docker
+# - hosts: k8s_masters
+#   gather_facts: false
+#   roles:
+#   - role: etcd
+#     tags: etcd
+# - hosts: k8s_proxy:k8s_masters:k8s_workers
+#   gather_facts: false
+#   roles:
+#   - role: kubernetes
+#     tags: kubernetes
+# - hosts: k8s_masters:k8s_proxy
+#   gather_facts: false
+#   roles:
+#   - role: ingress
+#     tags: ingress
+#   - role: kubernetes-dashboard
+#     tags: dashboard

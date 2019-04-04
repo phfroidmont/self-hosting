@@ -1,0 +1,13 @@
+plugin: scaleway
+hostnames:
+  - hostname
+regions:
+  - par1
+  - ams1
+tags:
+  - k8s
+  - kube-master
+  - etcd
+  - kube-node
+variables:
+  ansible_host: public_ip.address

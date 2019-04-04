@@ -7,33 +7,21 @@ variable "architecture" {
 }
 
 variable "image" {
-  default = "ubuntu-bionic-k8s"
-}
-
-variable "mini_image" {
-  default = "Ubuntu Mini Xenial 25G"
+  default = "Ubuntu Bionic"
 }
 
 variable "master_instance_type" {
-  default = "START1-S"
+  default = "DEV1-S"
 }
 
 variable "master_instance_count" {
-  default = 3
+  default = 1
 }
 
-variable "proxy_instance_type" {
-  default = "START1-S"
+variable "node_instance_type" {
+  default = "DEV1-S"
 }
 
-variable "worker_instance_type" {
-  default = "START1-S"
-}
-
-variable "worker_volume_size" {
-  default = 100
-}
-
-variable "worker_instance_count" {
-  default = 3
+variable "node_instance_count" {
+  default = 2
 }

@@ -1,0 +1,10 @@
+[kube-master]
+
+[etcd]
+
+[kube-node]
+
+[k8s]
+
+[k8s-cluster:children]
+k8s

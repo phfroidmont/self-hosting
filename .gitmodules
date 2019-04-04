@@ -1,0 +1,3 @@
+[submodule "kubespray"]
+	path = kubespray
+	url = ssh://git@gitlab.banditlair.com:2224/phfroidmont/kubespray.git
