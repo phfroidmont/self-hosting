@@ -1,0 +1,10 @@
+---
+kubeadm_enabled: true
+kube_api_anonymous_auth: true
+skip_non_kubeadm_warning: false
+helm_enabled: true
+ingress_nginx_enabled: true
+ingress_nginx_host_network: true
+ingress_nginx_nodeselector:
+  node-role.kubernetes.io/node: ""
+cert_manager_enabled: true

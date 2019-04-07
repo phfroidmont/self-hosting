@@ -1,18 +1,5 @@
 ---
 ansible_python_interpreter: /usr/bin/python3
-initial_master: master1
-tinc_primary_router: proxy1
-vpn_interface: tun0
-
-# Kubernetes
-kubernetes_apt_key: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-kubernetes_apt_channel: main
-kubernetes_release: xenial
-kubernetes_version: 1.11.3
-kubernetes_version_apt: "{{kubernetes_version}}-00"
-kubernetes_port: 6443
-
-etcd_version: "3.2.24"
 
 harden_linux_root_password: "{{k8s_scaleway_root_password}}"
 harden_linux_deploy_user: deploy

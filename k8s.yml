@@ -1,4 +1,9 @@
 ---
+- hosts: k8s-cluster
+  roles:
+    - role: tinc
+      tags: tinc
+
 - name: Include kubespray tasks
   import_playbook: kubespray/cluster.yml
 

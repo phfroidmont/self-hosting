@@ -1,4 +1,9 @@
 ---
+- name: Install tinc
+  apt:
+    name: tinc
+    state: latest
+
 - name: Ensure tinc netname directory exists
   file:
     path: /etc/tinc/{{ netname }}/hosts
@@ -55,12 +60,7 @@
   lineinfile:
     dest: /etc/tinc/{{ netname }}/hosts/{{ inventory_hostname }}
     line: |-
-      {%- if "k8s_proxy" in group_names -%}
-        {%- set interface = 'ansible_' + tinc_private_interface | default('eth0') -%}
-        Address = {{ vars[interface].ipv4.address }}
-      {%- else -%}
         Address = {{ ansible_eth0.ipv4.address }}
-      {%- endif -%}
     create: yes
   notify:
     - restart tinc
@@ -73,14 +73,6 @@
     create: yes
   notify:
     - restart tinc
-
-# in case of multimaster we need to add a subnet line
-- name: Ensure that keepalived ip is properly set in tinc host file on k8s_masters
-  lineinfile:
-    dest: /etc/tinc/{{ netname }}/hosts/{{ inventory_hostname }}
-    line: "Subnet = {{ api_floating_ip }}/{{ vpn_subnet_cidr_netmask }}"
-    create: yes
-  when: groups.k8s_masters | length > 1
 
 - name: Check whether /etc/tinc/netname/hosts/inventory_hostname contains "-----END RSA PUBLIC KEY-----"
   command: awk '/^-----END RSA PUBLIC KEY-----$/'  /etc/tinc/{{ netname }}/hosts/{{ inventory_hostname }}

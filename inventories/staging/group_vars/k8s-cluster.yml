@@ -1,2 +1,6 @@
+---
+ip: "{{vpn_ip}}"
 kube_network_plugin: flannel
 bin_dir: /usr/local/bin
+cluster_name: banditlair-staging
+dns_domain: k8s.staging.banditlair.com
