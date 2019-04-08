@@ -5,9 +5,8 @@ regions:
   - par1
   - ams1
 tags:
-  - k8s
-  - kube-master
-  - etcd
-  - kube-node
+  - test-master
+  - test-etcd
+  - test-node
 variables:
   ansible_host: public_ip.address

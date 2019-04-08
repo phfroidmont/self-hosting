@@ -1,0 +1,17 @@
+[test-master]
+[test-etcd]
+[test-node]
+
+[kube-master:children]
+test-master
+
+[etcd:children]
+test-etcd
+
+[kube-node:children]
+test-node
+
+[k8s-cluster:children]
+kube-master
+etcd
+kube-node
