@@ -1,6 +1,8 @@
 ---
 ansible_python_interpreter: /usr/bin/python3
 
+kubeadm_enabled: true
+
 harden_linux_root_password: "{{k8s_scaleway_root_password}}"
 harden_linux_deploy_user: deploy
 harden_linux_deploy_user_password: "{{k8s_scaleway_deploy_user_password}}"
@@ -23,4 +25,3 @@ harden_linux_sshguard_whitelist:
   - "212.83.165.111"
   - "10.3.0.0/24"
   - "10.200.0.0/16"
-

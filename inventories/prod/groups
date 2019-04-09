@@ -1,0 +1,17 @@
+[prod-master]
+[prod-etcd]
+[prod-node]
+
+[kube-master:children]
+prod-master
+
+[etcd:children]
+prod-etcd
+
+[kube-node:children]
+prod-node
+
+[k8s-cluster:children]
+kube-master
+etcd
+kube-node

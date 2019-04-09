@@ -1,1 +1,0 @@
-{% for svrs in ['k8s_masters'] %}{% for host in groups[svrs] %}etcd_{{ hostvars[host].ansible_hostname }}=http://{{ hostvars[host].vpn_ip }}:2380{% if not loop.last %},{% endif %}{% endfor %}{% endfor %}

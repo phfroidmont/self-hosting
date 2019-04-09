@@ -1,8 +1,9 @@
 ---
-kubeadm_enabled: true
+ip: "{{vpn_ip}}"
+kube_network_plugin: flannel
+bin_dir: /usr/local/bin
+
 kube_api_anonymous_auth: true
-skip_non_kubeadm_warning: false
-helm_enabled: true
 ingress_nginx_enabled: true
 ingress_nginx_host_network: true
 ingress_nginx_nodeselector:

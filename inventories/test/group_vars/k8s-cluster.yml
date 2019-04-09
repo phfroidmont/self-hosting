@@ -1,6 +1,3 @@
 ---
-ip: "{{vpn_ip}}"
-kube_network_plugin: flannel
-bin_dir: /usr/local/bin
-cluster_name: banditlair-staging
-dns_domain: staging.k8s.banditlair.com
+cluster_name: banditlair-test
+dns_domain: test.k8s.banditlair.com

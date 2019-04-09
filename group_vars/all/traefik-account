@@ -1,7 +1,0 @@
-traefik_serviceaccount: |
-  ---
-  apiVersion: v1
-  kind: ServiceAccount
-  metadata:
-    name: traefik-ingress-controller
-    namespace: kube-system
