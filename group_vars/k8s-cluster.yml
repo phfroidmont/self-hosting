@@ -2,6 +2,7 @@
 ip: "{{vpn_ip}}"
 kube_network_plugin: flannel
 bin_dir: /usr/local/bin
+kube_config_dir: "/etc/kubernetes"
 
 kube_api_anonymous_auth: true
 ingress_nginx_enabled: true

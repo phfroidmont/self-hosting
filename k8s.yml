@@ -7,6 +7,7 @@
 - name: Include kubespray tasks
   import_playbook: kubespray.yml
 
+ 
 # - hosts: k8s_proxy:k8s_masters:k8s_workers
 #   roles:
 #     - role: proxy

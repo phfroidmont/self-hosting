@@ -1,0 +1,21 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: searx-ingress
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+    certmanager.k8s.io/cluster-issuer: "{{searx_issuer}}"
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+    - hosts:
+      - searx.{{dns_domain}}
+      secretName: searx-{{searx_issuer}}
+  rules:
+    - host: searx.{{dns_domain}}
+      http:
+        paths:
+          - backend:
+              serviceName: searx
+              servicePort: 80

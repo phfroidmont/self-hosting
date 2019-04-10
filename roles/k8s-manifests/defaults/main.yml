@@ -1,0 +1,3 @@
+---
+letsencrypt_email: letsencrypt.account@banditlair.com
+searx_issuer: "{{default_issuer}}"
