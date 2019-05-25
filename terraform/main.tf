@@ -4,7 +4,7 @@ locals {
 
 terraform {
   backend "s3" {
-    bucket     = "banditlair.tfstate"
+    bucket     = "banditlair-terraform"
     key        = "k8s.tfstate"
     region     = "nl-ams"
     endpoint   = "https://s3.nl-ams.scw.cloud"
