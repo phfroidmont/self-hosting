@@ -7,6 +7,10 @@
   copy:
     src: docker-compose.yml
     dest: "{{docker_compose_files_folder}}/stb/"
+- name: Copy php upload config
+  copy:
+    src: uploads.ini
+    dest: "{{docker_compose_files_folder}}/stb/"
 - name: Create .env
   template:
     src: .env

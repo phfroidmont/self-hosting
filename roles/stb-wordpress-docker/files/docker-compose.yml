@@ -22,6 +22,7 @@ services:
     image: wordpress:4.9.4-php7.1-apache
     volumes:
       - /var/lib/stb:/var/www/html
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     labels:
       - "traefik.backend=wordpress"
       - "traefik.docker.network=web"
