@@ -13,7 +13,6 @@ services:
       - "traefik.docker.network=web"
       - "traefik.enable=true"
       - "traefik.default.protocol=http"
-      - "traefik.backend=gitlab"
       - "traefik.gitlab.frontend.rule=Host:gitlab.banditlair.com"
       - "traefik.gitlab.port=9090"
       - "traefik.registry.frontend.rule=Host:registry.banditlair.com"
