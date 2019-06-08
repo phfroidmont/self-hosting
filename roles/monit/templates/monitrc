@@ -336,7 +336,7 @@ check host Gitlab-ui with address gitlab.banditlair.com
     if failed port 443 protocol https with timeout 20 seconds then alert
 
 check host mail-admin with address mailu.banditlair.com
-    if failed url https://mailu.banditlair.com/ui/  with timeout 20 seconds then alert
+    if failed url https://webmail.banditlair.com/admin/  with timeout 20 seconds then alert
 
 #check host Grafana with address grafana.banditlair.com
 #    if failed port 443 protocol https with timeout 20 seconds then alert
