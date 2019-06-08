@@ -1,11 +1,9 @@
 <?php
 $CONFIG = array (
-  'dbtype' => 'mysql',
+  'dbtype' => 'pgsql',
   'dbname' => 'nextcloud',
-  'dbhost' => 'db',
-  'dbport' => '3306',
+  'dbhost' => 'postgres',
   'dbtableprefix' => 'oc_',
   'dbuser' => 'nextcloud',
-  'dbpassword' => '{{nextcloud_mysql_password}}',
-  'mysql.utf8mb4' => true
+  'dbpassword' => '{{nextcloud_mysql_password}}'
 );

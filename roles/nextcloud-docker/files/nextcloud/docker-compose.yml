@@ -22,7 +22,6 @@ services:
       - "traefik.default.protocol=http"
     depends_on:
       - app
-#      - collabora
     networks:
       - web
       - default
@@ -36,25 +35,23 @@ services:
       - /data:/media
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - MYSQL_HOST=db
       - NEXTCLOUD_UPDATE=1
     depends_on:
-      - db
+      - postgres
       - redis
     restart: always
 
-  db:
-    image: mariadb
+  postgres:
+    image: postgres
     volumes:
-      - /var/lib/mariadb/nextcloud:/var/lib/mysql
-      - ./db/custom.cnf:/etc/mysql/conf.d/custom.cnf
+      - /var/lib/postgresql/nextcloud:/var/lib/postgresql/data
       - /backups/nextcloud:/backups
       - /etc/localtime:/etc/localtime:ro
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=${MYSQL_PASSWORD}
     restart: always
 
   redis:
