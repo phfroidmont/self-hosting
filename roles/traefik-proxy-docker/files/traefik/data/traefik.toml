@@ -32,6 +32,7 @@ email = "letsencrypt.account@banditlair.com"
 storage = "acme.json"
 entryPoint = "https"
 OnHostRule = true
+KeyType = "RSA4096"
 [acme.httpChallenge]
 entryPoint = "http"
 

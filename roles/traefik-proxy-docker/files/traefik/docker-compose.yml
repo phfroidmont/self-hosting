@@ -3,7 +3,7 @@ version: '3'
 services:
   traefik:
     container_name: traefik
-    image: traefik:1.6.0-rc6-alpine
+    image: traefik:1.7.12-alpine
     ports:
       - 80:80
       - 443:443
@@ -24,26 +24,14 @@ services:
       - web
     restart: always
 
-  # Watch acme.json and dump certificates to files
   certdumper:
-    container_name: traefik_certdumper
-    image: alpine:latest
+    image: ldez/traefik-certs-dumper:v2.4.1
     depends_on:
       - traefik
     restart: unless-stopped
     volumes:
       - ./certs:/traefik
-    command: >
-      ash -c " \
-        apk --no-cache add inotify-tools jq openssl util-linux bash && \
-        wget https://raw.githubusercontent.com/containous/traefik/master/contrib/scripts/dumpcerts.sh -O dumpcerts.sh && \
-        mkdir -p /traefik/ssl/ && \
-        while true; do \
-          inotifywait -e modify /traefik/acme.json && \
-            bash dumpcerts.sh /traefik/acme.json /traefik/ssl/ && \
-            ln -f /traefik/ssl/certs/* /traefik/ssl/ && \
-            ln -f /traefik/ssl/private/* /traefik/ssl/; \
-        done"
+    command: file --source /traefik/acme.json --dest /traefik/ssl --watch
 
 networks:
   web:

@@ -9,4 +9,4 @@
   docker_network:
     name: web
 - name: Start traefik docker project
-  docker_service: project_src={{docker_compose_files_folder}}/traefik state=present
+  docker_compose: project_src={{docker_compose_files_folder}}/traefik state=present
