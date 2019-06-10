@@ -34,8 +34,8 @@ services:
       - "traefik.port=80"
       - "traefik.default.protocol=http"
     volumes:
-      - "../traefik/certs/ssl/banditlair.com.crt:/certs/cert.pem"
-      - "../traefik/certs/ssl/banditlair.com.key:/certs/key.pem"
+      - "../traefik/certs/ssl/certs/banditlair.com.crt:/certs/cert.pem"
+      - "../traefik/certs/ssl/private/banditlair.com.key:/certs/key.pem"
       - "/var/lib/mailu/overrides/nginx:/overrides"
     networks:
       - web
