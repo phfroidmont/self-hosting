@@ -3,6 +3,6 @@
 
 set -e
 
-SCW_TOKEN=`jq '.token' -r ~/.scwrc`
+export SCW_TOKEN=`jq '.token' -r ~/.scwrc`
 
 ansible-playbook "$@"
