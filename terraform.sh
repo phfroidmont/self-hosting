@@ -3,7 +3,8 @@
 
 set -e
 
-AWS_ACCESS_KEY_ID=SCW3NQVMPDWZF6HM3DR1
-AWS_SECRET_ACCESS_KEY=`jq '.token' -r ~/.scwrc`
+export AWS_ACCESS_KEY_ID=`cat ~/.ssh/scw_key_id`
+export AWS_SECRET_ACCESS_KEY=`jq '.token' -r ~/.scwrc`
 
 terraform "$@" terraform
+
