@@ -6,6 +6,22 @@ networks:
       name: web
 
 services:
+  biathlon:
+    build: ./biathlon
+    volumes:
+      - ./storage:/root/storage
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.backend=biathlon"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:biathlon.societe-de-tir-bertrix.com"
+      - "traefik.enable=true"
+      - "traefik.port=8080"
+      - "traefik.default.protocol=http"
+    networks:
+      - web
+      - default
+    restart: always
   db:
     image: mariadb:10.3.8
     volumes:
