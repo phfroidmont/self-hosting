@@ -93,21 +93,31 @@
   notify:
     - restart tinc
 
-- name: Fetch tinc hosts file after key creation
-  fetch:
-    src: /etc/tinc/{{ netname }}/hosts/{{ inventory_hostname }}
-    dest: fetch/{{ inventory_hostname }}
-    flat: yes
-  notify:
-    - reload tinc
+- block:
+  - name: Fetch tinc hosts file after key creation
+    fetch:
+      src: /etc/tinc/{{ netname }}/hosts/{{ inventory_hostname }}
+      dest: fetch/{{ inventory_hostname }}
+      flat: yes
+    changed_when: false
 
-- name: Sync the fetched tinc hosts files on each host
-  synchronize:
-    src: fetch/
-    dest: /etc/tinc/{{ netname }}/hosts/
-    use_ssh_args: yes
-  notify:
-    - reload tinc
+  - name: Sync the fetched tinc hosts files on each host
+    synchronize:
+      src: fetch/
+      dest: /etc/tinc/{{ netname }}/hosts/
+      use_ssh_args: yes
+    notify:
+      - reload tinc
+
+  always:
+  - name: Remove fetched files
+    local_action:
+      module: file
+      path: fetch
+      state: absent
+    run_once: True
+    changed_when: false
+
 
 - meta: flush_handlers
 
