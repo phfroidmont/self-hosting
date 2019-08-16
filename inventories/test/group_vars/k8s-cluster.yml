@@ -1,4 +1,2 @@
 ---
-cluster_name: banditlair-test
-dns_domain: test.k8s.banditlair.com
 default_issuer: letsencrypt-staging

@@ -4,11 +4,9 @@ kube_network_plugin: flannel
 bin_dir: /usr/local/bin
 kube_config_dir: "/etc/kubernetes"
 
+upstream_dns_servers: 
+  - 195.20.55.180
+
 #Addons
 kube_api_anonymous_auth: true
-ingress_nginx_enabled: true
-ingress_nginx_host_network: true
-ingress_nginx_nodeselector:
-  node-role.kubernetes.io/node: ""
-cert_manager_enabled: true
 metrics_server_enabled: true

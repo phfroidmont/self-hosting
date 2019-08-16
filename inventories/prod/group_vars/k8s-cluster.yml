@@ -1,4 +1,2 @@
 ---
-cluster_name: banditlair
-dns_domain: banditlair.com
 default_issuer: letsencrypt-production
