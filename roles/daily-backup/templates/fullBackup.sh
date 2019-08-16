@@ -16,6 +16,9 @@ docker exec stb_db_1 sh -c "mysqldump -u stb -p{{stb_mysql_password}} stb > /bac
 echo 'Dumping matrix database'
 docker exec matrix_db_1 sh -c "pg_dump -U synapse synapse > /backups/database.dmp"
 
+echo 'Dumping invidious database'
+docker exec invidious_postgres_1 sh -c "pg_dump -U kemal invidious > /backups/database.dmp"
+
 echo 'Copying murmur database'
 docker stop murmur_murmur_1
 cp /var/lib/murmur/murmur.sqlite /backups/murmur/murmur.sqlite

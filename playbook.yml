@@ -24,6 +24,7 @@
     - { role: torrent-docker, tags: [ 'torrent', 'docker' ] }
     - { role: monit, tags: [ 'monit' ] }
     - { role: stb-wordpress-docker, tags: [ 'stb', 'docker' ] }
+    - { role: invidious-docker, tags: [ 'invidious', 'docker' ] }
     - { role: traefik-proxy-docker, tags: [ 'traefik', 'docker' ] }
     - { role: ddns-docker, tags: [ 'ddns', 'docker' ] }
 

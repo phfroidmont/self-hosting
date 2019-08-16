@@ -1,0 +1,38 @@
+version: '3'
+
+networks:
+  web:
+    external:
+      name: web
+
+services:
+  postgres:
+    build:
+      context: repo
+      dockerfile: docker/Dockerfile.postgres
+    restart: unless-stopped
+    volumes:
+      - /var/lib/postgresql/invidious:/var/lib/postgresql/data
+      - /backups/invidious:/backups
+      - /etc/localtime:/etc/localtime:ro
+  invidious:
+    build:
+      context: repo
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./config.yml:/invidious/config/config.yml
+    expose:
+      - 3000
+    labels:
+      - "traefik.backend=invidious"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:yt.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=3000"
+      - "traefik.default.protocol=http"
+    depends_on:
+      - postgres
+    networks:
+      - web
+      - default
