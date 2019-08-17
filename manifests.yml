@@ -1,4 +1,4 @@
-- hosts: k8s-cluster
+- hosts: kube-master[0]
+  gather_facts: no
   roles:
     - role: k8s-manifests
-
