@@ -53,6 +53,39 @@
         name: traefik-ingress-controller
         namespace: kube-system
 
+# - name: Traefik configuration
+#   k8s:
+#     state: present
+#     definition:
+#       apiVersion: v1
+#       kind: ConfigMap
+#       metadata:
+#         name: traefik-conf
+#         namespace: kube-system
+#       data:
+#         traefik.toml: |
+#           defaultEntryPoints = ["http", "https"]
+
+#           logLevel = "INFO"
+
+#           [entryPoints]
+#             [entryPoints.http]
+#             address = ":80"
+#               [entryPoints.http.redirect]
+#               entryPoint = "https"
+#             [entryPoints.https]
+#             address = ":443"
+#             [entryPoints.https.tls]
+#             [entryPoints.api]
+#               address = ":8080"
+
+#           [api]
+#           entryPoint = "api"
+#           dashboard = true
+#           debug = false
+
+#           [kubernetes]
+
 - name: Traefik daemon set
   k8s:
     state: present
@@ -76,6 +109,9 @@
             containers:
             - image: traefik
               name: traefik-ingress-lb
+              # volumeMounts:
+              # - mountPath: /config
+              #   name: traefik-config
               ports:
               - name: http
                 containerPort: 80
@@ -92,6 +128,10 @@
               - --api
               - --kubernetes
               - --logLevel=INFO
+            # volumes:
+            # - name: traefik-config
+            #   configMap:
+            #     name: traefik-conf
 
 - name: Traefik service
   k8s:
@@ -154,12 +194,39 @@
         annotations:
           traefik.ingress.kubernetes.io/auth-type: "basic"
           traefik.ingress.kubernetes.io/auth-secret: "traefik-auth"
+          traefik.ingress.kubernetes.io/redirect-entry-point: https
+          traefik.ingress.kubernetes.io/redirect-permanent: "true"
+          ingress.kubernetes.io/ssl-redirect: "true"
+          ingress.kubernetes.io/ssl-temporary-redirect: "false"
       spec:
         rules:
-        - host: traefik.k8s.banditlair.com
+        - host: "{{traefik_domain}}"
           http:
             paths:
             - path: /
               backend:
                 serviceName: traefik-web-ui
                 servicePort: web
+        tls:
+          - secretName: traefik-cert
+
+- name: Traefik UI certificate
+  k8s:
+    state: present
+    definition:
+      apiVersion: certmanager.k8s.io/v1alpha1
+      kind: Certificate
+      metadata:
+        name: traefik-cert
+        namespace: kube-system
+      spec:
+        secretName: traefik-cert
+        issuerRef:
+          name: "{{cert_manager_issuer}}"
+        commonName:  "{{traefik_domain}}"
+        acme:
+          config:
+          - http01:
+              ingressClass: traefik
+            domains:
+            -  "{{traefik_domain}}"

@@ -1,9 +1,12 @@
 ---
-- include: prerequisites.yml
+- import_tasks: prerequisites.yml
   tags: prerequisites
 
-- include: traefik.yml
+- import_tasks: cert-manager.yml
+  tags: cert-manager
+
+- import_tasks: traefik.yml
   tags: traefik
 
-- include: searx.yml
+- import_tasks: searx.yml
   tags: searx

@@ -1,0 +1,27 @@
+- name: cert-manager issuers
+  k8s:
+    state: present
+    namespace: "{{item.1}}"
+    definition:
+      apiVersion: certmanager.k8s.io/v1alpha1
+      kind: Issuer
+      metadata:
+        name: "{{item.0.name}}"
+      spec:
+        acme:
+          # The ACME server URL
+          server: "{{item.0.server}}"
+          # Email address used for ACME registration
+          email: "{{letsencrypt_email}}"
+          # Name of a secret used to store the ACME account private key
+          privateKeySecretRef:
+            name: "{{item.0.name}}"
+          # Enable HTTP01 validations
+          http01: {}
+  with_nested:
+    - - name: letsencrypt-production
+        server: https://acme-v02.api.letsencrypt.org/directory
+      - name: letsencrypt-staging
+        server: https://acme-staging-v02.api.letsencrypt.org/directory
+    - - default
+      - kube-system

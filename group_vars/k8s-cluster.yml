@@ -9,4 +9,5 @@ upstream_dns_servers:
 
 #Addons
 kube_api_anonymous_auth: true
+cert_manager_enabled: true
 metrics_server_enabled: true

@@ -1,3 +1,4 @@
 ---
 letsencrypt_email: letsencrypt.account@banditlair.com
-searx_issuer: "{{default_issuer}}"
+traefik_domain: "traefik.{{banditlair_domain}}"
+searx_domain: "searx.{{banditlair_domain}}"

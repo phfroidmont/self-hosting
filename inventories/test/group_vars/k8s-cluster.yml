@@ -1,2 +1,3 @@
 ---
-default_issuer: letsencrypt-staging
+cert_manager_issuer: letsencrypt-staging
+banditlair_domain: k8s.banditlair.com
