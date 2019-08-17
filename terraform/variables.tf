@@ -26,3 +26,6 @@ variable "node_instance_count" {
   default = 2
 }
 
+variable "lb_ip" {
+  default = "51.159.26.139"
+}
