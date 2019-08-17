@@ -2,4 +2,8 @@
 - include: prerequisites.yml
   tags: prerequisites
 
+- include: traefik.yml
+  tags: traefik
+
 - include: searx.yml
+  tags: searx

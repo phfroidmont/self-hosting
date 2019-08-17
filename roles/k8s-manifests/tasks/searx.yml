@@ -47,4 +47,23 @@
           - port: 80
             targetPort: 8888
         selector:
-          app: searx 
+          app: searx
+
+- name: Searx ingress
+  k8s:
+    namespace: default
+    state: present
+    definition:
+      apiVersion: extensions/v1beta1
+      kind: Ingress
+      metadata:
+        name: searx
+      spec:
+        rules:
+        - host: searx.k8s.banditlair.com
+          http:
+            paths:
+            - path: /
+              backend:
+                serviceName: searx
+                servicePort: 80
