@@ -1,0 +1,36 @@
+$ORIGIN banditlair.com.
+@ 3600 IN  SOA ns0.online.net. hostmaster.online.net. 20190817102310 10800 3600 604800 3600
+
+; Parent NS
+banditlair.com. 86400 IN NS ns0.online.net.
+banditlair.com.	86400 IN NS ns1.online.net.
+
+; Custom DNS server
+ddns.banditlair.com. 3600 IN NS ns.banditlair.com.
+ns.banditlair.com.   600  IN A  5.9.66.49
+
+
+; Main domain
+banditlair.com.     86400 IN A     5.9.66.49
+www.banditlair.com. 86400 IN CNAME banditlair.com.
+storage1            600   IN A     5.9.66.49
+*.banditlair.com.   600   IN CNAME banditlair.com.
+
+; Matrix special record
+banditlair.com.banditlair.com. 86400 IN SRV 12 10 8448 matrix.banditlair.com.
+
+; Mail server related records
+mail2                                        86400 IN A   5.9.66.49
+banditlair.com.                              86400 IN MX  20 mail2.banditlair.com.
+banditlair.com.                              86400 IN MX  12 mail.banditlair.com.
+banditlair.com.                              600   IN TXT "v=spf1 mx -all"
+_dmarc.banditlair.com.                       600   IN TXT "v=DMARC1; p=none; rua=mailto:failed-dmarc@banditlair.com; ruf=mailto:dmarc@banditlair.com"
+froidmont.org._report._dmarc.banditlair.com. 600   IN TXT "v=DMARC1"
+falbo.fr._report._dmarc.banditlair.com.      600   IN TXT "v=DMARC1"
+dkim._domainkey.banditlair.com.              600   IN TXT "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwDEwt+a0neFlyq7ndCj0EECUp4bsusFpL2aVzroLY5Xw9S//dYuXUp1sr/yiivS71WyNjt7tOpuonu0gGEWpc6RPyeZrzXQg+zY1k/1+cLXFMz5HmJJaAbNxK02Qn89qfk/Y3pbuJt6Y/NBQ4KVOCZQB2hCT2izVSWSkhegYTCwIDAQAB"
+
+; Kubernetes tests
+k8s        600 IN A 51.159.24.204
+*.test.k8s 600 IN CNAME k8s.banditlair.com.
+test.k8s   600 IN CNAME k8s.banditlair.com.
+*.k8s      600 IN CNAME k8s.banditlair.com.
