@@ -5,8 +5,5 @@
 - import_tasks: cert-manager.yml
   tags: cert-manager
 
-- import_tasks: traefik.yml
-  tags: traefik
-
 - import_tasks: searx.yml
   tags: searx

@@ -19,7 +19,7 @@
           spec:
             containers:
               - name: searx
-                image: wonderfall/searx:latest
+                image: hoellen/searx
                 imagePullPolicy: IfNotPresent
                 ports:
                   - containerPort: 8888
@@ -58,11 +58,11 @@
       kind: Ingress
       metadata:
         name: searx
-        annotation:
-          traefik.ingress.kubernetes.io/redirect-entry-point: https
-          traefik.ingress.kubernetes.io/redirect-permanent: "true"
-          ingress.kubernetes.io/ssl-redirect: "true"
-          ingress.kubernetes.io/ssl-temporary-redirect: "false"
+        annotations:
+          kubernetes.io/ingress.class: nginx
+          certmanager.k8s.io/cluster-issuer: "{{cert_manager_issuer}}"
+          # ingress.kubernetes.io/ssl-redirect: "true"
+          # ingress.kubernetes.io/ssl-temporary-redirect: "false"
       spec:
         rules:
         - host: "{{searx_domain}}"
@@ -73,25 +73,6 @@
                 serviceName: searx
                 servicePort: 80
         tls:
-          - secretName: searx-cert
-
-- name: Searx certificate
-  k8s:
-    namespace: default
-    state: present
-    definition:
-      apiVersion: certmanager.k8s.io/v1alpha1
-      kind: Certificate
-      metadata:
-        name: searx-cert
-      spec:
-        secretName: traefik-cert
-        issuerRef:
-          name: "{{cert_manager_issuer}}"
-        commonName:  "{{searx_domain}}"
-        acme:
-          config:
-          - http01:
-              ingressClass: traefik
-            domains:
-            -  "{{searx_domain}}"
+        - hosts:
+            - "{{searx_domain}}"
+          secretName: letsencrypt-staging
