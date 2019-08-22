@@ -30,7 +30,7 @@ falbo.fr._report._dmarc.banditlair.com.      600   IN TXT "v=DMARC1"
 dkim._domainkey.banditlair.com.              600   IN TXT "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwDEwt+a0neFlyq7ndCj0EECUp4bsusFpL2aVzroLY5Xw9S//dYuXUp1sr/yiivS71WyNjt7tOpuonu0gGEWpc6RPyeZrzXQg+zY1k/1+cLXFMz5HmJJaAbNxK02Qn89qfk/Y3pbuJt6Y/NBQ4KVOCZQB2hCT2izVSWSkhegYTCwIDAQAB"
 
 ; Kubernetes tests
-k8s        600 IN A 51.159.24.204
+k8s        600 IN A     116.203.8.164
 *.test.k8s 600 IN CNAME k8s.banditlair.com.
 test.k8s   600 IN CNAME k8s.banditlair.com.
 *.k8s      600 IN CNAME k8s.banditlair.com.
