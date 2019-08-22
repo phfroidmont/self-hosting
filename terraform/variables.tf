@@ -1,31 +1,20 @@
 variable "region" {
-  default = "par1"
+  default = "ams1"
 }
 
-variable "architecture" {
-  default = "x86_64"
+variable "master_server_type" {
+  default = "cx11"
 }
 
-variable "image" {
-  default = "Ubuntu Bionic"
-}
-
-variable "master_instance_type" {
-  default = "DEV1-S"
-}
-
-variable "master_instance_count" {
+variable "master_server_count" {
   default = 1
 }
 
-variable "node_instance_type" {
-  default = "DEV1-S"
+variable "node_server_type" {
+  default = "cx21"
 }
 
-variable "node_instance_count" {
-  default = 2
+variable "node_server_count" {
+  default = 3
 }
 
-variable "lb_ip" {
-  default = "51.159.26.139"
-}

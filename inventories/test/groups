@@ -1,15 +1,14 @@
-[test-master]
-[test-etcd]
-[test-node]
+[master]
+[node]
 
 [kube-master:children]
-test-master
+master
 
 [etcd:children]
-test-etcd
+master
 
 [kube-node:children]
-test-node
+node
 
 [k8s-cluster:children]
 kube-master

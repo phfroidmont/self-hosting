@@ -1,3 +1,5 @@
 ---
 cert_manager_issuer: letsencrypt-staging
 banditlair_domain: k8s.banditlair.com
+floating_ip: 116.203.8.164
+floating_ip_id: 91174

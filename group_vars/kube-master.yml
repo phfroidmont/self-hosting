@@ -1,2 +1,2 @@
 ---
-vpn_ip: 192.168.66.{{ 0 +(inventory_hostname|regex_replace('\D+','')|int) }}
+ip: 192.168.1.{{ 0 +(inventory_hostname|regex_replace('\D+','')|int) }}

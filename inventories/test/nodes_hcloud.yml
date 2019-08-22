@@ -1,0 +1,6 @@
+plugin: hcloud
+
+label_selector: type=node
+
+groups:
+  node: yes

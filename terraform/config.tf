@@ -14,6 +14,10 @@ terraform {
   }
 }
 
-provider "scaleway" {
-  region = var.region
+provider "hcloud" {
+}
+
+resource "hcloud_ssh_key" "desktop" {
+  name = "Desktop"
+  public_key = "${file("ssh_keys/desktop.pub")}"
 }

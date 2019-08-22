@@ -1,13 +1,16 @@
 ---
-ip: "{{vpn_ip}}"
-kube_network_plugin: flannel
+kube_network_plugin: weave
 bin_dir: /usr/local/bin
-kube_config_dir: "/etc/kubernetes"
+kube_config_dir: /etc/kubernetes
 
 upstream_dns_servers: 
-  - 195.20.55.180
+  - 213.133.98.98
+  - 213.133.99.99
 
-#Addons
 kube_api_anonymous_auth: true
 cert_manager_enabled: true
+ingress_nginx_enabled: true
+dashboard_enabled: false
+helm_enabled: false
 metrics_server_enabled: true
+enable_nodelocaldns: true

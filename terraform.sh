@@ -1,10 +1,12 @@
-#! /usr/bin/env nix-shell
-#! nix-shell -i bash -p terraform jq
+#! /bin/bash
 
 set -e
 
-export AWS_ACCESS_KEY_ID=`cat ~/.ssh/scw_key_id`
-export AWS_SECRET_ACCESS_KEY=`jq '.token' -r ~/.scwrc`
+export HCLOUD_TOKEN=$(./get_hcloud_token.sh)
+ENVIRONMENT=$(cat .environment)
 
-terraform "$@" terraform
+cd terraform
+
+terraform workspace select $ENVIRONMENT
+terraform "$@"
 

@@ -1,11 +1,8 @@
-output "loadbalancer_ip" {
-  value = var.lb_ip
+output "master_public_ips" {
+  value = [hcloud_server.master.*.ipv4_address]
 }
 
 output "node_public_ips" {
-  value = [scaleway_server.node.*.public_ip]
+  value = [hcloud_server.node.*.ipv4_address]
 }
 
-output "master_public_ips" {
-  value = [scaleway_server.master.*.public_ip]
-}

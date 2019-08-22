@@ -1,0 +1,34 @@
+- name: Install keepalived
+  package:
+    name: keepalived
+    state: present
+
+- name: Keepalived config
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  notify: restart keepalived
+
+- name: Copy nginx healtcheck script
+  copy:
+    src: check_nginx.sh
+    dest: /etc/keepalived/check_nginx.sh
+    mode: 0700
+
+- name: Copy hcloud failover script
+  copy:
+    src: hcloud_failover.py
+    dest: /etc/keepalived/hcloud_failover.py
+    mode: 0700
+
+- name: Copy hcloud failover script config
+  template:
+    src: config.json.j2
+    dest: /etc/keepalived/config.json
+    mode: 0700
+
+- name: Start and enable keepalived
+  systemd:
+    name: keepalived
+    enabled: yes
+    state: started
