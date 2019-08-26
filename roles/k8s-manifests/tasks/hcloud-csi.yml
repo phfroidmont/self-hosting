@@ -1,0 +1,22 @@
+- name: Create secret with token for CSI driver
+  k8s:
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: hcloud-csi
+        namespace: kube-system
+      stringData:
+        token: "{{ hcloud_token_csi }}"
+
+- name: Download the CSI driver manifest
+  get_url:
+    url: https://raw.githubusercontent.com/hetznercloud/csi-driver/master/deploy/kubernetes/hcloud-csi.yml
+    dest: /tmp/hcloud-csi.yml
+    mode: 0600
+  delegate_to: localhost
+
+- name: Apply CSI driver manifest
+  k8s:
+    state: present
+    definition: "{{ lookup('file', '/tmp/hcloud-csi.yml') }}"
