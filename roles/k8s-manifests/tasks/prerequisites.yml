@@ -9,6 +9,4 @@
   pip:
     name: 
       - openshift
-      # - pyhelm
-      # - grpcio
     state: present

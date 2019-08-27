@@ -2,3 +2,5 @@
 letsencrypt_email: letsencrypt.account@banditlair.com
 traefik_domain: "traefik.{{banditlair_domain}}"
 searx_domain: "searx.{{banditlair_domain}}"
+anderia_domain: "anderia.{{banditlair_domain}}"
+rook_domain: "rook.{{banditlair_domain}}"

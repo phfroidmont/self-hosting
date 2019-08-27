@@ -1,0 +1,204 @@
+- name: Download Rook manifests
+  get_url:
+    url: "{{item.url}}"
+    dest: "/tmp/{{item.filename}}"
+    mode: 0600
+    force: yes
+  delegate_to: localhost
+  changed_when: false
+  with_items:
+   - url: https://raw.githubusercontent.com/rook/rook/release-1.0/cluster/examples/kubernetes/ceph/common.yaml
+     filename: rook-common.yml
+   - url: https://raw.githubusercontent.com/rook/rook/release-1.0/cluster/examples/kubernetes/ceph/operator.yaml
+     filename: rook-operator.yml
+
+# Workaround until https://github.com/ansible/ansible/pull/59160 is released
+- name: Remove last line of the manifest file
+  lineinfile:
+    path: /tmp/rook-common.yml
+    state: absent
+    regexp: '^---$'
+  delegate_to: localhost
+  changed_when: false
+
+- name: Apply Rook manifests
+  k8s:
+    state: present
+    definition: "{{ lookup('file', '/tmp/' + item) }}"
+  with_items:
+   - rook-common.yml
+   - rook-operator.yml
+
+- name: Rook cluster CRD
+  k8s:
+    state: present
+    definition:
+      apiVersion: ceph.rook.io/v1
+      kind: CephCluster
+      metadata:
+        name: rook-ceph
+        namespace: rook-ceph
+      spec:
+        cephVersion:
+          image: ceph/ceph:v14.2.2-20190722
+          allowUnsupported: false
+        dataDirHostPath: /var/lib/rook
+        mon:
+          count: 3
+          allowMultiplePerNode: false
+        dashboard:
+          enabled: true
+          # serve the dashboard under a subpath (useful when you are accessing the dashboard via a reverse proxy)
+          # urlPrefix: /ceph-dashboard
+          # serve the dashboard at the given port.
+          port: 8080
+          # serve the dashboard using SSL
+          ssl: false
+        network:
+          hostNetwork: false
+        rbdMirroring:
+          workers: 0
+        storage:
+          useAllNodes: true
+          useAllDevices: true
+          directories:
+          - path: /var/lib/rook
+
+- name: Rook CephFS
+  k8s:
+    state: present
+    definition:
+      apiVersion: ceph.rook.io/v1
+      kind: CephFilesystem
+      metadata:
+        name: ceph-fs
+        namespace: rook-ceph
+      spec:
+        metadataPool:
+          failureDomain: host
+          replicated:
+            size: 2
+        dataPools:
+          - failureDomain: host
+            replicated:
+              size: 3
+        metadataServer:
+          activeCount: 1
+          activeStandby: true
+
+- name: Rook Toolbox
+  k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: rook-ceph-tools
+        namespace: rook-ceph
+        labels:
+          app: rook-ceph-tools
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: rook-ceph-tools
+        template:
+          metadata:
+            labels:
+              app: rook-ceph-tools
+          spec:
+            dnsPolicy: ClusterFirstWithHostNet
+            containers:
+            - name: rook-ceph-tools
+              image: rook/ceph:v1.0.5
+              command: ["/tini"]
+              args: ["-g", "--", "/usr/local/bin/toolbox.sh"]
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: ROOK_ADMIN_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: rook-ceph-mon
+                      key: admin-secret
+              securityContext:
+                privileged: true
+              volumeMounts:
+                - mountPath: /dev
+                  name: dev
+                - mountPath: /sys/bus
+                  name: sysbus
+                - mountPath: /lib/modules
+                  name: libmodules
+                - name: mon-endpoint-volume
+                  mountPath: /etc/rook
+            # if hostNetwork: false, the "rbd map" command hangs, see https://github.com/rook/rook/issues/2021
+            hostNetwork: true
+            volumes:
+              - name: dev
+                hostPath:
+                  path: /dev
+              - name: sysbus
+                hostPath:
+                  path: /sys/bus
+              - name: libmodules
+                hostPath:
+                  path: /lib/modules
+              - name: mon-endpoint-volume
+                configMap:
+                  name: rook-ceph-mon-endpoints
+                  items:
+                  - key: data
+                    path: mon-endpoints
+
+- name: Rook ceph dashboard service
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: rook-ceph-mgr-dashboard
+        namespace: rook-ceph
+        labels:
+          app: rook-ceph-mgr
+          rook_cluster: rook-ceph
+      spec:
+        type: ClusterIP
+        ports:
+        - name: dashboard
+          port: 8080
+          targetPort: 8080
+        selector:
+          app: rook-ceph-mgr
+          rook_cluster: rook-ceph
+        sessionAffinity: None
+
+- name: Rook ceph dashboard ingress
+  k8s:
+    state: present
+    definition:
+      apiVersion: extensions/v1beta1
+      kind: Ingress
+      metadata:
+        name: rook-ceph-mgr-dashboard
+        namespace: rook-ceph
+        annotations:
+          kubernetes.io/ingress.class: nginx
+          certmanager.k8s.io/cluster-issuer: "{{cert_manager_issuer}}"
+          # kubernetes.io/tls-acme: "true"
+          # nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+          # nginx.ingress.kubernetes.io/server-snippet: |
+          #   proxy_ssl_verify off;
+      spec:
+        rules:
+        - host: "{{rook_domain}}"
+          http:
+            paths:
+            - path: /
+              backend:
+                serviceName: rook-ceph-mgr-dashboard
+                servicePort: 8080
+        tls:
+        - hosts:
+          - "{{rook_domain}}"
+          secretName: rook-cert

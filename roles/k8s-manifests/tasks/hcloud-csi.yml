@@ -14,6 +14,7 @@
     url: https://raw.githubusercontent.com/hetznercloud/csi-driver/master/deploy/kubernetes/hcloud-csi.yml
     dest: /tmp/hcloud-csi.yml
     mode: 0600
+    force: yes
   delegate_to: localhost
 
 - name: Apply CSI driver manifest

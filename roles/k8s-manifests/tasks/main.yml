@@ -5,8 +5,17 @@
 - import_tasks: hcloud-csi.yml
   tags: hcloud-csi
 
+- import_tasks: rook.yml
+  tags: rook
+
 - import_tasks: cert-manager.yml
   tags: cert-manager
 
 - import_tasks: searx.yml
   tags: searx
+
+
+- import_tasks: anderia-wiki.yml
+  tags: 
+    - anderia
+    - wiki
