@@ -6,17 +6,34 @@ networks:
       name: web
 
 services:
-  rpg_wiki:
-    image: 'bitnami/dokuwiki:0.20170219.201708232029-r7'
+  anderia:
+    image: 'bitnami/dokuwiki:0.20180422.201901061035'
     expose:
       - 80
     volumes:
-      - '/var/lib/wiki/rpg:/bitnami'
+      - '/var/lib/wiki/anderia:/bitnami'
       - /etc/localtime:/etc/localtime:ro
     labels:
-      - "traefik.backend=rpg_wiki"
+      - "traefik.backend=anderia"
       - "traefik.docker.network=web"
-      - "traefik.frontend.rule=Host:rpg.banditlair.com"
+      - "traefik.frontend.rule=Host:anderia.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.default.protocol=http"
+    networks:
+      - web
+    restart: always
+  arkadia:
+    image: 'bitnami/dokuwiki:0.20180422.201901061035'
+    expose:
+      - 80
+    volumes:
+      - '/var/lib/wiki/arkadia:/bitnami'
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.backend=arkadia"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:arkadia.banditlair.com"
       - "traefik.enable=true"
       - "traefik.port=80"
       - "traefik.default.protocol=http"

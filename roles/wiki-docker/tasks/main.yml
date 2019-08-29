@@ -1,12 +1,5 @@
 ---
 - name: Copy wiki config
   copy: src=wiki dest={{docker_compose_files_folder}}
-#- name: Create wiki data folder
-#  file: dest=/var/lib/wiki state=directory
-#- name: Create symlink for wiki data
-#  file:
-#    src: "{{backup_folder}}/var/lib/wiki/rpg"
-#    dest: /var/lib/wiki/rpg
-#    state: link
 - name: Start wiki docker project
   docker_service: project_src={{docker_compose_files_folder}}/wiki state=present
