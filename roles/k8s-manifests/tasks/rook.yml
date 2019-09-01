@@ -14,12 +14,10 @@
 
 # Workaround until https://github.com/ansible/ansible/pull/59160 is released
 - name: Remove last line of the manifest file
-  lineinfile:
-    path: /tmp/rook-common.yml
-    state: absent
-    regexp: '^---$'
+  command: sed -i '$ d' /tmp/rook-common.yml
   delegate_to: localhost
   changed_when: false
+  warn: false
 
 - name: Apply Rook manifests
   k8s:

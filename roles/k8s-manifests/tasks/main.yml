@@ -15,7 +15,14 @@
   tags: searx
 
 
-- import_tasks: anderia-wiki.yml
-  tags: 
+- include_tasks: 
+    file: wiki.yml
+    apply:
+      tags:
+        - wiki
+  vars:
+    wiki_instance: "{{ item }}"
+  loop:
     - anderia
-    - wiki
+    - arkadia
+  tags: wiki

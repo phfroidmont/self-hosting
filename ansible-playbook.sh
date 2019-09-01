@@ -6,4 +6,9 @@ export HCLOUD_TOKEN=$(./get_hcloud_token.sh)
 ENVIRONMENT=$(cat .environment)
 source .virtualenv/bin/activate
 
-ansible-playbook -i inventories/$ENVIRONMENT --vault-id=~/.ssh/vault-pass  "$@"
+ARGS="-i inventories/$ENVIRONMENT"
+ARGS="$ARGS --vault-id=~/.ssh/vault-pass"
+ARGS="$ARGS $@"
+
+echo "ansible-playbook $ARGS"
+ansible-playbook $ARGS

@@ -1,16 +1,17 @@
 ---
-- name: Create dockerComposeAll.sh
+- name: Create scripts
   template:
-    src: dockerComposeAll.sh
-    dest: /root/dockerComposeAll.sh
+    src: "{{ item }}"
+    dest: /root/{{ item }}
     mode: 0700
-- name: Create syncData.sh
-  template:
-    src: syncData.sh
-    dest: /root/syncData.sh
+  loop:
+    - dockerComposeAll.sh
+    - syncData.sh
+    - updateAll.sh
+
+- name: Create syncDataToK8s.sh
+  copy:
+    src: syncDataToK8s.sh
+    dest: /root/syncDataToK8s.sh
     mode: 0700
-- name: Create updateAll.sh
-  template:
-    src: updateAll.sh
-    dest: /root/updateAll.sh
-    mode: 0700
+
