@@ -352,7 +352,7 @@ check host transmission with address transmission.banditlair.com
         with timeout 20 seconds 
     then alert
 
-check host rpg-wiki with address rpg.banditlair.com
+check host anderia-wiki with address anderia.banditlair.com
     if failed port 443 protocol https with timeout 20 seconds then alert
 ###############################################################################
 ## Includes

@@ -1,12 +1,16 @@
 ---
-- name: Copy traefik config
-  copy: src=traefik dest={{docker_compose_files_folder}}
-- name: Create traefik .env
+- name: Copy traefik files
   template:
-    src: traefik/.env
-    dest: "{{docker_compose_files_folder}}/traefik/.env"
+   src: "{{item}}"
+   dest: "{{docker_compose_files_folder}}/traefik/{{item}}"
+  loop:
+    - .env
+    - docker-compose.yml
+    - data/traefik.toml
 - name: Create web docker network
   docker_network:
     name: web
 - name: Start traefik docker project
-  docker_compose: project_src={{docker_compose_files_folder}}/traefik state=present
+  docker_compose:
+    project_src: "{{docker_compose_files_folder}}/traefik"
+    state: present

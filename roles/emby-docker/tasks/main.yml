@@ -1,5 +1,9 @@
 ---
 - name: Copy emby config
-  copy: src=emby dest={{docker_compose_files_folder}}
+  copy:
+    src: emby
+    dest: "{{docker_compose_files_folder}}"
 - name: Start emby docker project
-  docker_service: project_src={{docker_compose_files_folder}}/emby state=present
+  docker_compose:
+    project_src: "{{docker_compose_files_folder}}/emby"
+    state: present

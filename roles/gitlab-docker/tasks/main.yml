@@ -1,27 +1,45 @@
 ---
 - name: Copy docker-compose.yml
-  copy: src=gitlab dest={{docker_compose_files_folder}}
+  copy:
+    src: gitlab
+    dest: "{{docker_compose_files_folder}}"
+
 - name: Create gitlab config folder
-  file: dest={{docker_compose_files_folder}}/gitlab/config state=directory
+  file:
+    dest: "{{docker_compose_files_folder}}/gitlab/config"
+    state: directory
+
 - name: Create gitlab config
-  template: src=gitlab/config/gitlab.rb dest={{docker_compose_files_folder}}/gitlab/config/gitlab.rb
+  template:
+    src: gitlab/config/gitlab.rb
+    dest: "{{docker_compose_files_folder}}/gitlab/config/gitlab.rb"
+
 - name: Start gitlab docker project
-  docker_service: project_src={{docker_compose_files_folder}}/gitlab state=present
+  docker_compose:
+    project_src: "{{docker_compose_files_folder}}/gitlab"
+    state: present
+
 - name: Find Gitlab user repositories
-  find: paths=/var/lib/gitlab/git-data/repositories/ file_type=directory patterns="*"
+  find:
+    paths: /var/lib/gitlab/git-data/repositories/
+    file_type: directory
+    patterns: "*"
   register: gitlab_users_repos
+
 - name: Get Gitlab git user id
   command: docker-compose exec -T gitlab id -u git
   args:
       chdir: "{{docker_compose_files_folder}}/gitlab/"
   register: gitlab_git_uid
   when: gitlab_users_repos.matched|int == 0
+
 - name: Wait for Gitlab to be installed
   wait_for:
     path: /var/lib/gitlab/postgres-exporter/
     state: present
     timeout: 600
   when: gitlab_users_repos.matched|int == 0
+
 - name: Restore backup if no users are found
   script: restore-backup.sh {{gitlab_git_uid.stdout}}
   register: gitlab_backup_restore

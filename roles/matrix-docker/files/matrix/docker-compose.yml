@@ -33,6 +33,8 @@ services:
       - /var/log/synapse:/data/log
       - ./synapse:/data
       - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - db
     networks:
       - matrix
       - web

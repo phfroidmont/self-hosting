@@ -9,7 +9,7 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 172.22.0.0/16
+        - subnet: 192.168.64.0/20
 
 services:
   front:
@@ -53,7 +53,7 @@ services:
     env_file: .env
     networks:
       default:
-        ipv4_address: 172.22.255.254
+        ipv4_address: 192.168.64.254
 
   admin:
     image: mailu/admin:$VERSION
@@ -87,7 +87,7 @@ services:
       - front
       - resolver
     dns:
-      - 172.22.255.254
+      - 192.168.64.254
 
   antispam:
     image: mailu/rspamd:$VERSION
@@ -101,7 +101,7 @@ services:
       - front
       - resolver
     dns:
-      - 172.22.255.254
+      - 192.168.64.254
 
   fetchmail:
     image: mailu/fetchmail:$VERSION
@@ -110,7 +110,7 @@ services:
     depends_on:
       - resolver
     dns:
-      - 172.22.255.254
+      - 192.168.64.254
 
   webmail:
     image: mailu/rainloop

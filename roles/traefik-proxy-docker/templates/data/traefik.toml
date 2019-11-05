@@ -23,7 +23,11 @@ dashboard = true
 
 [docker]
 endpoint = "unix:///var/run/docker.sock"
+{% if inventory_hostname in (groups['mail']) %}
+domain = "mail1.banditlair.com"
+{% else %}
 domain = "banditlair.com"
+{% endif %}
 watch = true
 exposedbydefault = false
 
@@ -37,8 +41,13 @@ KeyType = "RSA4096"
 entryPoint = "http"
 
 [[acme.domains]]
+{% if inventory_hostname in (groups['mail']) %}
+main = "mail1.banditlair.com"
+{% else %}
 main = "banditlair.com"
 sans = ["mail.banditlair.com"]
+{% endif %}
+
 
 [accessLog]
 filePath = "/var/log/traefik/access.log"

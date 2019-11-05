@@ -1,11 +1,10 @@
 ---
-- hosts: all
+- hosts: storage
   become: true
   vars:
-    docker_compose_files_folder_previous_server: /etc/images
+    docker_compose_files_folder_previous_server: /etc/compose
     docker_compose_files_folder: /etc/compose
     domain_name: banditlair.com
-    docker_version: 18.06.*
     sub_domains:
       - rpg
   roles:
@@ -13,18 +12,38 @@
     - { role: scripts, tags: [ 'scripts' ] }
     - { role: daily-backup, tags: [ 'backup' ] }
     - { role: docker, tags: [ 'docker' ] }
-    - { role: murmur-docker, tags: [ 'murmur', 'docker' ] }
-    - { role: searx-docker, tags: [ 'searx', 'docker' ] }
-    - { role: wiki-docker, tags: [ 'wiki', 'docker' ] }
-    - { role: emby-docker, tags: [ 'emby', 'docker' ] }
-    - { role: gitlab-docker, tags: [ 'gitlab', 'docker' ] }
-    - { role: mailu-docker, tags: [ 'mailu', 'docker' ] }
-    - { role: nextcloud-docker, tags: [ 'nextcloud', 'docker' ] }
-    - { role: matrix-docker, tags: [ 'matrix', 'docker' ] }
-    - { role: torrent-docker, tags: [ 'torrent', 'docker' ] }
+    - { role: murmur-docker, tags: [ 'murmur' ] }
+    - { role: searx-docker, tags: [ 'searx' ] }
+    - { role: wiki-docker, tags: [ 'wiki' ] }
+    - { role: emby-docker, tags: [ 'emby' ] }
+    - { role: gitlab-docker, tags: [ 'gitlab' ] }
+    - { role: nextcloud-docker, tags: [ 'nextcloud' ] }
+    - { role: matrix-docker, tags: [ 'matrix' ] }
+    - { role: torrent-docker, tags: [ 'torrent' ] }
     - { role: monit, tags: [ 'monit' ] }
-    - { role: stb-wordpress-docker, tags: [ 'stb', 'docker' ] }
-    - { role: invidious-docker, tags: [ 'invidious', 'docker' ] }
-    - { role: traefik-proxy-docker, tags: [ 'traefik', 'docker' ] }
-    - { role: ddns-docker, tags: [ 'ddns', 'docker' ] }
+    - { role: stb-wordpress-docker, tags: [ 'stb' ] }
+    - { role: invidious-docker, tags: [ 'invidious' ] }
+    - { role: traefik-proxy-docker, tags: [ 'traefik' ] }
+    - { role: ddns-docker, tags: [ 'ddns' ] }
+    - role: mailu-docker
+      tags: [ 'mailu' ]
 
+- hosts: mail
+  become: true
+  vars:
+    docker_compose_files_folder_previous_server: /etc/compose
+    docker_compose_files_folder: /etc/compose
+    domain_name: banditlair.com
+    sub_domains:
+      - rpg
+  roles:
+    - role: scripts
+      tags: [ 'scripts' ]
+    - role: daily-backup
+      tags: [ 'backup' ]
+    - role: docker
+      tags: [ 'docker' ]
+    - role: mailu-docker
+      tags: [ 'mailu' ]
+    - role: traefik-proxy-docker
+      tags: [ 'traefik' ]

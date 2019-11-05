@@ -3,22 +3,27 @@
   file:
     state: directory
     dest: "{{docker_compose_files_folder}}/stb"
+
 - name: Copy STB docker-compose
   copy:
     src: docker-compose.yml
     dest: "{{docker_compose_files_folder}}/stb/"
+
 - name: Copy php upload config
   copy:
     src: uploads.ini
     dest: "{{docker_compose_files_folder}}/stb/"
+
 - name: Create .env
   template:
     src: .env
     dest: "{{docker_compose_files_folder}}/stb/.env"
+
 - name: Pull and start docker project
-  docker_service:
+  docker_compose:
     project_src: "{{docker_compose_files_folder}}/stb"
     state: present
+
 - name: Check if database tables exist
   command: docker-compose exec -T db mysql -u stb -p{{stb_mysql_password}} stb -e "show tables;"
   args:
@@ -28,6 +33,7 @@
   delay: 10
   until: db_tables_exist.rc == 0
   changed_when: no
+
 - name: Restore STB database
   command: docker-compose exec -T db sh -c "mysql -u stb -p{{stb_mysql_password}} stb < /backups/database.dmp"
   args:

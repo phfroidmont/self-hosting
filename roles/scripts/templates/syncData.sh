@@ -2,10 +2,11 @@
 
 set -e
 
-SOURCE_HOST=195.154.134.7
+SOURCE_HOST=5.9.66.49
 
+{% if inventory_hostname in (groups['storage']) %}
 #Sync Media
-rsync -aAvh --progress root@${SOURCE_HOST}:/media/ /data --delete
+rsync -aAvh --progress root@${SOURCE_HOST}:/data/ /data --delete
 
 #Sync Backups
 rsync -aAvh --progress root@${SOURCE_HOST}:/backups/ /backups --delete
@@ -19,14 +20,12 @@ rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/transmission/ /var/lib/trans
 mkdir -p {{docker_compose_files_folder}}/emby
 rsync -aAvh --progress root@${SOURCE_HOST}:{{docker_compose_files_folder_previous_server}}/emby/config/ {{docker_compose_files_folder}}/emby/config --exclude "transcoding-temp"  --delete
 
-#Sync Mailu
-rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/mailu/ /var/lib/mailu --delete
-
 #Sync matrix
 mkdir -p {{docker_compose_files_folder}}/matrix
 mkdir -p /var/lib/matrix
 rsync -aAvh --progress root@${SOURCE_HOST}:{{docker_compose_files_folder_previous_server}}/matrix/synapse/ {{docker_compose_files_folder}}/matrix/synapse --delete
 rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/matrix/media_store/ /var/lib/matrix/media_store --delete
+rsync -aAvh --progress root@${SOURCE_HOST}:/var/log/synapse/ /var/log/synapse --delete
 
 #Sync nextcloud
 mkdir -p {{docker_compose_files_folder}}/nextcloud/config
@@ -47,3 +46,10 @@ rsync -aAvh --progress root@${SOURCE_HOST}:/opt/factorio/ /opt/factorio --delete
 #Sync STB wordpress
 mkdir -p /var/lib/stb
 rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/stb/ /var/lib/stb --delete
+rsync -aAvh --progress root@${SOURCE_HOST}:{{docker_compose_files_folder_previous_server}}/stb/ {{docker_compose_files_folder}}/stb --delete
+{% endif %}
+
+{% if inventory_hostname in (groups['mail']) %}
+#Sync Mailu
+rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/mailu/ /var/lib/mailu --delete
+{% endif %}

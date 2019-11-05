@@ -8,6 +8,6 @@
     src: torrent/.env
     dest: "{{docker_compose_files_folder}}/torrent/.env"
 - name: Start torrent docker project
-  docker_service:
+  docker_compose:
     project_src: "{{docker_compose_files_folder}}/torrent"
     state: present

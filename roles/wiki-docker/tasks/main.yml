@@ -1,5 +1,10 @@
 ---
 - name: Copy wiki config
-  copy: src=wiki dest={{docker_compose_files_folder}}
+  copy:
+    src: wiki
+    dest: "{{docker_compose_files_folder}}"
+
 - name: Start wiki docker project
-  docker_service: project_src={{docker_compose_files_folder}}/wiki state=present
+  docker_compose:
+    project_src: "{{docker_compose_files_folder}}/wiki"
+    state: present

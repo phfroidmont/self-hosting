@@ -1,5 +1,10 @@
 ---
 - name: Copy searx config
-  copy: src=searx dest={{docker_compose_files_folder}}
+  copy:
+    src: searx
+    dest: "{{docker_compose_files_folder}}"
+
 - name: Start searx docker project
-  docker_service: project_src={{docker_compose_files_folder}}/searx state=present
+  docker_compose:
+    project_src: "{{docker_compose_files_folder}}/searx"
+    state: present
