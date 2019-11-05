@@ -1,0 +1,17 @@
+$ORIGIN falbo.fr.
+@ 3600 IN  SOA ns0.online.net. hostmaster.online.net. 20190128060537 10800 3600 604800 3600
+
+; Parent NS
+@ 86400 IN NS ns1.online.net.
+@ 86400 IN NS ns0.online.net.
+
+; Main domain
+@ 600 IN A 144.76.18.197
+* 600 IN CNAME @
+
+; Mail server related records
+@               86400 IN MX  12 mail2.banditlair.com.
+@               86400 IN MX  12 mail.banditlair.com.
+_dmarc          600   IN TXT "v=DMARC1; p=none; rua=mailto:failed-dmarc@banditlair.com; ruf=mailto:dmarc@banditlair.com"
+@               600   IN TXT "v=spf1 include:banditlair.com -all"
+dkim._domainkey 600   IN TXT "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDWJwmQoiaxKCp6Cj+rELeHicd7VD1l/Q5KKQURgt1wIAY36bwbFYeuN/+ULruJzbnoyJ63G2QttO4H6MLdVTgNRjTuixmoE5mZEAE/7BlyAfDS0MLUXyGbxD6WtGZPT6PQ1cxWp9jVvYUs/NypcRfpDu0J9IXX6+coQM5CMLLdRwIDAQAB"
