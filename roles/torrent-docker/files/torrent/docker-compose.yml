@@ -25,9 +25,9 @@ services:
       - OPENVPN_PROVIDER=BLACKVPN
       - OPENVPN_USERNAME=${VPN_USER}
       - OPENVPN_PASSWORD=${VPN_PASS}
-      - OPENVPN_CONFIG=Privacy-Germany
+      - OPENVPN_CONFIG=Privacy-Netherlands
       - WEBPROXY_ENABLED=false
-      - LOCAL_NETWORK=10.90.86.0/26
+      - LOCAL_NETWORK=172.19.0.0/16
       - PUID=33
       - PGID=33
       - TRANSMISSION_RPC_USERNAME=admin
