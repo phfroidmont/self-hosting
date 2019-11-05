@@ -78,7 +78,6 @@
   retries: 3
   until: result is success
 
-
 - name: Install docker-compose package dependencies
   apt:
     state: latest

@@ -4,7 +4,6 @@ set -e
 
 SOURCE_HOST=5.9.66.49
 
-{% if inventory_hostname in (groups['storage']) %}
 #Sync Media
 rsync -aAvh --progress root@${SOURCE_HOST}:/data/ /data --delete
 
@@ -47,9 +46,6 @@ rsync -aAvh --progress root@${SOURCE_HOST}:/opt/factorio/ /opt/factorio --delete
 mkdir -p /var/lib/stb
 rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/stb/ /var/lib/stb --delete
 rsync -aAvh --progress root@${SOURCE_HOST}:{{docker_compose_files_folder_previous_server}}/stb/ {{docker_compose_files_folder}}/stb --delete
-{% endif %}
 
-{% if inventory_hostname in (groups['mail']) %}
 #Sync Mailu
 rsync -aAvh --progress root@${SOURCE_HOST}:/var/lib/mailu/ /var/lib/mailu --delete
-{% endif %}
