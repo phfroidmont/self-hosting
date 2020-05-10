@@ -63,7 +63,7 @@ services:
     stdin_open: true
     tty: true
     expose:
-      - '80'
+      - 80
     labels:
       - "traefik.backend=onlyoffice"
       - "traefik.docker.network=web"
