@@ -22,10 +22,12 @@ services:
     expose:
       - 9091
     environment:
-      - OPENVPN_PROVIDER=BLACKVPN
+      - OPENVPN_PROVIDER=NORDVPN
+      - NORDVPN_COUNTRY=DE
+      - NORDVPN_CATEGORY=legacy_p2p
+      - NORDVPN_PROTOCOL=udp
       - OPENVPN_USERNAME=${VPN_USER}
       - OPENVPN_PASSWORD=${VPN_PASS}
-      - OPENVPN_CONFIG=Privacy-Netherlands
       - WEBPROXY_ENABLED=false
       - LOCAL_NETWORK=172.19.0.0/16
       - PUID=33
