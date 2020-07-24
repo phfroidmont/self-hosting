@@ -1,0 +1,11 @@
+---
+- name: Copy searx config
+  copy:
+    src: website-marie
+    dest: "{{docker_compose_files_folder}}"
+
+- name: Start website-marie docker project
+  docker_compose:
+    project_src: "{{docker_compose_files_folder}}/website-marie"
+    state: present
+

@@ -1,0 +1,23 @@
+version: '2.2'
+
+networks:
+  web:
+    external:
+      name: web
+
+services:
+  website-marie:
+    image: nginx
+    labels:
+      - "traefik.backend=website-marie"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:osteopathie.froidmont.org"
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.default.protocol=http"
+    volumes:
+      - /var/lib/website-marie:/usr/share/nginx/html:ro
+    networks:
+      - web
+    restart: always
+
