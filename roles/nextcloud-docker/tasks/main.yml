@@ -39,7 +39,7 @@
   register: db_tables_exist
   retries: 15
   delay: 10
-  until: db_tables_exist.rc == 0
+  until: db_tables_exist is succeeded
   changed_when: no
 
 - name: Restore Nextcloud database
