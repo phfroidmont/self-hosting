@@ -7,7 +7,7 @@ networks:
 
 services:
   gitlab:
-    image: 'gitlab/gitlab-ce:12.10.14-ce.0'
+    image: 'gitlab/gitlab-ce:13.2.2-ce.0'
     hostname: ${GITLAB_DOMAIN}
     labels:
       - "traefik.docker.network=web"
