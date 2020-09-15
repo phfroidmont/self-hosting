@@ -16,11 +16,9 @@ services:
       - matrix
 
   synapse:
-    image: silviof/docker-matrix
+    image: matrixdotorg/synapse
     ports:
       - "127.0.0.1:8008:8008"
-      - "8448:8448"
-      - "3478:3478"
     labels:
       - "traefik.backend=synapse"
       - "traefik.docker.network=web"
@@ -39,6 +37,14 @@ services:
       - matrix
       - web
     restart: always
+
+  coturn:
+    image: instrumentisto/coturn
+    network_mode: host
+    volumes:
+      - ./synapse/turnserver.conf:/etc/coturn/turnserver.conf
+    tmpfs:
+      - /var/lib/coturn
 
 networks:
   matrix:
