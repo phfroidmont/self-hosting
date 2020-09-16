@@ -42,6 +42,7 @@ services:
     image: instrumentisto/coturn
     network_mode: host
     volumes:
+      - ./synapse:/data
       - ./synapse/turnserver.conf:/etc/coturn/turnserver.conf
     tmpfs:
       - /var/lib/coturn
