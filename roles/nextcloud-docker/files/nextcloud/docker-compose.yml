@@ -42,7 +42,7 @@ services:
     restart: always
 
   postgres:
-    image: postgres
+    image: postgres:12
     volumes:
       - /var/lib/postgresql/nextcloud:/var/lib/postgresql/data
       - /backups/nextcloud:/backups
