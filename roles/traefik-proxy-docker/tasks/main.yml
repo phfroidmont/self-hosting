@@ -8,7 +8,7 @@
     - docker-compose.yml
     - data/traefik.toml
 - name: Create web docker network
-  docker_network:
+  community.general.docker_network:
     name: web
 - name: Start traefik docker project
   docker_compose:

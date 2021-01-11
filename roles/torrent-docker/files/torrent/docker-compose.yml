@@ -7,7 +7,7 @@ networks:
 
 services:
   transmission:
-    image: haugene/transmission-openvpn:latest-alpine
+    image: haugene/transmission-openvpn:latest
     cap_add:
       - NET_ADMIN
     devices:
@@ -162,3 +162,12 @@ services:
     restart: always
     networks:
       - web
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    environment:
+      - LOG_LEVEL=debug
+      - CAPTCHA_SOLVER=hcaptcha-solver
+    restart: unless-stopped
+    networks:
+      - web
+
