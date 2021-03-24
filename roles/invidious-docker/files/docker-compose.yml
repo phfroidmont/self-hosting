@@ -7,14 +7,19 @@ networks:
 
 services:
   postgres:
-    build:
-      context: repo
-      dockerfile: docker/Dockerfile.postgres
+    image: postgres:10
     restart: unless-stopped
     volumes:
       - /var/lib/postgresql/invidious:/var/lib/postgresql/data
       - /backups/invidious:/backups
-      - /etc/localtime:/etc/localtime:ro
+      - ./repo/config/sql:/config/sql
+      - ./repo/docker/init-invidious-db.sh:/docker-entrypoint-initdb.d/init-invidious-db.sh
+    environment:
+      POSTGRES_DB: invidious
+      POSTGRES_PASSWORD: kemal
+      POSTGRES_USER: kemal
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
   invidious:
     build:
       context: repo
@@ -24,6 +29,28 @@ services:
       - ./config.yml:/invidious/config/config.yml
     expose:
       - 3000
+    environment:
+      # Adapted from ./config/config.yml
+      INVIDIOUS_CONFIG: |
+        crawl_threads: 1
+        channel_threads: 1
+        check_tables: true
+        feed_threads: 1
+        video_threads: 1
+        db:
+          user: kemal
+          password: kemal
+          host: postgres
+          port: 5432
+          dbname: invidious
+        full_refresh: false
+        https_only: true
+        geo_bypass: true
+        top_enabled: false
+        force_resolve: ipv4
+        admins:
+          - paultrial
+        domain: yt.banditlair.com
     labels:
       - "traefik.backend=invidious"
       - "traefik.docker.network=web"

@@ -4,11 +4,6 @@
     src: docker-compose.yml
     dest: "{{docker_compose_files_folder}}/invidious/"
 
-- name: Copy config
-  copy:
-    src: config.yml
-    dest: "{{docker_compose_files_folder}}/invidious/"
-
 - name: Checkout git repo
   git:
     repo: https://github.com/omarroth/invidious.git
