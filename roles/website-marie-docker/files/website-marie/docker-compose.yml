@@ -11,13 +11,15 @@ services:
     labels:
       - "traefik.backend=website-marie"
       - "traefik.docker.network=web"
-      - "traefik.frontend.rule=Host:osteopathie.froidmont.org"
+      - "traefik.frontend.rule=Host:osteopathie.froidmont.org,www.osteopathie.froidmont.org"
+      - "traefik.frontend.redirect.regex=^https?://www.osteopathie.froidmont.org/(.*)"
+      - "traefik.frontend.redirect.replacement=https://osteopathie.froidmont.org/$${1}"
       - "traefik.enable=true"
       - "traefik.port=80"
       - "traefik.default.protocol=http"
     volumes:
       - /var/lib/website-marie:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     networks:
       - web
     restart: always
-

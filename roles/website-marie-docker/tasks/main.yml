@@ -1,5 +1,5 @@
 ---
-- name: Copy searx config
+- name: Copy website config
   copy:
     src: website-marie
     dest: "{{docker_compose_files_folder}}"
