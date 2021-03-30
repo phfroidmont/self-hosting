@@ -13,9 +13,10 @@ ddns.banditlair.com. 3600 IN NS ns.banditlair.com.
 @        600 IN A     144.76.18.197
 *        600 IN CNAME @
 storage1 600 IN A     144.76.18.197
+matrix   600 IN A     144.76.18.197
 
 ; Matrix special record
-banditlair.com.banditlair.com. 86400 IN SRV 12 10 8448 matrix.banditlair.com.
+_matrix._tcp.banditlair.com. 86400 IN SRV 12 10 443 matrix.banditlair.com.
 
 ; Mail server related records
 ;webmail                     86400 IN A   144.76.18.197

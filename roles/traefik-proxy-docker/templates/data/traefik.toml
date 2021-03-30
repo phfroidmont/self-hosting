@@ -10,7 +10,7 @@ defaultEntryPoints = ["https","http"]
     entryPoint = "https"
   [entryPoints.https]
   address = ":443"
-  [entryPoints.https.tls]
+    [entryPoints.https.tls]
   [entryPoints.traefik]
   address = ":8080"
 

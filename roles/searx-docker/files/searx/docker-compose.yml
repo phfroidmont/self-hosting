@@ -11,13 +11,13 @@ services:
     environment:
       - BASE_URL="https://banditlair.com"
       - IMAGE_PROXY=True
-    labels:
-      - "traefik.backend=searx"
-      - "traefik.docker.network=web"
-      - "traefik.frontend.rule=Host:banditlair.com"
-      - "traefik.enable=true"
-      - "traefik.port=8888"
-      - "traefik.default.protocol=http"
+#    labels:
+#      - "traefik.backend=searx"
+#      - "traefik.docker.network=web"
+#      - "traefik.frontend.rule=Host:banditlair.com"
+#      - "traefik.enable=true"
+#      - "traefik.port=8888"
+#      - "traefik.default.protocol=http"
     networks:
       - web
     restart: always

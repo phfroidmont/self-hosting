@@ -1,7 +1,7 @@
 version: "2"
 services:
   db:
-    image: postgres:9.6
+    image: postgres:9
     restart: always
     ports:
       - "127.0.0.1:5432:5432"
@@ -17,15 +17,18 @@ services:
 
   synapse:
     image: matrixdotorg/synapse
-    ports:
-      - "127.0.0.1:8008:8008"
+#    ports:
+      # Coturn
+#      - "3478:3478"
+#      - "5349:5349"
     labels:
-      - "traefik.backend=synapse"
-      - "traefik.docker.network=web"
-      - "traefik.frontend.rule=Host:matrix.banditlair.com"
       - "traefik.enable=true"
-      - "traefik.port=8008"
       - "traefik.default.protocol=http"
+      - "traefik.docker.network=web"
+      - "traefik.port=8008"
+      - "traefik.backend=synapse"
+      - "traefik.frontend.rule=Host:banditlair.com,matrix.banditlair.com"
+      - "traefik.frontend.passHostHeader=true"
     volumes:
       - /var/lib/matrix/media_store:/data/media_store
       - /var/log/synapse:/data/log
@@ -46,6 +49,23 @@ services:
       - ./synapse/turnserver.conf:/etc/coturn/turnserver.conf
     tmpfs:
       - /var/lib/coturn
+
+  dimension:
+    image: turt2live/matrix-dimension
+    labels:
+      - "traefik.docker.network=web"
+      - "traefik.backend=dimension"
+      - "traefik.frontend.rule=Host:dimension.banditlair.com"
+      - "traefik.enable=true"
+      - "traefik.port=8184"
+      - "traefik.default.protocol=http"
+    expose:
+      - 8184
+    volumes:
+      - ./dimension:/data
+    networks:
+      - web
+    restart: always
 
 networks:
   matrix:
