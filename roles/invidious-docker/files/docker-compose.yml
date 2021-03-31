@@ -1,4 +1,4 @@
-version: '3'
+version: '2.4'
 
 networks:
   web:
@@ -24,6 +24,7 @@ services:
     build:
       context: repo
       dockerfile: docker/Dockerfile
+    mem_limit: 2g
     restart: unless-stopped
     volumes:
       - ./config.yml:/invidious/config/config.yml
