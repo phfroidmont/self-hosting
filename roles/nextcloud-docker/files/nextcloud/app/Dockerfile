@@ -1,4 +1,4 @@
-FROM nextcloud:20.0.4-fpm
+FROM nextcloud:21.0.3-fpm
 
 RUN apt-get update && apt-get install -y \
   supervisor \
