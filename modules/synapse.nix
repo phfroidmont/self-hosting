@@ -1,31 +1,10 @@
-{ modulesPath, pkgs, lib, config, ... }:
+{ pkgs, lib, config, ... }:
 let
   fqdn =
     let
       join = hostName: domain: hostName + lib.optionalString (domain != null) ".${domain}";
     in join "matrix" config.networking.domain;
 in {
-  imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
-
-  boot.loader.grub.device = "/dev/sda";
-  fileSystems."/" = { device = "/dev/sda1"; fsType = "ext4"; };
-
-  # Set NIX_PATH to be the same as the Terraform module
-  # nix.nixPath = [ "nixpkgs=${pkgs}" ];
-
-  boot.cleanTmpDir = true;
-
-  networking.hostName = "backend1";
-  networking.domain = "banditlair.com";
-  networking.firewall.allowPing = true;
-  networking.firewall.allowedTCPPorts = [ 80 443 64738 ];
-  networking.firewall.allowedUDPPorts = [ 64738 ];
-
-  services.openssh.enable = true;
-  users.users.root.openssh.authorizedKeys.keyFiles = [
-     ./ssh_keys/phfroidmont-desktop.pub
-  ];
-
   security.acme.email = "letsencrypt.account@banditlair.com";
   security.acme.acceptTerms = true;
 
@@ -113,13 +92,4 @@ in {
     extraConfigFiles = [ "/var/keys/synapse-extra-config.yaml" ];
   };
   users.users.matrix-synapse.extraGroups = [ "keys" ];
-
-  services.murmur = {
-    enable = true;
-    bandwidth = 128000;
-    password = "$MURMURD_PASSWORD";
-    environmentFile = "/var/keys/murmur.env";
-  };
-
-  users.users.murmur.extraGroups = [ "keys" ];
 }

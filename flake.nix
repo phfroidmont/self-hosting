@@ -5,23 +5,49 @@
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
 
-      inputs = with pkgs; [
-        terraform_0_14
-        sops
-      ];
+      common = {
+        modules = [
+          ./hardware/hcloud.nix
+          ./modules/openssh.nix
+        ];
+      };
     in {
       devShell.x86_64-linux = pkgs.mkShell {
-        buildInputs = inputs;
+        buildInputs = with pkgs; [
+          terraform_0_14
+          sops
+        ];
       };
 
-      nixosConfigurations.db1 = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [ { imports = [ ./db1.nix ]; } ];
+      nixosConfigurations = {
+        db1 = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = common.modules ++[
+            ./modules/postgresql.nix
+            ({
+              environment.systemPackages = with pkgs; [
+                htop
+              ];
+              networking.hostName = "db1";
+              networking.domain = "banditlair.com";
+              networking.firewall.interfaces."enp7s0".allowedTCPPorts = [ 5432 ];
+            })
+          ];
+        };
+        backend1 = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = common.modules ++[
+            ./modules/murmur.nix
+            ./modules/synapse.nix
+            ({
+              networking.hostName = "backend1";
+              networking.domain = "banditlair.com";
+              networking.firewall.allowedTCPPorts = [ 80 443 64738 ];
+              networking.firewall.allowedUDPPorts = [ 64738 ];
+            })
+          ];
+        };
       };
 
-      nixosConfigurations.backend1 = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [ { imports = [ ./backend1.nix ]; } ];
-      };
     };
 }
