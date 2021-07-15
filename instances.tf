@@ -53,13 +53,15 @@ module "deploy_nixos_db1" {
   target_host = hcloud_server.db1.ipv4_address
   ssh_agent = true
   keys = {
-    "postgres-init.sql" = <<EOT
+    "postgres-init.sql" = <<-EOT
       CREATE ROLE "synapse" WITH LOGIN PASSWORD '${data.sops_file.secrets.data["synapse.db_password"]}';
       CREATE DATABASE "synapse" WITH OWNER "synapse"
         TEMPLATE template0
         LC_COLLATE = "C"
         LC_CTYPE = "C";
       EOT
+    borgbackup-passphrase = data.sops_file.secrets.data["borg.passphrase"]
+    borgbackup-ssh-key = data.sops_file.secrets.data["borg.client_keys.db1.private"]
   }
 }
 
@@ -100,7 +102,7 @@ module "deploy_nixos_backend1" {
   ssh_agent = true
 
   keys = {
-    "synapse-extra-config.yaml" = <<EOT
+    "synapse-extra-config.yaml" = <<-EOT
       database:
         name: psycopg2
         args:
@@ -110,8 +112,10 @@ module "deploy_nixos_backend1" {
           password: "${data.sops_file.secrets.data["synapse.db_password"]}"
       macaroon_secret_key: "${data.sops_file.secrets.data["synapse.macaroon_secret_key"]}"
       EOT
-    "murmur.env" = <<EOT
+    "murmur.env" = <<-EOT
       MURMURD_PASSWORD=${data.sops_file.secrets.data["murmur.password"]}
       EOT
+    borgbackup-passphrase = data.sops_file.secrets.data["borg.passphrase"]
+    borgbackup-ssh-key = data.sops_file.secrets.data["borg.client_keys.backend1.private"]
   }
 }

@@ -93,6 +93,7 @@ in
     database_args = {
       host = "fake"; # This section is overriden in deploy_nixos keys
     };
+    dataDir = "/nix/var/data/matrix-synapse";
     extraConfigFiles = [ "/var/keys/synapse-extra-config.yaml" ];
   };
   users.users.matrix-synapse.extraGroups = [ "keys" ];
