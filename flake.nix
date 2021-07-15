@@ -9,6 +9,7 @@
         modules = [
           ./hardware/hcloud.nix
           ./modules/openssh.nix
+          ./environment.nix
         ];
       };
     in
@@ -27,9 +28,6 @@
           modules = common.modules ++ [
             ./modules/postgresql.nix
             ({
-              environment.systemPackages = with pkgs; [
-                htop
-              ];
               networking.hostName = "db1";
               networking.domain = "banditlair.com";
               networking.firewall.interfaces."enp7s0".allowedTCPPorts = [ 5432 ];
