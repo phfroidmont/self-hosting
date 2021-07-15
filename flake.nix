@@ -11,9 +11,11 @@
           ./modules/openssh.nix
         ];
       };
-    in {
+    in
+    {
       devShell.x86_64-linux = pkgs.mkShell {
         buildInputs = with pkgs; [
+          nixpkgs-fmt
           terraform_0_14
           sops
         ];
@@ -22,7 +24,7 @@
       nixosConfigurations = {
         db1 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          modules = common.modules ++[
+          modules = common.modules ++ [
             ./modules/postgresql.nix
             ({
               environment.systemPackages = with pkgs; [
@@ -36,7 +38,7 @@
         };
         backend1 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          modules = common.modules ++[
+          modules = common.modules ++ [
             ./modules/murmur.nix
             ./modules/synapse.nix
             ({

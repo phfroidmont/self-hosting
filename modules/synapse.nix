@@ -3,8 +3,10 @@ let
   fqdn =
     let
       join = hostName: domain: hostName + lib.optionalString (domain != null) ".${domain}";
-    in join "matrix" config.networking.domain;
-in {
+    in
+    join "matrix" config.networking.domain;
+in
+{
   security.acme.email = "letsencrypt.account@banditlair.com";
   security.acme.acceptTerms = true;
 
@@ -30,18 +32,20 @@ in {
             # use 443 instead of the default 8448 port to unite
             # the client-server and server-server port for simplicity
             server = { "m.server" = "${fqdn}:443"; };
-          in ''
+          in
+          ''
             add_header Content-Type application/json;
             return 200 '${builtins.toJSON server}';
           '';
         locations."= /.well-known/matrix/client".extraConfig =
           let
             client = {
-              "m.homeserver" =  { "base_url" = "https://${fqdn}"; };
-              "m.identity_server" =  { "base_url" = "https://vector.im"; };
+              "m.homeserver" = { "base_url" = "https://${fqdn}"; };
+              "m.identity_server" = { "base_url" = "https://vector.im"; };
             };
-          # ACAO required to allow element-web on any URL to request this json file
-          in ''
+            # ACAO required to allow element-web on any URL to request this json file
+          in
+          ''
             add_header Content-Type application/json;
             add_header Access-Control-Allow-Origin *;
             return 200 '${builtins.toJSON client}';
