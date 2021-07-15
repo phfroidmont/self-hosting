@@ -1,8 +1,0 @@
-replicas_default_backend: 1
-image_default_backend: gcr.io/google_containers/defaultbackend
-version_default_backend: 1.4
-
-scaleway_servername1: proxy1
-scaleway_servername2: proxy2
-scaleway_ipaddr: "" # set this in the inventory file
-scaleway_reverse_ipaddr: "" # set this in the inventory file

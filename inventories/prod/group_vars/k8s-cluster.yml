@@ -1,3 +1,0 @@
----
-cert_manager_issuer: letsencrypt-production
-banditlair_domain: banditlair.com

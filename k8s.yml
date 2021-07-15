@@ -1,8 +1,0 @@
-- hosts: kube-node
-  roles:
-    - role: keepalived-hcloud
-      tags: keepalived
-
-- name: Include kubespray tasks
-  import_playbook: kubespray.yml
- 

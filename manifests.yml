@@ -1,6 +1,0 @@
-- hosts: kube-master[0]
-  gather_facts: no
-  roles:
-    - role: k8s-manifests
-    - role: k8s-utils
-      tags: ["utils"]

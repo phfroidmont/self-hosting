@@ -1,6 +1,0 @@
-plugin: hcloud
-
-label_selector: type=master
-
-groups:
-  master: yes

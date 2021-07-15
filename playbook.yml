@@ -18,8 +18,6 @@
       tags: [ 'docker' ]
     - role: traefik-proxy-docker
       tags: [ 'traefik' ]
-#    - role: murmur-docker
-#      tags: [ 'murmur' ]
     - role: searx-docker
       tags: [ 'searx' ]
     - role: wiki-docker
@@ -30,8 +28,6 @@
       tags: [ 'gitlab' ]
     - role: nextcloud-docker
       tags: [ 'nextcloud' ]
-#    - role: matrix-docker
-#      tags: [ 'matrix' ]
     - role: torrent-docker
       tags: [ 'torrent' ]
     - role: monit
