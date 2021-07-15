@@ -110,5 +110,8 @@ module "deploy_nixos_backend1" {
           password: "${data.sops_file.secrets.data["synapse.db_password"]}"
       macaroon_secret_key: "${data.sops_file.secrets.data["synapse.macaroon_secret_key"]}"
       EOT
+    "murmur.env" = <<EOT
+      MURMURD_PASSWORD=${data.sops_file.secrets.data["murmur.password"]}
+      EOT
   }
 }

@@ -18,7 +18,8 @@ in {
   networking.hostName = "backend1";
   networking.domain = "banditlair.com";
   networking.firewall.allowPing = true;
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  networking.firewall.allowedTCPPorts = [ 80 443 64738 ];
+  networking.firewall.allowedUDPPorts = [ 64738 ];
 
   services.openssh.enable = true;
   users.users.root.openssh.authorizedKeys.keyFiles = [
@@ -112,4 +113,13 @@ in {
     extraConfigFiles = [ "/var/keys/synapse-extra-config.yaml" ];
   };
   users.users.matrix-synapse.extraGroups = [ "keys" ];
+
+  services.murmur = {
+    enable = true;
+    bandwidth = 128000;
+    password = "$MURMURD_PASSWORD";
+    environmentFile = "/var/keys/murmur.env";
+  };
+
+  users.users.murmur.extraGroups = [ "keys" ];
 }

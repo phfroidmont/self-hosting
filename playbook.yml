@@ -18,8 +18,8 @@
       tags: [ 'docker' ]
     - role: traefik-proxy-docker
       tags: [ 'traefik' ]
-    - role: murmur-docker
-      tags: [ 'murmur' ]
+#    - role: murmur-docker
+#      tags: [ 'murmur' ]
     - role: searx-docker
       tags: [ 'searx' ]
     - role: wiki-docker
