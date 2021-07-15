@@ -7,35 +7,27 @@ data "hetznerdns_zone" "banditlair_zone" {
   name = "banditlair.com"
 }
 
-resource "hetznerdns_record" "banditlair_a" {
+resource "hetznerdns_record" "banditlair_hcloud_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name = "@"
-  value = "144.76.18.197"
+  value = data.hcloud_floating_ip.main_ip.ip_address
   type = "A"
   ttl = 600
 }
 
-resource "hetznerdns_record" "banditlair_cname" {
+resource "hetznerdns_record" "banditlair_dedicated_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name = "*"
-  value = "${data.hetznerdns_zone.banditlair_zone.name}."
-  type = "CNAME"
+  value = "144.76.18.197"
+  type = "A"
   ttl = 600
-}
-
-resource "hetznerdns_record" "ddns_ns" {
-  zone_id = data.hetznerdns_zone.banditlair_zone.id
-  name = "ddns.banditlair.com."
-  value = "ns.banditlair.com."
-  type = "NS"
-  ttl = 3600
 }
 
 # Matrix
 resource "hetznerdns_record" "matrix_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name = "matrix"
-  value = hetznerdns_record.banditlair_a.value
+  value = data.hcloud_floating_ip.main_ip.ip_address
   type = "A"
   ttl = 600
 }
@@ -112,7 +104,7 @@ data "hetznerdns_zone" "falbo_zone" {
 resource "hetznerdns_record" "falbo_a" {
   zone_id = data.hetznerdns_zone.falbo_zone.id
   name = "@"
-  value = hetznerdns_record.banditlair_a.value
+  value = hetznerdns_record.banditlair_dedicated_a.value
   type = "A"
   ttl = 600
 }
@@ -172,7 +164,7 @@ data "hetznerdns_zone" "froidmont_zone" {
 resource "hetznerdns_record" "froidmont_a" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
   name = "@"
-  value = hetznerdns_record.banditlair_a.value
+  value = hetznerdns_record.banditlair_dedicated_a.value
   type = "A"
   ttl = 600
 }
@@ -232,7 +224,7 @@ data "hetznerdns_zone" "stb_zone" {
 resource "hetznerdns_record" "stb_a" {
   zone_id = data.hetznerdns_zone.stb_zone.id
   name = "@"
-  value = hetznerdns_record.banditlair_a.value
+  value = hetznerdns_record.banditlair_dedicated_a.value
   type = "A"
   ttl = 600
 }

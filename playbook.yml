@@ -30,8 +30,8 @@
       tags: [ 'gitlab' ]
     - role: nextcloud-docker
       tags: [ 'nextcloud' ]
-    - role: matrix-docker
-      tags: [ 'matrix' ]
+#    - role: matrix-docker
+#      tags: [ 'matrix' ]
     - role: torrent-docker
       tags: [ 'torrent' ]
     - role: monit
