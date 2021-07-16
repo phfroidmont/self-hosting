@@ -6,7 +6,7 @@
     initialScript = "/var/keys/postgres-init.sql";
     enableTCPIP = true;
     identMap = ''
-    root_as_others         root                  synapse
+      root_as_others         root                  synapse
     '';
     authentication = ''
       local  all     postgres               peer
