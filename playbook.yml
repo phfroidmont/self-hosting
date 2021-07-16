@@ -26,8 +26,6 @@
       tags: [ 'emby' ]
     - role: gitlab-docker
       tags: [ 'gitlab' ]
-    - role: nextcloud-docker
-      tags: [ 'nextcloud' ]
     - role: torrent-docker
       tags: [ 'torrent' ]
     - role: monit

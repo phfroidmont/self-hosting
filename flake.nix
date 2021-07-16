@@ -43,8 +43,10 @@
         backend1 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = common.modules ++ [
+            ./modules/nginx.nix
             ./modules/murmur.nix
             ./modules/synapse.nix
+            ./modules/nextcloud.nix
             ./modules/custom-backup-job.nix
             ({
               networking.hostName = "backend1";
