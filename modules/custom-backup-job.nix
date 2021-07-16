@@ -5,6 +5,11 @@ let
 in
 {
   options.services.custom-backup-job = {
+    additionalPaths = mkOption {
+      type = with types; listOf path;
+      default = [ ];
+    };
+
     additionalReadWritePaths = mkOption {
       type = with types; listOf path;
       default = [ ];
@@ -23,7 +28,7 @@ in
 
   config = {
     services.borgbackup.jobs.data = {
-      paths = [ "/nix/var/data" ];
+      paths = [ "/nix/var/data" ] ++ cfg.additionalPaths;
       doInit = false;
       repo = "backup@212.129.12.205:./";
       encryption = {

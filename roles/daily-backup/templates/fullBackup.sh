@@ -7,8 +7,8 @@ REPOSITORY=ssh://backup@212.129.12.205:22/./
 
 export BORG_PASSPHRASE='{{backup_borg_passphrase}}'
 
-echo 'Dumping NextCloud database'
-docker exec nextcloud_postgres_1 sh -c "pg_dump -U nextcloud nextcloud > /backups/database.dmp"
+#echo 'Dumping NextCloud database'
+#docker exec nextcloud_postgres_1 sh -c "pg_dump -U nextcloud nextcloud > /backups/database.dmp"
 
 echo 'Dumping S.T.B. wordpress database'
 docker exec stb_db_1 sh -c "mysqldump -u stb -p{{stb_mysql_password}} stb > /backups/database.dmp"

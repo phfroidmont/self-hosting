@@ -34,7 +34,10 @@
               networking.firewall.interfaces."enp7s0".allowedTCPPorts = [ 5432 ];
               services.custom-backup-job = {
                 additionalReadWritePaths = [ "/nix/var/data/postgresql" ];
-                additionalPreHook = "${pkgs.postgresql_12}/bin/pg_dump -U synapse synapse > /nix/var/data/postgresql/synapse.dmp";
+                additionalPreHook = ''
+                  ${pkgs.postgresql_12}/bin/pg_dump -U synapse synapse > /nix/var/data/postgresql/synapse.dmp
+                  ${pkgs.postgresql_12}/bin/pg_dump -U nextcloud nextcloud > /nix/var/data/postgresql/nextcloud.dmp
+                '';
                 startAt = "03:00";
               };
             })
@@ -54,6 +57,7 @@
               networking.firewall.allowedTCPPorts = [ 80 443 64738 ];
               networking.firewall.allowedUDPPorts = [ 64738 ];
               services.custom-backup-job = {
+                additionalPaths = [ "/var/lib/nextcloud/config" ];
                 additionalReadWritePaths = [ "/nix/var/data/murmur" ];
                 additionalPreHook = "cp /var/lib/murmur/murmur.sqlite /nix/var/data/murmur/murmur.sqlite";
                 startAt = "03:30";
