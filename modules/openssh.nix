@@ -3,5 +3,6 @@
   services.openssh.enable = true;
   users.users.root.openssh.authorizedKeys.keyFiles = [
     ../ssh_keys/phfroidmont-desktop.pub
+    ../ssh_keys/froidmpa-laptop.pub
   ];
 }

@@ -54,6 +54,7 @@
             ({
               networking.hostName = "backend1";
               networking.domain = "banditlair.com";
+              networking.localCommands = "ip addr add 95.216.177.3/32 dev enp1s0";
               networking.firewall.allowedTCPPorts = [ 80 443 64738 ];
               networking.firewall.allowedUDPPorts = [ 64738 ];
               services.custom-backup-job = {

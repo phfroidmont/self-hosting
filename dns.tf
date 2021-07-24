@@ -23,6 +23,14 @@ resource "hetznerdns_record" "banditlair_dedicated_a" {
   ttl = 600
 }
 
+resource "hetznerdns_record" "nextcloud_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name = "cloud"
+  value = data.hcloud_floating_ip.main_ip.ip_address
+  type = "A"
+  ttl = 600
+}
+
 # Matrix
 resource "hetznerdns_record" "matrix_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
