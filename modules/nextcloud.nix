@@ -58,6 +58,7 @@ in
       dbpassFile = "/var/keys/nextcloud-db-pass";
       adminpassFile = "/var/keys/nextcloud-admin-pass";
       adminuser = "root";
+      overwriteProtocol = "https";
     };
   };
   users.users.nextcloud.extraGroups = [ "keys" ];
