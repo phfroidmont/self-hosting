@@ -4,7 +4,7 @@ let
     let
       join = hostName: domain: hostName + lib.optionalString (domain != null) ".${domain}";
     in
-    join "matrix" config.networking.domain;
+      join "matrix" config.networking.domain;
 in
 {
   security.acme.email = "letsencrypt.account@banditlair.com";
@@ -18,6 +18,7 @@ in
       "${config.networking.domain}" = {
         enableACME = true;
         forceSSL = true;
+        acmeFallbackHost = "storage1.banditlair.com";
 
         locations."= /.well-known/matrix/server".extraConfig =
           let
@@ -25,10 +26,10 @@ in
             # the client-server and server-server port for simplicity
             server = { "m.server" = "${fqdn}:443"; };
           in
-          ''
-            add_header Content-Type application/json;
-            return 200 '${builtins.toJSON server}';
-          '';
+            ''
+              add_header Content-Type application/json;
+              return 200 '${builtins.toJSON server}';
+            '';
         locations."= /.well-known/matrix/client".extraConfig =
           let
             client = {
@@ -37,11 +38,11 @@ in
             };
             # ACAO required to allow element-web on any URL to request this json file
           in
-          ''
-            add_header Content-Type application/json;
-            add_header Access-Control-Allow-Origin *;
-            return 200 '${builtins.toJSON client}';
-          '';
+            ''
+              add_header Content-Type application/json;
+              add_header Access-Control-Allow-Origin *;
+              return 200 '${builtins.toJSON client}';
+            '';
       };
 
       # Reverse proxy for Matrix client-server and server-server communication
