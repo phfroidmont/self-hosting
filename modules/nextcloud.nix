@@ -30,13 +30,6 @@ in
       options = sshfsOptions;
     };
 
-  fileSystems."/run/mount/media" =
-    {
-      device = " www-data@10.0.2.2:/data";
-      fsType = "fuse.sshfs";
-      options = sshfsOptions;
-    };
-
   services.nginx = {
     virtualHosts = {
       "${config.services.nextcloud.hostName}" = {
