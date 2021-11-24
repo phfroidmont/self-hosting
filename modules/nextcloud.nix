@@ -41,7 +41,7 @@ in
 
   services.nextcloud = {
     enable = true;
-    package = pkgs.nextcloud21;
+    package = pkgs.nextcloud22;
     hostName = "cloud.${config.networking.domain}";
     config = {
       dbtype = "pgsql";
@@ -52,6 +52,7 @@ in
       adminpassFile = "/var/keys/nextcloud-admin-pass";
       adminuser = "root";
       overwriteProtocol = "https";
+      defaultPhoneRegion = "BE";
     };
   };
   users.users.nextcloud.extraGroups = [ "keys" ];
