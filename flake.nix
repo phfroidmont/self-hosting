@@ -46,6 +46,20 @@
             )
           ];
         };
+        storage1 = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./profiles/storage.nix
+            (
+              {
+                networking.hostName = "storage1";
+                networking.domain = "banditlair.com";
+
+                system.stateVersion = "21.05";
+              }
+            )
+          ];
+        };
       };
 
       deploy.nodes = {
@@ -63,6 +77,14 @@
             user = "root";
             sshUser = "root";
             path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.backend1;
+          };
+        };
+        storage1 = {
+          hostname = "78.46.96.243";
+          profiles.system = {
+            user = "root";
+            sshUser = "root";
+            path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.storage1;
           };
         };
       };
