@@ -34,7 +34,7 @@
         allow localhost
 
       check file nextcloud-data-mounted with path /var/lib/nextcloud/data/index.html
-        if does not exist then exec "${pkgs.systemd}/bin/systemctl restart var-lib-nextcloud-data.mount"
+        start = "${pkgs.systemd}/bin/systemctl start var-lib-nextcloud-data.mount"
     '';
   };
 
