@@ -10,12 +10,12 @@ in
       default = [ ];
     };
 
-    additionalReadWritePaths = mkOption {
+    readWritePaths = mkOption {
       type = with types; listOf path;
       default = [ ];
     };
 
-    additionalPreHook = mkOption {
+    preHook = mkOption {
       type = types.lines;
       default = "";
     };
@@ -24,25 +24,31 @@ in
       type = with types; either str (listOf str);
       default = "03:30";
     };
+
+    sshKey = mkOption {
+      type = with types; path;
+    };
   };
 
   config = {
+
+    sops.secrets = {
+      borgPassphrase = {
+        owner = config.services.borgbackup.jobs.data.user;
+        key = "borg/passphrase";
+      };
+    };
     services.borgbackup.jobs.data = {
-      paths = [ "/nix/var/data" ] ++ cfg.additionalPaths;
+      paths = [ "/nix/var/data" cfg.sshKey ] ++ cfg.additionalPaths;
       doInit = false;
       repo = "backup@212.129.12.205:./";
       encryption = {
         mode = "repokey-blake2";
-        passCommand = "cat /var/keys/borgbackup-passphrase";
+        passCommand = "cat ${config.sops.secrets.borgPassphrase.path}";
       };
-      readWritePaths = [
-        "/var/keys/borgbackup-ssh-key"
-      ] ++ cfg.additionalReadWritePaths;
-      preHook = ''
-        #There is no way to specify the permissions on keys so we fix them here
-        chmod 0600 /var/keys/borgbackup-ssh-key
-      '' + cfg.additionalPreHook;
-      environment = { BORG_RSH = "ssh -i /var/keys/borgbackup-ssh-key"; };
+      readWritePaths = cfg.readWritePaths;
+      preHook = cfg.preHook;
+      environment = { BORG_RSH = "ssh -i ${cfg.sshKey}"; };
       compression = "lz4";
       startAt = cfg.startAt;
       prune.keep = {

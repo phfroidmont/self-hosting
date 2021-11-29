@@ -4,5 +4,6 @@
     htop
     nload
     tmux
+    vim
   ];
 }

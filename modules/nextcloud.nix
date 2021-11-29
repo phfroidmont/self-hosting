@@ -6,29 +6,54 @@ let
   gidFile = pkgs.writeText "gidfile" ''
     nextcloud:33
   '';
-  sshfsOptions = [
-    "nofail"
-    "identityfile=/var/keys/sshfs-ssh-key"
-    "ServerAliveInterval=15"
-    "idmap=file"
-    "uidfile=${uidFile}"
-    "gidfile=${gidFile}"
-    "allow_other"
-    "default_permissions"
-    "nomap=ignore"
-  ];
 in
 {
+  sops.secrets = {
+    sshfsKey = {
+      key = "sshfs_keys/private";
+      restartUnits = [ "var-lib-nextcloud-data.mount" ];
+    };
+    nextcloudDbPassword = {
+      owner = config.users.users.nextcloud.name;
+      key = "nextcloud/db_password";
+      restartUnits = [ "nextcloud-setup.service" ];
+    };
+    nextcloudAdminPassword = {
+      owner = config.users.users.nextcloud.name;
+      key = "nextcloud/admin_password";
+      restartUnits = [ "nextcloud-setup.service" ];
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     sshfs
   ];
 
-  fileSystems."/var/lib/nextcloud/data" =
-    {
-      device = " www-data@10.0.2.2:/var/lib/nextcloud/data";
-      fsType = "fuse.sshfs";
-      options = sshfsOptions;
+  systemd.services.nextcloud-data-sshfs = {
+    wantedBy = [ "multi-user.target" ];
+    before = [ "phpfpm-nextcloud.service" ];
+    restartIfChanged = false;
+    serviceConfig = {
+      ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p /var/lib/nextcloud/data";
+      ExecStart =
+        let
+          options = builtins.concatStringsSep "," [
+            "identityfile=${config.sops.secrets.sshfsKey.path}"
+            "ServerAliveInterval=15"
+            "idmap=file"
+            "uidfile=${uidFile}"
+            "gidfile=${gidFile}"
+            "allow_other"
+            "default_permissions"
+            "nomap=ignore"
+          ];
+        in
+        "${pkgs.sshfs}/bin/mount.fuse.sshfs www-data@10.0.2.2:/var/lib/nextcloud/data "
+        + "/var/lib/nextcloud/data -o ${options}";
+      ExecStopPost = "-${pkgs.fuse}/bin/fusermount -u /var/lib/nextcloud/data";
+      KillMode = "process";
     };
+  };
 
   services.nginx = {
     virtualHosts = {
@@ -48,12 +73,11 @@ in
       dbuser = "nextcloud";
       dbhost = "10.0.1.11";
       dbname = "nextcloud";
-      dbpassFile = "/var/keys/nextcloud-db-pass";
-      adminpassFile = "/var/keys/nextcloud-admin-pass";
+      dbpassFile = "${config.sops.secrets.nextcloudDbPassword.path}";
+      adminpassFile = "${config.sops.secrets.nextcloudAdminPassword.path}";
       adminuser = "root";
       overwriteProtocol = "https";
       defaultPhoneRegion = "BE";
     };
   };
-  users.users.nextcloud.extraGroups = [ "keys" ];
 }

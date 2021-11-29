@@ -1,0 +1,11 @@
+keys:
+  - &admin 3AC6F170F01133CE393BCD94BE948AFD7E7873BE
+  - &server ebdabf42731801d79db14c893639d8f0c7ff61ed
+  - &storage1 7675e1c632a9a0644c6ab828dbcc48a5300773a8
+creation_rules:
+  - path_regex: secrets.enc.yml$
+    key_groups:
+    - pgp:
+      - *admin
+      - *server
+      - *storage1

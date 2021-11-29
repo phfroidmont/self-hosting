@@ -22,6 +22,14 @@ resource "hetznerdns_record" "backend1_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "mail2_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "mail2"
+  value   = "78.46.96.243"
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "db1_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "db1"

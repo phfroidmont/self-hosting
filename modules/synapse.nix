@@ -4,7 +4,17 @@ let
     let
       join = hostName: domain: hostName + lib.optionalString (domain != null) ".${domain}";
     in
-      join "matrix" config.networking.domain;
+    join "matrix" config.networking.domain;
+  synapseDbConfig = pkgs.writeText "synapse-db-config.yaml" ''
+    database:
+        name: psycopg2
+        args:
+          database: synapse
+          host: "10.0.1.11"
+          user: "synapse"
+          password: "SYNAPSE_DB_PASSWORD"
+    macaroon_secret_key: "MACAROON_SECRET_KEY"
+  '';
 in
 {
   security.acme.email = "letsencrypt.account@banditlair.com";
@@ -26,10 +36,10 @@ in
             # the client-server and server-server port for simplicity
             server = { "m.server" = "${fqdn}:443"; };
           in
-            ''
-              add_header Content-Type application/json;
-              return 200 '${builtins.toJSON server}';
-            '';
+          ''
+            add_header Content-Type application/json;
+            return 200 '${builtins.toJSON server}';
+          '';
         locations."= /.well-known/matrix/client".extraConfig =
           let
             client = {
@@ -38,11 +48,11 @@ in
             };
             # ACAO required to allow element-web on any URL to request this json file
           in
-            ''
-              add_header Content-Type application/json;
-              add_header Access-Control-Allow-Origin *;
-              return 200 '${builtins.toJSON client}';
-            '';
+          ''
+            add_header Content-Type application/json;
+            add_header Access-Control-Allow-Origin *;
+            return 200 '${builtins.toJSON client}';
+          '';
       };
 
       # Reverse proxy for Matrix client-server and server-server communication
@@ -62,6 +72,43 @@ in
         };
       };
     };
+  };
+
+  sops.secrets = {
+    synapseDbPassword = {
+      owner = config.systemd.services.matrix-synapse.serviceConfig.User;
+      key = "synapse/db_password";
+      restartUnits = [ "matrix-synapse-setup" ];
+    };
+    macaroonSecretKey = {
+      owner = config.systemd.services.matrix-synapse.serviceConfig.User;
+      key = "synapse/macaroon_secret_key";
+      restartUnits = [ "matrix-synapse-setup" ];
+    };
+  };
+
+  systemd.services.matrix-synapse-setup = {
+    before = [ "matrix-synapse.service" ];
+
+    script = ''
+      set -euo pipefail
+      install -m 600 ${synapseDbConfig} /run/synapse/synapse-db-config.yaml
+      ${pkgs.replace-secret}/bin/replace-secret 'SYNAPSE_DB_PASSWORD' '${config.sops.secrets.synapseDbPassword.path}' /run/synapse/synapse-db-config.yaml
+      ${pkgs.replace-secret}/bin/replace-secret 'MACAROON_SECRET_KEY' '${config.sops.secrets.macaroonSecretKey.path}' /run/synapse/synapse-db-config.yaml
+    '';
+
+    serviceConfig = {
+      User = config.systemd.services.matrix-synapse.serviceConfig.User;
+      Group = config.systemd.services.matrix-synapse.serviceConfig.Group;
+      Type = "oneshot";
+      RemainAfterExit = true;
+      RuntimeDirectory = "synapse";
+    };
+  };
+
+  systemd.services.matrix-synapse = {
+    after = [ "matrix-synapse-setup.service" "network.target" ];
+    bindsTo = [ "matrix-synapse-setup.service" ];
   };
 
   services.matrix-synapse = {
@@ -87,7 +134,6 @@ in
       host = "fake"; # This section is overriden in deploy_nixos keys
     };
     dataDir = "/nix/var/data/matrix-synapse";
-    extraConfigFiles = [ "/var/keys/synapse-extra-config.yaml" ];
+    extraConfigFiles = [ "/run/synapse/synapse-db-config.yaml" ];
   };
-  users.users.matrix-synapse.extraGroups = [ "keys" ];
 }

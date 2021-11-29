@@ -1,11 +1,15 @@
 { config, lib, pkgs, ... }:
 {
+  sops.secrets.murmurEnvFile = {
+    owner = config.systemd.services.murmur.serviceConfig.User;
+    key = "murmur.env";
+    restartUnits = [ "murmur.service" ];
+  };
+
   services.murmur = {
     enable = true;
     bandwidth = 128000;
     password = "$MURMURD_PASSWORD";
-    environmentFile = "/var/keys/murmur.env";
+    environmentFile = config.sops.secrets.murmurEnvFile.path;
   };
-
-  users.users.murmur.extraGroups = [ "keys" ];
 }

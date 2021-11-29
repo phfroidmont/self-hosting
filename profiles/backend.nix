@@ -11,11 +11,19 @@
     ../modules/custom-backup-job.nix
   ];
 
+  sops.secrets = {
+    borgSshKey = {
+      owner = config.services.borgbackup.jobs.data.user;
+      key = "borg/client_keys/backend1/private";
+    };
+  };
+
   services.custom-backup-job = {
     additionalPaths = [ "/var/lib/nextcloud/config" ];
-    additionalReadWritePaths = [ "/nix/var/data/murmur" ];
-    additionalPreHook = "cp /var/lib/murmur/murmur.sqlite /nix/var/data/murmur/murmur.sqlite";
+    readWritePaths = [ "/nix/var/data/murmur" ];
+    preHook = "cp /var/lib/murmur/murmur.sqlite /nix/var/data/murmur/murmur.sqlite";
     startAt = "03:30";
+    sshKey = config.sops.secrets.borgPassphrase.path;
   };
 
   networking.localCommands = "ip addr add 95.216.177.3/32 dev enp1s0";
@@ -34,7 +42,7 @@
         allow localhost
 
       check file nextcloud-data-mounted with path /var/lib/nextcloud/data/index.html
-        start = "${pkgs.systemd}/bin/systemctl start var-lib-nextcloud-data.mount"
+        start = "${pkgs.systemd}/bin/systemctl start nextcloud-data-sshfs.service"
     '';
   };
 
