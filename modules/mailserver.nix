@@ -33,7 +33,7 @@
     };
 
 
-    # certificateScheme = 3;
+    certificateScheme = 3;
   };
 
 }
