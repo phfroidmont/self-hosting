@@ -10,6 +10,7 @@
     ../modules/nextcloud.nix
     ../modules/custom-backup-job.nix
     ../modules/dokuwiki.nix
+    ../modules/website-marie.nix
   ];
 
   sops.secrets = {

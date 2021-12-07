@@ -38,6 +38,7 @@ resource "hetznerdns_record" "jellyfin_a" {
   type    = "A"
   ttl     = 600
 }
+
 resource "hetznerdns_record" "anderia_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "anderia"
@@ -45,6 +46,7 @@ resource "hetznerdns_record" "anderia_a" {
   type    = "A"
   ttl     = 600
 }
+
 resource "hetznerdns_record" "arkadia_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "arkadia"
@@ -218,6 +220,14 @@ resource "hetznerdns_record" "froidmont_a" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
   name    = "@"
   value   = hetznerdns_record.banditlair_dedicated_a.value
+  type    = "A"
+  ttl     = 600
+}
+
+resource "hetznerdns_record" "website_marie_a" {
+  zone_id = data.hetznerdns_zone.froidmont_zone.id
+  name    = "osteopathie"
+  value   = data.hcloud_floating_ip.main_ip.ip_address
   type    = "A"
   ttl     = 600
 }
