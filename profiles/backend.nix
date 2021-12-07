@@ -9,6 +9,7 @@
     ../modules/synapse.nix
     ../modules/nextcloud.nix
     ../modules/custom-backup-job.nix
+    ../modules/dokuwiki.nix
   ];
 
   sops.secrets = {
@@ -26,7 +27,18 @@
     sshKey = config.sops.secrets.borgPassphrase.path;
   };
 
-  networking.localCommands = "ip addr add 95.216.177.3/32 dev enp1s0";
+  networking.interfaces.enp1s0 = {
+    useDHCP = true;
+    ipv4 = {
+      addresses = [
+        {
+          address = "95.216.177.3";
+          prefixLength = 32;
+        }
+      ];
+    };
+  };
+
   networking.firewall.allowedTCPPorts = [ 80 443 64738 ];
   networking.firewall.allowedUDPPorts = [ 64738 ];
 
@@ -45,6 +57,4 @@
         start = "${pkgs.systemd}/bin/systemctl start nextcloud-data-sshfs.service"
     '';
   };
-
-  networking.firewall.interfaces."ens10".allowedTCPPorts = [ 80 ];
 }

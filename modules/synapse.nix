@@ -28,7 +28,7 @@ in
       "${config.networking.domain}" = {
         enableACME = true;
         forceSSL = true;
-        acmeFallbackHost = "storage1.banditlair.com";
+        # acmeFallbackHost = "storage1.banditlair.com";
 
         locations."= /.well-known/matrix/server".extraConfig =
           let

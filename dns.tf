@@ -38,6 +38,20 @@ resource "hetznerdns_record" "jellyfin_a" {
   type    = "A"
   ttl     = 600
 }
+resource "hetznerdns_record" "anderia_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "anderia"
+  value   = data.hcloud_floating_ip.main_ip.ip_address
+  type    = "A"
+  ttl     = 600
+}
+resource "hetznerdns_record" "arkadia_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "arkadia"
+  value   = data.hcloud_floating_ip.main_ip.ip_address
+  type    = "A"
+  ttl     = 600
+}
 resource "hetznerdns_record" "db1_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "db1"
