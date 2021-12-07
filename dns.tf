@@ -1,5 +1,6 @@
 locals {
   dmarc_value = "\"v=DMARC1; p=none; rua=mailto:failed-dmarc@banditlair.com; ruf=mailto:dmarc@banditlair.com\""
+  storage1_ip = "78.46.96.243"
 }
 
 data "hetznerdns_zone" "banditlair_zone" {
@@ -25,11 +26,18 @@ resource "hetznerdns_record" "backend1_a" {
 resource "hetznerdns_record" "mail2_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "mail2"
-  value   = "78.46.96.243"
+  value   = local.storage1_ip
   type    = "A"
   ttl     = 600
 }
 
+resource "hetznerdns_record" "jellyfin_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "jellyfin"
+  value   = local.storage1_ip
+  type    = "A"
+  ttl     = 600
+}
 resource "hetznerdns_record" "db1_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "db1"

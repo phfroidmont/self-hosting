@@ -6,5 +6,8 @@
     ../modules/openssh.nix
     ../modules/mailserver.nix
     ../modules/nginx.nix
+    ../modules/jellyfin.nix
   ];
+
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
 }

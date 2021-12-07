@@ -55,14 +55,11 @@ in
     };
   };
 
-  services.nginx = {
-    virtualHosts = {
-      "${config.services.nextcloud.hostName}" = {
-        enableACME = true;
-        forceSSL = true;
-      };
-    };
+  services.nginx.virtualHosts."${config.services.nextcloud.hostName}" = {
+    enableACME = true;
+    forceSSL = true;
   };
+
 
   services.nextcloud = {
     enable = true;
