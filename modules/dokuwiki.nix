@@ -16,4 +16,7 @@ let
     };
   };
 in
-configureWiki "anderia" // configureWiki "arkadia"
+lib.mkMerge [
+  (configureWiki "anderia")
+  (configureWiki "arkadia")
+]
