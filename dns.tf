@@ -287,7 +287,7 @@ data "hetznerdns_zone" "stb_zone" {
 resource "hetznerdns_record" "stb_a" {
   zone_id = data.hetznerdns_zone.stb_zone.id
   name    = "@"
-  value   = hetznerdns_record.banditlair_dedicated_a.value
+  value   = local.storage1_ip
   type    = "A"
   ttl     = 600
 }

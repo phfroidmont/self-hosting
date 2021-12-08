@@ -7,6 +7,7 @@
     ../modules/mailserver.nix
     ../modules/nginx.nix
     ../modules/jellyfin.nix
+    ../modules/stb.nix
   ];
 
   networking.firewall.allowedTCPPorts = [ 80 443 ];
