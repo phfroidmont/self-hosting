@@ -1,10 +1,19 @@
 { config, lib, pkgs, ... }:
 let
   configureWiki = name: {
+
+    sops.secrets."usersFile-${name}" = {
+      owner = "dokuwiki";
+      key = "wiki/${name}/users_file";
+      restartUnits = [ "phpfpm-dokuwiki-${name}.${config.networking.domain}.service" ];
+    };
+
     services.dokuwiki.sites = {
       "${name}.${config.networking.domain}" = {
         enable = true;
         stateDir = "/nix/var/data/dokuwiki/${name}/data";
+        usersFile = config.sops.secrets."usersFile-${name}".path;
+        disableActions = "register";
       };
     };
 
