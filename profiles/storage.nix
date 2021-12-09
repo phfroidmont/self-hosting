@@ -8,7 +8,8 @@
     ../modules/nginx.nix
     ../modules/jellyfin.nix
     ../modules/stb.nix
+    ../modules/monero.nix
   ];
 
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  networking.firewall.allowedTCPPorts = [ 80 443 18080 ];
 }
