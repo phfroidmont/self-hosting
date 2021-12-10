@@ -41,6 +41,7 @@ in
       };
       volumes = [ "/var/lib/mariadb/stb:/var/lib/mysql" ];
       extraOptions = [ "--network=stb-br" ];
+      autoStart = true;
     };
 
     "stb-wordpress" = {
@@ -51,6 +52,7 @@ in
       ];
       ports = [ "8080:80" ];
       extraOptions = [ "--network=stb-br" ];
+      autoStart = true;
     };
   };
 

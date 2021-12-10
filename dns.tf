@@ -39,6 +39,46 @@ resource "hetznerdns_record" "jellyfin_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "transmission_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "transmission"
+  value   = local.storage1_ip
+  type    = "A"
+  ttl     = 600
+}
+
+resource "hetznerdns_record" "jackett_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "jackett"
+  value   = local.storage1_ip
+  type    = "A"
+  ttl     = 600
+}
+
+resource "hetznerdns_record" "sonarr_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "sonarr"
+  value   = local.storage1_ip
+  type    = "A"
+  ttl     = 600
+}
+
+resource "hetznerdns_record" "radarr_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "radarr"
+  value   = local.storage1_ip
+  type    = "A"
+  ttl     = 600
+}
+
+resource "hetznerdns_record" "headphones_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "headphones"
+  value   = local.storage1_ip
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "monero_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "monero"
