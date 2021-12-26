@@ -33,21 +33,47 @@
   nix.maxJobs = lib.mkDefault 8;
   powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";
 
+  networking = {
+    useDHCP = false;
+    defaultGateway = "78.46.96.225";
+    defaultGateway6 = { address = "fe80::1"; interface = "enp2s0"; };
+    nameservers = [
+      "213.133.100.100"
+      "213.133.99.99"
+      "213.133.98.98"
+    ];
+    interfaces = {
+      enp2s0 = {
+        ipv4.addresses = [
+          {
+            address = "78.46.96.243";
+            prefixLength = 24;
+          }
+        ];
+        ipv6.addresses = [
+          {
+            address = "2a01:4f8:120:8233::1";
+            prefixLength = 64;
+          }
+        ];
+      };
+      vlan4000 = {
+        mtu = 1400;
+        ipv4 = {
+          addresses = [{
+            address = "10.0.2.3";
+            prefixLength = 24;
+          }];
+          routes = [{
+            address = "10.0.0.0";
+            prefixLength = 16;
+            via = "10.0.2.1";
+          }];
+        };
+      };
+    };
+    vlans.vlan4000 = { id = 4000; interface = "enp2s0"; };
+  };
 
-  networking.useDHCP = false;
-  networking.interfaces."enp2s0".ipv4.addresses = [
-    {
-      address = "78.46.96.243";
-      prefixLength = 24;
-    }
-  ];
-  networking.interfaces."enp2s0".ipv6.addresses = [
-    {
-      address = "2a01:4f8:120:8233::1";
-      prefixLength = 64;
-    }
-  ];
-  networking.defaultGateway = "78.46.96.225";
-  networking.defaultGateway6 = { address = "fe80::1"; interface = "enp2s0"; };
-  networking.nameservers = [ "8.8.8.8" ];
+
 }

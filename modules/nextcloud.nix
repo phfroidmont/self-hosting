@@ -1,10 +1,10 @@
 { config, lib, pkgs, ... }:
 let
   uidFile = pkgs.writeText "uidfile" ''
-    nextcloud:33
+    nextcloud:993
   '';
   gidFile = pkgs.writeText "gidfile" ''
-    nextcloud:33
+    nextcloud:991
   '';
 in
 {
@@ -48,7 +48,7 @@ in
             "nomap=ignore"
           ];
         in
-        "${pkgs.sshfs}/bin/mount.fuse.sshfs www-data@10.0.2.2:/var/lib/nextcloud/data "
+        "${pkgs.sshfs}/bin/mount.fuse.sshfs www-data@10.0.2.3:/nix/var/data/nextcloud/data "
         + "/var/lib/nextcloud/data -o ${options}";
       ExecStopPost = "-${pkgs.fuse}/bin/fusermount -u /var/lib/nextcloud/data";
       KillMode = "process";

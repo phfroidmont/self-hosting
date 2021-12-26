@@ -105,6 +105,7 @@
         hashedPasswordFile = config.sops.secrets.eliosPassword.path;
         aliases = [
           "webshit@banditlair.com"
+          "outlook-pascal@banditlair.com"
           "nexusmods.webshit@banditlair.com"
           "pizza.webshit@banditlair.com"
           "fnac.webshit@banditlair.com"
