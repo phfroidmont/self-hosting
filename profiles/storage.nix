@@ -24,4 +24,10 @@
     group = config.users.groups.www-data.name;
   };
   users.groups.www-data = { gid = 991; };
+
+  users.users.steam = {
+    isNormalUser = true;
+    group = config.users.groups.steam.name;
+  };
+  users.groups.steam = { };
 }

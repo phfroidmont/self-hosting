@@ -113,7 +113,7 @@ resource "hetznerdns_record" "db1_a" {
 resource "hetznerdns_record" "banditlair_dedicated_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "*"
-  value   = "144.76.18.197"
+  value   = local.storage1_ip
   type    = "A"
   ttl     = 600
 }
@@ -194,8 +194,8 @@ resource "hetznerdns_record" "dmarc_report_falbo_txt" {
 
 resource "hetznerdns_record" "dkim_txt" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
-  name    = "dkim._domainkey"
-  value   = "\"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwDEwt+a0neFlyq7ndCj0EECUp4bsusFpL2aVzroLY5Xw9S//dYuXUp1sr/yiivS71WyNjt7tOpuonu0gGEWpc6RPyeZrzXQg+zY1k/1+cLXFMz5HmJJaAbNxK02Qn89qfk/Y3pbuJt6Y/NBQ4KVOCZQB2hCT2izVSWSkhegYTCwIDAQAB\""
+  name    = "mail._domainkey"
+  value   = "\"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCgRhQ9zN4hkiASKH4kTfWUSBz+Ov7BvH0459BDVeSNQFjH3KjmofJicKQ6eWXGJOSz4jCpNDRdgMbkVHEiTHOcKd/u9LqxEchWKZU50lwSrYhUmr8j+b4vgf+sUxIWKCZUNuyrDp2ROeheA3Pbx+fYJb3VhGTZecLlchMrRjBJqwIDAQAB\""
   type    = "TXT"
   ttl     = 600
 }
@@ -254,8 +254,8 @@ resource "hetznerdns_record" "falbo_dmarc_txt" {
 
 resource "hetznerdns_record" "falbo_dkim_txt" {
   zone_id = data.hetznerdns_zone.falbo_zone.id
-  name    = "dkim._domainkey"
-  value   = "\"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDWJwmQoiaxKCp6Cj+rELeHicd7VD1l/Q5KKQURgt1wIAY36bwbFYeuN/+ULruJzbnoyJ63G2QttO4H6MLdVTgNRjTuixmoE5mZEAE/7BlyAfDS0MLUXyGbxD6WtGZPT6PQ1cxWp9jVvYUs/NypcRfpDu0J9IXX6+coQM5CMLLdRwIDAQAB\""
+  name    = "mail._domainkey"
+  value   = "\"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCY6ESTQcWbZVNxjb8TFhpyhCoG6Ri8OV1MijDHGNmpLye8AsuMzaEdcFk59AoIWPI6P9ZGIXzYTTwRxXhCIBrRJgcDGrbTAQ7tuaKggJRCXhan7FVMizZSJ53NEr3f4PFaBtrV0Ni8f7ENuT6WcQQ+JsMN3vEGbwA1LmgHH2XSBQIDAQAB\""
   type    = "TXT"
   ttl     = 600
 }
@@ -322,8 +322,8 @@ resource "hetznerdns_record" "froidmont_dmarc_txt" {
 
 resource "hetznerdns_record" "froidmont_dkim_txt" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
-  name    = "dkim._domainkey"
-  value   = "\"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDlBZhkvPboheAWQtlWZCJpxIsjLvMOjn9TUHpyNz/tATA4/I6m21YlXreyHVoLLkaGOS/jXx2dptU/l6C0Bu+HdhcyBqw3tOxnTwDzD07h58u1mM5L//k/F+YsD+onCWYehQpIzCeRGgNe1w4QN11im4VVoNznFPzwMLIeepbg/QIDAQAB\""
+  name    = "mail._domainkey"
+  value   = "\"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDoY56+gnsfCFGVchumtl7mnRuFENBKoTojxpMZQ8kHPY68pkTg7Xw0M6GtfLQQa/2VGCddQIYcXH74nu7J/4vakEPLp7JYsToqbLOucfXoFbBAQN3N43YyUsp8DqMh80y0UjItHf04HQUfa+OyjJWZD9JZm2oKIAO4Z0X0RoSyWwIDAQAB\""
   type    = "TXT"
   ttl     = 600
 }
