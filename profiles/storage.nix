@@ -12,6 +12,7 @@
     ../modules/torrents.nix
     ../modules/custom-backup-job.nix
     ../modules/custom-monit.nix
+    ../modules/jitsi.nix
   ];
 
   sops.secrets = {

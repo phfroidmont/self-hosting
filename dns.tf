@@ -47,6 +47,14 @@ resource "hetznerdns_record" "jellyfin_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "jitsi_a" {
+  zone_id = data.hetznerdns_zone.froidmont_zone.id
+  name    = "jitsi"
+  value   = local.storage1_ip
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "transmission_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "transmission"
