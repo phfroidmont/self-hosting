@@ -23,7 +23,9 @@
     enable = true;
     fqdn = "mail.banditlair.com";
     domains = [ "banditlair.com" "froidmont.org" "falbo.fr" ];
+    enableManageSieve = true;
     mailDirectory = "/nix/var/data/vmail";
+    sieveDirectory = "/nix/var/data/sieve";
     lmtpSaveToDetailMailbox = "no";
     loginAccounts = {
       "paultrial@banditlair.com" = {

@@ -23,6 +23,7 @@
     preHook = ''
       ${pkgs.postgresql_12}/bin/pg_dump -U synapse synapse > /nix/var/data/postgresql/synapse.dmp
       ${pkgs.postgresql_12}/bin/pg_dump -U nextcloud nextcloud > /nix/var/data/postgresql/nextcloud.dmp
+      ${pkgs.postgresql_12}/bin/pg_dump -U roundcube roundcube > /nix/var/data/postgresql/roundcube.dmp
     '';
     postHook = "touch /nix/var/data/backup/backup-ok";
     startAt = "03:00";

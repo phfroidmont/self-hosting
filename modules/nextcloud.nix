@@ -11,7 +11,6 @@ in
   sops.secrets = {
     sshfsKey = {
       key = "sshfs_keys/private";
-      restartUnits = [ "var-lib-nextcloud-data.mount" ];
     };
     nextcloudDbPassword = {
       owner = config.users.users.nextcloud.name;
@@ -30,7 +29,7 @@ in
   ];
 
   systemd.services.nextcloud-data-sshfs = {
-    wantedBy = [ "multi-user.target" ];
+    wantedBy = [ "multi-user.target" "nextcloud-setup.service" ];
     before = [ "phpfpm-nextcloud.service" ];
     restartIfChanged = false;
     serviceConfig = {

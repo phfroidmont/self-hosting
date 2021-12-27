@@ -60,5 +60,7 @@
       if failed port 443 protocol https with timeout 20 seconds then alert
     check host website-marie with address osteopathie.froidmont.org
       if failed port 443 protocol https with timeout 20 seconds then alert
+    check host webmail with address webmail.banditlair.com
+      if failed port 443 protocol https with timeout 20 seconds then alert
   '';
 }

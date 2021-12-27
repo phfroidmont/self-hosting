@@ -23,6 +23,14 @@ resource "hetznerdns_record" "backend1_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "webmail_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "webmail"
+  value   = hcloud_server.backend1.ipv4_address
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "mail2_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "mail2"

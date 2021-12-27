@@ -7,12 +7,14 @@
     initialScript = pkgs.writeText "postgres-init.sql" ''
       CREATE ROLE "synapse";
       CREATE ROLE "nextcloud";
+      CREATE ROLE "roundcube";
     '';
     enableTCPIP = true;
     identMap = ''
       root_as_others         root                  postgres
       root_as_others         root                  synapse
       root_as_others         root                  nextcloud
+      root_as_others         root                  roundcube
     '';
     authentication = ''
       local  all     postgres               peer
@@ -30,6 +32,11 @@
     nextcloudDbPassword = {
       owner = config.services.postgresql.superUser;
       key = "nextcloud/db_password";
+      restartUnits = [ "postgresql-setup.service" ];
+    };
+    roundcubeDbPassword = {
+      owner = config.services.postgresql.superUser;
+      key = "roundcube/db_password";
       restartUnits = [ "postgresql-setup.service" ];
     };
   };
@@ -50,11 +57,14 @@
         }
         PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'synapse'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "synapse" OWNER "synapse" TEMPLATE template0 LC_COLLATE = "C" LC_CTYPE = "C"'
         PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'nextcloud'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "nextcloud" OWNER "nextcloud"'
+        PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'roundcube'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "roundcube" OWNER "roundcube"'
 
         synapse_password="$(<'${config.sops.secrets.synapseDbPassword.path}')"
         PSQL -tAc  "ALTER ROLE synapse WITH PASSWORD '$synapse_password'"
         nextcloud_password="$(<'${config.sops.secrets.nextcloudDbPassword.path}')"
         PSQL -tAc  "ALTER ROLE nextcloud WITH PASSWORD '$nextcloud_password'"
+        roundcube_password="$(<'${config.sops.secrets.roundcubeDbPassword.path}')"
+        PSQL -tAc  "ALTER ROLE roundcube WITH PASSWORD '$roundcube_password'"
       '';
 
       serviceConfig = {

@@ -12,6 +12,7 @@
     ../modules/custom-monit.nix
     ../modules/dokuwiki.nix
     ../modules/website-marie.nix
+    ../modules/roundcube.nix
   ];
 
   sops.secrets = {
