@@ -20,6 +20,11 @@ in
       default = "";
     };
 
+    postHook = mkOption {
+      type = types.lines;
+      default = "";
+    };
+
     startAt = mkOption {
       type = with types; either str (listOf str);
       default = "03:30";
@@ -48,6 +53,7 @@ in
       };
       readWritePaths = cfg.readWritePaths;
       preHook = cfg.preHook;
+      postHook = cfg.postHook;
       environment = { BORG_RSH = "ssh -i ${cfg.sshKey}"; };
       compression = "lz4";
       startAt = cfg.startAt;

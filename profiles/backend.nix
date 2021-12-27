@@ -9,6 +9,7 @@
     ../modules/synapse.nix
     ../modules/nextcloud.nix
     ../modules/custom-backup-job.nix
+    ../modules/custom-monit.nix
     ../modules/dokuwiki.nix
     ../modules/website-marie.nix
   ];
@@ -22,11 +23,34 @@
 
   services.custom-backup-job = {
     additionalPaths = [ "/var/lib/nextcloud/config" ];
-    readWritePaths = [ "/nix/var/data/murmur" ];
-    preHook = "cp /var/lib/murmur/murmur.sqlite /nix/var/data/murmur/murmur.sqlite";
+    readWritePaths = [ "/nix/var/data/murmur" "/nix/var/data/backup/" ];
+    preHook = ''
+      cp /var/lib/murmur/murmur.sqlite /nix/var/data/murmur/murmur.sqlite
+    '';
+    postHook = ''
+      touch /nix/var/data/backup/backup-ok
+    '';
     startAt = "03:30";
     sshKey = config.sops.secrets.borgSshKey.path;
   };
+
+  services.custom-monit.additionalConfig = ''
+    check file nextcloud-data-mounted with path /var/lib/nextcloud/data/index.html
+      start = "${pkgs.systemd}/bin/systemctl start nextcloud-data-sshfs.service"
+
+    check host jellyfin with address jellyfin.banditlair.com
+      if failed port 443 protocol https with timeout 20 seconds then alert
+    check host stb with address www.societe-de-tir-bertrix.com
+      if failed port 443 protocol https with timeout 20 seconds then alert
+
+    check host transmission with address transmission.banditlair.com
+      if failed
+          port 443
+          protocol https
+          status = 401
+          with timeout 20 seconds
+      then alert
+  '';
 
   networking.interfaces.enp1s0 = {
     useDHCP = true;
@@ -43,19 +67,4 @@
   networking.firewall.allowedTCPPorts = [ 80 443 64738 ];
   networking.firewall.allowedUDPPorts = [ 64738 ];
 
-  services.monit = {
-    enable = true;
-    config = ''
-      set daemon 30
-        with start delay 90
-
-      set httpd
-        port 2812
-        use address 127.0.0.1
-        allow localhost
-
-      check file nextcloud-data-mounted with path /var/lib/nextcloud/data/index.html
-        start = "${pkgs.systemd}/bin/systemctl start nextcloud-data-sshfs.service"
-    '';
-  };
 }

@@ -11,6 +11,7 @@
     ../modules/monero.nix
     ../modules/torrents.nix
     ../modules/custom-backup-job.nix
+    ../modules/custom-monit.nix
   ];
 
   sops.secrets = {
@@ -45,7 +46,19 @@
   services.custom-backup-job = {
     readWritePaths = [ "/nix/var/data/backup" ];
     preHook = "${pkgs.docker}/bin/docker exec stb-mariadb sh -c 'mysqldump -u stb -pstb stb' > /nix/var/data/backup/stb_mariadb.sql";
+    postHook = "touch /nix/var/data/backup/backup-ok";
     startAt = "04:00";
     sshKey = config.sops.secrets.borgSshKey.path;
   };
+
+  services.custom-monit.additionalConfig = ''
+    check host nextcloud with address cloud.banditlair.com
+      if failed port 443 protocol https with timeout 20 seconds then alert
+    check host anderia-wiki with address anderia.banditlair.com
+      if failed port 443 protocol https with timeout 20 seconds then alert
+    check host arkadia-wiki with address arkadia.banditlair.com
+      if failed port 443 protocol https with timeout 20 seconds then alert
+    check host website-marie with address osteopathie.froidmont.org
+      if failed port 443 protocol https with timeout 20 seconds then alert
+  '';
 }
