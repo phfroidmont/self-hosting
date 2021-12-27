@@ -10,7 +10,15 @@
     ../modules/stb.nix
     ../modules/monero.nix
     ../modules/torrents.nix
+    ../modules/custom-backup-job.nix
   ];
+
+  sops.secrets = {
+    borgSshKey = {
+      owner = config.services.borgbackup.jobs.data.user;
+      key = "borg/client_keys/storage1/private";
+    };
+  };
 
   networking.firewall.allowedTCPPorts = [ 80 443 18080 ];
 
@@ -33,4 +41,11 @@
     group = config.users.groups.steam.name;
   };
   users.groups.steam = { };
+
+  services.custom-backup-job = {
+    readWritePaths = [ "/nix/var/data/backup" ];
+    preHook = "${pkgs.docker}/bin/docker exec stb-mariadb sh -c 'mysqldump -u stb -pstb stb' > /nix/var/data/backup/stb_mariadb.sql";
+    startAt = "04:00";
+    sshKey = config.sops.secrets.borgSshKey.path;
+  };
 }

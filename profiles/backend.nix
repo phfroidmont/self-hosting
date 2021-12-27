@@ -25,7 +25,7 @@
     readWritePaths = [ "/nix/var/data/murmur" ];
     preHook = "cp /var/lib/murmur/murmur.sqlite /nix/var/data/murmur/murmur.sqlite";
     startAt = "03:30";
-    sshKey = config.sops.secrets.borgPassphrase.path;
+    sshKey = config.sops.secrets.borgSshKey.path;
   };
 
   networking.interfaces.enp1s0 = {
