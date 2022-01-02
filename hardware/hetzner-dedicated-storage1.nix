@@ -26,6 +26,8 @@
 
   swapDevices = [ ];
 
+  time.timeZone = "Europe/Amsterdam";
+
   environment.etc."mdadm.conf".text = ''
     HOMEHOST <ignore>
   '';
