@@ -27,6 +27,9 @@
     mailDirectory = "/nix/var/data/vmail";
     sieveDirectory = "/nix/var/data/sieve";
     lmtpSaveToDetailMailbox = "no";
+    policydSPFExtraConfig = ''
+      Domain_Whitelist = skynet.be
+    '';
     loginAccounts = {
       "paultrial@banditlair.com" = {
         # nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2 > /hashed/password/file/location
