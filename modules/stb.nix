@@ -50,7 +50,7 @@ in
         "/nix/var/data/stb-wordpress:/var/www/html"
         "${uploadWordpressConfig}:/usr/local/etc/php/conf.d/uploads.ini"
       ];
-      ports = [ "8080:80" ];
+      ports = [ "127.0.0.1:8180:80" ];
       extraOptions = [ "--network=stb-br" ];
       autoStart = true;
     };
@@ -62,7 +62,7 @@ in
     enableACME = true;
 
     locations."/" = {
-      proxyPass = "http://127.0.0.1:8080";
+      proxyPass = "http://127.0.0.1:8180";
     };
   };
 }
