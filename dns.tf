@@ -31,6 +31,14 @@ resource "hetznerdns_record" "webmail_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "mail_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "mail"
+  value   = local.storage1_ip
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "mail2_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "mail2"
