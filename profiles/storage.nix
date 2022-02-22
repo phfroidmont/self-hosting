@@ -64,4 +64,17 @@
     check host webmail with address webmail.banditlair.com
       if failed port 443 protocol https with timeout 20 seconds then alert
   '';
+
+
+  nixpkgs.config.allowUnfree = true;
+  services.minecraft-server = {
+    enable = true;
+    eula = true;
+    openFirewall = true;
+    declarative = true;
+    serverProperties = {
+      online-mode = false;
+      force-gamemode = true;
+    };
+  };
 }
