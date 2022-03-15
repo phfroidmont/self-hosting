@@ -1,3 +1,0 @@
----
-- name: reload monit
-  command: monit reload

@@ -1,2 +1,0 @@
-[storage]
-storage1    ansible_user=root ansible_python_interpreter=/usr/bin/python3 ansible_host=144.76.18.197
