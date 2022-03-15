@@ -23,6 +23,7 @@
     enable = true;
     fqdn = "mail.banditlair.com";
     domains = [ "banditlair.com" "froidmont.org" "falbo.fr" ];
+    localDnsResolver = false;
     enableManageSieve = true;
     mailDirectory = "/nix/var/data/vmail";
     sieveDirectory = "/nix/var/data/sieve";
