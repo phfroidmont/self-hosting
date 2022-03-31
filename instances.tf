@@ -23,7 +23,7 @@ resource "hcloud_network_subnet" "banditlair_vswitch_network_subnet" {
   network_id   = hcloud_network.private_network.id
   network_zone = "eu-central"
   ip_range     = "10.0.2.0/24"
-  vswitch_id   = 22304
+  vswitch_id   = 29224
 }
 
 resource "hcloud_server" "db1" {

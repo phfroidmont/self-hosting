@@ -59,7 +59,7 @@
           }
         ];
       };
-      vlan4000 = {
+      vlan4001 = {
         mtu = 1400;
         ipv4 = {
           addresses = [{
@@ -74,7 +74,7 @@
         };
       };
     };
-    vlans.vlan4000 = { id = 4000; interface = "enp2s0"; };
+    vlans.vlan4001 = { id = 4001; interface = "enp2s0"; };
   };
 
 
