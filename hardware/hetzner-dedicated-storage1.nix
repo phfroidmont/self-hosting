@@ -8,7 +8,7 @@
 
   boot.initrd.availableKernelModules = [ "ahci" "sd_mod" ];
   boot.initrd.kernelModules = [ "dm-snapshot" ];
-  boot.initrd.mdadmConf = config.environment.etc."mdadm.conf".text;
+  boot.initrd.services.swraid.mdadmConf = config.environment.etc."mdadm.conf".text;
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
   boot.loader.systemd-boot.enable = false;

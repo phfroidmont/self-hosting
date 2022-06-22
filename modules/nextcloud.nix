@@ -62,8 +62,9 @@ in
 
   services.nextcloud = {
     enable = true;
-    package = pkgs.nextcloud22;
+    package = pkgs.nextcloud24;
     hostName = "cloud.${config.networking.domain}";
+    https = true;
     config = {
       dbtype = "pgsql";
       dbuser = "nextcloud";

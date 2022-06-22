@@ -17,9 +17,6 @@ let
   '';
 in
 {
-  security.acme.email = "letsencrypt.account@banditlair.com";
-  security.acme.acceptTerms = true;
-
   services.nginx = {
     virtualHosts = {
       # This host section can be placed on a different host than the rest,
@@ -113,26 +110,34 @@ in
 
   services.matrix-synapse = {
     enable = true;
-    server_name = config.networking.domain;
-    listeners = [
-      {
-        port = 8008;
-        bind_address = "::1";
-        type = "http";
-        tls = false;
-        x_forwarded = true;
-        resources = [
-          {
-            names = [ "client" "federation" ];
-            compress = false;
-          }
-        ];
-      }
-    ];
-    database_type = "psycopg2";
-    database_args = {
-      host = "fake"; # This section is overriden in deploy_nixos keys
+    settings = {
+      server_name = config.networking.domain;
+
+      listeners = [
+        {
+          port = 8008;
+          bind_addresses = [ "::1" ];
+          type = "http";
+          tls = false;
+          x_forwarded = true;
+          resources = [
+            {
+              names = [ "client" "federation" ];
+              compress = false;
+            }
+          ];
+        }
+      ];
+      database = {
+        name = "psycopg2";
+        args = {
+          host = "fake"; # This section is overriden by "extraConfigFiles"
+        };
+      };
     };
+
+
+
     dataDir = "/nix/var/data/matrix-synapse";
     extraConfigFiles = [ "/run/synapse/synapse-db-config.yaml" ];
   };

@@ -1,6 +1,6 @@
 { pkgs, lib, config, ... }:
 {
-  security.acme.email = "letsencrypt.account@banditlair.com";
+  security.acme.defaults.email = "letsencrypt.account@banditlair.com";
   security.acme.acceptTerms = true;
 
   services.nginx = {
