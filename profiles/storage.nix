@@ -13,6 +13,7 @@
     ../modules/custom-backup-job.nix
     ../modules/custom-monit.nix
     ../modules/jitsi.nix
+    ../modules/gitlab-runner.nix
   ];
 
   sops.secrets = {
