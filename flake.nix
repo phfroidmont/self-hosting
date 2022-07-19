@@ -12,9 +12,17 @@
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
       pkgs-unstable = nixpkgs-unstable.legacyPackages.x86_64-linux;
+      defaultModuleArgs = { pkgs, ... }: {
+        _module.args.pkgs-unstable = import nixpkgs-unstable {
+          inherit (pkgs.stdenv.targetPlatform) system;
+          config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
+            "minecraft-server"
+          ];
+        };
+      };
     in
     {
-      devShell.x86_64-linux = pkgs.mkShell {
+      devShells.x86_64-linux.default = pkgs.mkShell {
         sopsPGPKeyDirs = [
           "./keys/hosts"
           "./keys/users"
@@ -71,6 +79,7 @@
         storage1 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
+            defaultModuleArgs
             sops-nix.nixosModules.sops
             simple-nixos-mailserver.nixosModule
             ./profiles/storage.nix

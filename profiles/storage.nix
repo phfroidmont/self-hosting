@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, pkgs-unstable, ... }:
 {
   imports = [
     ../environment.nix
@@ -65,10 +65,9 @@
       if failed port 443 protocol https with timeout 20 seconds then alert
   '';
 
-
-  nixpkgs.config.allowUnfree = true;
   services.minecraft-server = {
     enable = true;
+    package = pkgs-unstable.minecraft-server;
     eula = true;
     openFirewall = true;
     declarative = true;
