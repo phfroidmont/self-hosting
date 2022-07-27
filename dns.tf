@@ -175,6 +175,14 @@ resource "hetznerdns_record" "matrix_srv" {
   ttl     = 86400
 }
 
+resource "hetznerdns_record" "coturn_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "turn"
+  value   = data.hcloud_floating_ip.main_ip.ip_address
+  type    = "A"
+  ttl     = 600
+}
+
 # Email
 resource "hetznerdns_record" "mail_mx" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
