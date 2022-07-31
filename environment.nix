@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, nixpkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
     htop
@@ -6,4 +6,10 @@
     tmux
     vim
   ];
+
+  nix = {
+    nixPath = [
+      "nixpkgs=${nixpkgs}"
+    ];
+  };
 }

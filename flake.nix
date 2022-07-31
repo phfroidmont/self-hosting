@@ -44,6 +44,7 @@
       nixosConfigurations = {
         db1 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
+          specialArgs = { inherit nixpkgs; };
           modules = [
             sops-nix.nixosModules.sops
             ./profiles/db.nix
@@ -61,6 +62,7 @@
         };
         backend1 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
+          specialArgs = { inherit nixpkgs; };
           modules = [
             sops-nix.nixosModules.sops
             ./profiles/backend.nix
@@ -78,6 +80,7 @@
         };
         storage1 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
+          specialArgs = { inherit nixpkgs; };
           modules = [
             defaultModuleArgs
             sops-nix.nixosModules.sops
