@@ -1,0 +1,43 @@
+[plantuml, format="png"]
+----
+skinparam componentStyle rectangle
+cloud "Hetzner cloud" {
+    node "backend1" {
+        [Nextcloud]
+        [matrix-synapse]
+        [roundcube]
+        [dkuwiki]
+        [mumble]
+        [website-marie]
+    }
+
+    database "db1" {
+        [PostgreSQL]
+    }
+}
+
+frame "Hetzner dedicated" {
+    node "storage1" {
+        [jellyfin]
+        [torrents]
+        [mailserver]
+        [stb-website]
+        [monero node]
+        [jitsi-meet]
+        folder "filesystem" {
+            interface "nextcloud_data"
+            interface "media"
+        }
+    }
+}
+
+
+[Nextcloud] ---> [PostgreSQL]
+[matrix-synapse] ---> [PostgreSQL]
+[roundcube] ---> [PostgreSQL]
+
+[Nextcloud] ...> nextcloud_data : sshfs
+[jellyfin] ---> media
+[torrents] ---> media
+
+----
