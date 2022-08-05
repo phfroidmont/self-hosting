@@ -193,21 +193,20 @@ in
     '';
   };
 
-  networking.firewall = {
-    interfaces.enp2s0 =
-      let
-        range = with config.services.coturn; [{
-          from = min-port;
-          to = max-port;
-        }];
-      in
-      {
-        allowedUDPPortRanges = range;
-        allowedUDPPorts = [ 3478 ];
-        allowedTCPPortRanges = range;
-        allowedTCPPorts = [ 3478 ];
-      };
-  };
+  networking.firewall =
+    let
+      range = with config.services.coturn; [{
+        from = min-port;
+        to = max-port;
+      }];
+    in
+    {
+      allowedUDPPortRanges = range;
+      allowedUDPPorts = [ 3478 ];
+      allowedTCPPortRanges = range;
+      allowedTCPPorts = [ 3478 ];
+    };
+
 
   security.acme.certs.${config.services.coturn.realm} = {
     postRun = "systemctl restart coturn.service";
