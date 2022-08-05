@@ -51,6 +51,11 @@
           group = config.users.groups.gitlab-runner.name;
         };
 
+        programs.ssh.extraConfig = ''
+          StrictHostKeyChecking=no
+          UserKnownHostsFile=/dev/null
+        '';
+
         services = {
           openssh.enable = true;
           gitlab-runner = {
