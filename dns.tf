@@ -39,14 +39,6 @@ resource "hetznerdns_record" "mail_a" {
   ttl     = 600
 }
 
-resource "hetznerdns_record" "mail2_a" {
-  zone_id = data.hetznerdns_zone.banditlair_zone.id
-  name    = "mail2"
-  value   = local.storage1_ip
-  type    = "A"
-  ttl     = 600
-}
-
 resource "hetznerdns_record" "storage1_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "storage1"
@@ -192,14 +184,6 @@ resource "hetznerdns_record" "mail_mx" {
   ttl     = 86400
 }
 
-resource "hetznerdns_record" "mail2_mx" {
-  zone_id = data.hetznerdns_zone.banditlair_zone.id
-  name    = "@"
-  value   = "20 mail2"
-  type    = "MX"
-  ttl     = 86400
-}
-
 resource "hetznerdns_record" "spf_txt" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "@"
@@ -268,14 +252,6 @@ resource "hetznerdns_record" "falbo_mail_mx" {
   ttl     = 86400
 }
 
-resource "hetznerdns_record" "falbo_mail2_mx" {
-  zone_id = data.hetznerdns_zone.falbo_zone.id
-  name    = "@"
-  value   = "20 mail2.${data.hetznerdns_zone.banditlair_zone.name}."
-  type    = "MX"
-  ttl     = 86400
-}
-
 resource "hetznerdns_record" "falbo_spf_txt" {
   zone_id = data.hetznerdns_zone.falbo_zone.id
   name    = "@"
@@ -332,14 +308,6 @@ resource "hetznerdns_record" "froidmont_mail_mx" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
   name    = "@"
   value   = "12 mail.${data.hetznerdns_zone.banditlair_zone.name}."
-  type    = "MX"
-  ttl     = 86400
-}
-
-resource "hetznerdns_record" "froidmont_mail2_mx" {
-  zone_id = data.hetznerdns_zone.froidmont_zone.id
-  name    = "@"
-  value   = "20 mail2.${data.hetznerdns_zone.banditlair_zone.name}."
   type    = "MX"
   ttl     = 86400
 }
