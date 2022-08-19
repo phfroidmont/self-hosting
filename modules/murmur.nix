@@ -11,5 +11,6 @@
     bandwidth = 128000;
     password = "$MURMURD_PASSWORD";
     environmentFile = config.sops.secrets.murmurEnvFile.path;
+    imgMsgLength = 13107200;
   };
 }
