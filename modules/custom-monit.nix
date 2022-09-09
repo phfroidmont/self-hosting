@@ -38,11 +38,11 @@ in
         include ${config.sops.secrets.monitMailserverConfig.path}
 
         set mail-format { from: monit@banditlair.com }
-        set alert alerts@banditlair.com
+        set alert alerts@banditlair.com with reminder on 120 cycles
 
         check system $HOST
           if cpu usage > 95% for 10 cycles then alert
-          if memory usage > 75% then alert
+          if memory usage > 75% for 5 times within 15 cycles then alert
           if swap usage > 25% then alert
 
         check filesystem root with path /
@@ -50,6 +50,7 @@ in
 
         check file daily-backup-done with path /nix/var/data/backup/backup-ok
           if changed timestamp then alert
+          if timestamp > 26 hours then alert
         
         ${cfg.additionalConfig}
       '';

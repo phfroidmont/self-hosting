@@ -64,6 +64,9 @@
       if failed port 443 protocol https with timeout 20 seconds then alert
     check host webmail with address webmail.banditlair.com
       if failed port 443 protocol https with timeout 20 seconds then alert
+
+    check program raid-md127 with path "${pkgs.mdadm}/bin/mdadm --misc --detail --test /dev/md127"
+      if status != 0 then alert
   '';
 
   services.minecraft-server = {
