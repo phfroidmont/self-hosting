@@ -1,6 +1,7 @@
 locals {
-  dmarc_value = "\"v=DMARC1; p=none; rua=mailto:failed-dmarc@banditlair.com; ruf=mailto:dmarc@banditlair.com\""
-  storage1_ip = "78.46.96.243"
+  dmarc_value   = "\"v=DMARC1; p=none; rua=mailto:failed-dmarc@banditlair.com; ruf=mailto:dmarc@banditlair.com\""
+  storage1_ip   = "78.46.96.243"
+  storage1_ipv6 = "2a01:4f8:120:8233::1"
 }
 
 data "hetznerdns_zone" "banditlair_zone" {
@@ -36,6 +37,14 @@ resource "hetznerdns_record" "mail_a" {
   name    = "mail"
   value   = local.storage1_ip
   type    = "A"
+  ttl     = 600
+}
+
+resource "hetznerdns_record" "mail_aaaa" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "mail"
+  value   = local.storage1_ipv6
+  type    = "AAAA"
   ttl     = 600
 }
 
