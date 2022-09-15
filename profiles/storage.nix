@@ -14,6 +14,7 @@
     ../modules/custom-monit.nix
     ../modules/jitsi.nix
     ../modules/gitlab-runner.nix
+    ../modules/binary-cache.nix
   ];
 
   sops.secrets = {

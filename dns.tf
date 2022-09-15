@@ -56,6 +56,14 @@ resource "hetznerdns_record" "storage1_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "cache_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "cache"
+  value   = local.storage1_ip
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "jellyfin_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "jellyfin"
