@@ -13,6 +13,7 @@
     ../modules/dokuwiki.nix
     ../modules/website-marie.nix
     ../modules/roundcube.nix
+    ../modules/monitoring-exporters.nix
   ];
 
   sops.secrets = {
@@ -67,5 +68,6 @@
 
   networking.firewall.allowedTCPPorts = [ 80 443 64738 ];
   networking.firewall.allowedUDPPorts = [ 64738 ];
+  networking.firewall.interfaces."enp7s0".allowedTCPPorts = [ config.services.prometheus.exporters.node.port ];
 
 }

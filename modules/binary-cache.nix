@@ -3,7 +3,6 @@
 
   sops.secrets = {
     nixCacheKey = {
-      owner = config.services.borgbackup.jobs.data.user;
       key = "nix/cache_secret_key";
     };
   };

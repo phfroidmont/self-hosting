@@ -15,6 +15,8 @@
     ../modules/jitsi.nix
     ../modules/gitlab-runner.nix
     ../modules/binary-cache.nix
+    ../modules/grafana.nix
+    ../modules/monitoring-exporters.nix
   ];
 
   sops.secrets = {
@@ -25,6 +27,7 @@
   };
 
   networking.firewall.allowedTCPPorts = [ 80 443 18080 ];
+  networking.firewall.interfaces.vlan4001.allowedTCPPorts = [ config.services.loki.configuration.server.http_listen_port ];
 
   networking.nat.enable = true;
   networking.nat.internalInterfaces = [ "ve-+" ];

@@ -7,9 +7,10 @@
     ../modules/postgresql.nix
     ../modules/custom-backup-job.nix
     ../modules/custom-monit.nix
+    ../modules/monitoring-exporters.nix
   ];
 
-  networking.firewall.interfaces."enp7s0".allowedTCPPorts = [ 5432 ];
+  networking.firewall.interfaces."enp7s0".allowedTCPPorts = [ config.services.prometheus.exporters.node.port config.services.postgresql.port ];
 
   sops.secrets = {
     borgSshKey = {
@@ -30,5 +31,4 @@
     sshKey = config.sops.secrets.borgSshKey.path;
   };
 
-  networking.firewall.interfaces."ens10".allowedTCPPorts = [ 80 ];
 }
