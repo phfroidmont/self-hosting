@@ -1,10 +1,12 @@
 { config, lib, pkgs, ... }:
 with lib;
 let
-  cfg = config.services.custom-backup-job;
+  cfg = config.custom.services.backup-job;
 in
 {
-  options.services.custom-backup-job = {
+  options.custom.services.backup-job = {
+    enable = mkEnableOption "backup-job";
+
     additionalPaths = mkOption {
       type = with types; listOf path;
       default = [ ];
@@ -35,7 +37,7 @@ in
     };
   };
 
-  config = {
+  config = mkIf cfg.enable {
 
     sops.secrets = {
       borgPassphrase = {
@@ -43,6 +45,7 @@ in
         key = "borg/passphrase";
       };
     };
+
     services.borgbackup.jobs.data = {
       paths = [ "/nix/var/data" cfg.sshKey ] ++ cfg.additionalPaths;
       doInit = false;

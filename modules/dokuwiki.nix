@@ -1,5 +1,8 @@
 { config, lib, pkgs, ... }:
+with lib;
 let
+  cfg = config.custom.services.dokuwiki;
+
   configureWiki = name: {
 
     sops.secrets."usersFile-${name}" = {
@@ -25,7 +28,20 @@ let
     };
   };
 in
-lib.mkMerge [
-  (configureWiki "anderia")
-  (configureWiki "arkadia")
-]
+{
+  options.custom.services.dokuwiki = {
+
+    enable = mkEnableOption "dokuwiki";
+
+    secretKeyFile = mkOption {
+      type = types.path;
+    };
+  };
+
+
+  config = mkIf cfg.enable
+    (lib.mkMerge [
+      (configureWiki "anderia")
+      (configureWiki "arkadia")
+    ]);
+}

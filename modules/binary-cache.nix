@@ -1,32 +1,40 @@
-{ config, ... }:
+{ config, lib, ... }:
+with lib;
+let
+  cfg = config.custom.services.binary-cache;
+in
 {
+  options.custom.services.binary-cache = {
 
-  sops.secrets = {
-    nixCacheKey = {
-      key = "nix/cache_secret_key";
+    enable = mkEnableOption "binary-cache";
+
+    secretKeyFile = mkOption {
+      type = types.path;
     };
   };
 
 
-  services.nix-serve = {
-    enable = true;
-    port = 1500;
-    secretKeyFile = config.sops.secrets.nixCacheKey.path;
-  };
+  config = mkIf cfg.enable {
+    services.nix-serve = {
+      enable = true;
+      port = 1500;
+      secretKeyFile = config.sops.secrets.nixCacheKey.path;
+    };
 
-  services.nginx = {
-    virtualHosts = {
-      "cache.${config.networking.domain}" = {
+    services.nginx = {
+      virtualHosts = {
+        "cache.${config.networking.domain}" = {
 
-        enableACME = true;
-        forceSSL = true;
+          enableACME = true;
+          forceSSL = true;
 
-        locations."/".extraConfig = ''
-          proxy_pass http://localhost:${toString config.services.nix-serve.port};
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        '';
+          locations."/".extraConfig = ''
+            proxy_pass http://localhost:${toString config.services.nix-serve.port};
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          '';
+        };
       };
     };
   };

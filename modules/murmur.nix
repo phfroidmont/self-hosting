@@ -1,16 +1,27 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
+with lib;
+let
+  cfg = config.custom.services.murmur;
+in
 {
-  sops.secrets.murmurEnvFile = {
-    owner = config.systemd.services.murmur.serviceConfig.User;
-    key = "murmur.env";
-    restartUnits = [ "murmur.service" ];
+  options.custom.services.murmur = {
+    enable = mkEnableOption "murmur";
   };
 
-  services.murmur = {
-    enable = true;
-    bandwidth = 128000;
-    password = "$MURMURD_PASSWORD";
-    environmentFile = config.sops.secrets.murmurEnvFile.path;
-    imgMsgLength = 13107200;
+
+  config = mkIf cfg.enable {
+    sops.secrets.murmurEnvFile = {
+      owner = config.systemd.services.murmur.serviceConfig.User;
+      key = "murmur.env";
+      restartUnits = [ "murmur.service" ];
+    };
+
+    services.murmur = {
+      enable = true;
+      bandwidth = 128000;
+      password = "$MURMURD_PASSWORD";
+      environmentFile = config.sops.secrets.murmurEnvFile.path;
+      imgMsgLength = 13107200;
+    };
   };
 }

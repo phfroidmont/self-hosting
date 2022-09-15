@@ -1,10 +1,12 @@
 { config, lib, pkgs, ... }:
 with lib;
 let
-  cfg = config.services.custom-monit;
+  cfg = config.custom.services.monit;
 in
 {
-  options.services.custom-monit = {
+  options.custom.services.monit = {
+    enable = mkEnableOption "monit";
+
     additionalConfig = mkOption {
       type = types.lines;
       default = "";

@@ -3,6 +3,7 @@
   imports = [
     ../environment.nix
     ../hardware/hetzner-dedicated-storage1.nix
+    ../modules
     ../modules/openssh.nix
     ../modules/mailserver.nix
     ../modules/nginx.nix
@@ -10,10 +11,7 @@
     ../modules/stb.nix
     ../modules/monero.nix
     ../modules/torrents.nix
-    ../modules/custom-backup-job.nix
-    ../modules/custom-monit.nix
     ../modules/jitsi.nix
-    ../modules/gitlab-runner.nix
     ../modules/binary-cache.nix
     ../modules/grafana.nix
     ../modules/monitoring-exporters.nix
@@ -24,6 +22,47 @@
       owner = config.services.borgbackup.jobs.data.user;
       key = "borg/client_keys/storage1/private";
     };
+    nixCacheKey = {
+      key = "nix/cache_secret_key";
+    };
+  };
+
+  custom = {
+    services.binary-cache = {
+      enable = true;
+      secretKeyFile = config.sops.secrets.nixCacheKey.path;
+    };
+
+    services.backup-job = {
+      enable = true;
+      readWritePaths = [ "/nix/var/data/backup" ];
+      preHook = "${pkgs.docker}/bin/docker exec stb-mariadb sh -c 'mysqldump -u stb -pstb stb' > /nix/var/data/backup/stb_mariadb.sql";
+      postHook = "touch /nix/var/data/backup/backup-ok";
+      startAt = "04:00";
+      sshKey = config.sops.secrets.borgSshKey.path;
+    };
+
+    services.monit = {
+      enable = true;
+      additionalConfig = ''
+        check host nextcloud with address cloud.banditlair.com
+          if failed port 443 protocol https with timeout 20 seconds then alert
+        check host anderia-wiki with address anderia.banditlair.com
+          if failed port 443 protocol https with timeout 20 seconds then alert
+        check host arkadia-wiki with address arkadia.banditlair.com
+          if failed port 443 protocol https with timeout 20 seconds then alert
+        check host website-marie with address osteopathie.froidmont.org
+          if failed port 443 protocol https with timeout 20 seconds then alert
+        check host webmail with address webmail.banditlair.com
+          if failed port 443 protocol https with timeout 20 seconds then alert
+
+        check program raid-md127 with path "${pkgs.mdadm}/bin/mdadm --misc --detail --test /dev/md127"
+          if status != 0 then alert
+      '';
+    };
+
+    services.gitlab-runner.enable = true;
+    services.openssh.enable = true;
   };
 
   networking.firewall.allowedTCPPorts = [ 80 443 18080 ];
@@ -48,30 +87,6 @@
     group = config.users.groups.steam.name;
   };
   users.groups.steam = { };
-
-  services.custom-backup-job = {
-    readWritePaths = [ "/nix/var/data/backup" ];
-    preHook = "${pkgs.docker}/bin/docker exec stb-mariadb sh -c 'mysqldump -u stb -pstb stb' > /nix/var/data/backup/stb_mariadb.sql";
-    postHook = "touch /nix/var/data/backup/backup-ok";
-    startAt = "04:00";
-    sshKey = config.sops.secrets.borgSshKey.path;
-  };
-
-  services.custom-monit.additionalConfig = ''
-    check host nextcloud with address cloud.banditlair.com
-      if failed port 443 protocol https with timeout 20 seconds then alert
-    check host anderia-wiki with address anderia.banditlair.com
-      if failed port 443 protocol https with timeout 20 seconds then alert
-    check host arkadia-wiki with address arkadia.banditlair.com
-      if failed port 443 protocol https with timeout 20 seconds then alert
-    check host website-marie with address osteopathie.froidmont.org
-      if failed port 443 protocol https with timeout 20 seconds then alert
-    check host webmail with address webmail.banditlair.com
-      if failed port 443 protocol https with timeout 20 seconds then alert
-
-    check program raid-md127 with path "${pkgs.mdadm}/bin/mdadm --misc --detail --test /dev/md127"
-      if status != 0 then alert
-  '';
 
   services.minecraft-server = {
     enable = true;
