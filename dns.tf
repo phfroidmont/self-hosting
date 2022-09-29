@@ -88,6 +88,14 @@ resource "hetznerdns_record" "jitsi_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "elefan-test_a" {
+  zone_id = data.hetznerdns_zone.froidmont_zone.id
+  name    = "elefan-test"
+  value   = local.storage1_ip
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "transmission_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "transmission"

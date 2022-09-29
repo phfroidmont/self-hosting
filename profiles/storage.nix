@@ -15,6 +15,7 @@
     ../modules/binary-cache.nix
     ../modules/grafana.nix
     ../modules/monitoring-exporters.nix
+    ../modules/elefan.nix
   ];
 
   sops.secrets = {
