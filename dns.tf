@@ -96,6 +96,14 @@ resource "hetznerdns_record" "elefan-test_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "wikijs-test_a" {
+  zone_id = data.hetznerdns_zone.froidmont_zone.id
+  name    = "wikijs-test"
+  value   = data.hcloud_floating_ip.main_ip.ip_address
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "transmission_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "transmission"

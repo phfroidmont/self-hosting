@@ -18,6 +18,10 @@
       owner = config.services.borgbackup.jobs.data.user;
       key = "borg/client_keys/backend1/private";
     };
+    wikiJsEnvFile = {
+      key = "wikijs-test/service_env_file";
+      restartUnits = [ "wiki-js.service" ];
+    };
   };
 
   custom = {
@@ -63,7 +67,26 @@
     services.murmur.enable = true;
   };
 
+  services.wiki-js = {
+    enable = true;
+    settings = {
+      db.type = "postgres";
+      db.host = "10.0.1.11";
+      db.db = "wikijs-test";
+      db.user = "wikijs-test";
+      db.pass = "$(DB_PASS)";
+    };
+    environmentFile = config.sops.secrets.wikiJsEnvFile.path;
+  };
 
+  services.nginx.virtualHosts."wikijs-test.froidmont.org" = {
+    forceSSL = true;
+    enableACME = true;
+
+    locations."/" = {
+      proxyPass = "http://127.0.0.1:${toString config.services.wiki-js.settings.port}";
+    };
+  };
 
   networking.interfaces.enp1s0 = {
     useDHCP = true;
