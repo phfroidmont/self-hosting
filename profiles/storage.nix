@@ -61,7 +61,13 @@
           if status != 0 then alert
 
         check host osteoview with address osteoview.app
-          if failed port 443 protocol https with timeout 5 seconds then alert
+          if failed
+              port 443
+              protocol https
+              status = 200
+              request "/api/_health"
+              with timeout 5 seconds
+          then alert
       '';
     };
 
