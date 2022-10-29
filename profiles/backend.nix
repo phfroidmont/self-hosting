@@ -91,7 +91,7 @@
     };
   };
 
-  networking.interfaces.enp1s0 = {
+  networking.interfaces.eth1 = {
     useDHCP = true;
     ipv4 = {
       addresses = [
@@ -105,6 +105,6 @@
 
   networking.firewall.allowedTCPPorts = [ 80 443 64738 ];
   networking.firewall.allowedUDPPorts = [ 64738 ];
-  networking.firewall.interfaces."enp7s0".allowedTCPPorts = [ config.services.prometheus.exporters.node.port ];
+  networking.firewall.interfaces."eth2".allowedTCPPorts = [ config.services.prometheus.exporters.node.port ];
 
 }

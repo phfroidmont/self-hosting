@@ -9,4 +9,5 @@
 
   boot.cleanTmpDir = true;
   networking.firewall.allowPing = true;
+  networking.usePredictableInterfaceNames = false;
 }
