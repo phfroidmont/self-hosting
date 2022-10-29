@@ -11,7 +11,7 @@ data "hetznerdns_zone" "banditlair_zone" {
 resource "hetznerdns_record" "banditlair_hcloud_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "@"
-  value   = data.hcloud_floating_ip.main_ip.ip_address
+  value   = hcloud_server.backend1.ipv4_address
   type    = "A"
   ttl     = 600
 }
@@ -99,7 +99,7 @@ resource "hetznerdns_record" "elefan-test_a" {
 resource "hetznerdns_record" "wikijs-test_a" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
   name    = "wikijs-test"
-  value   = data.hcloud_floating_ip.main_ip.ip_address
+  value   = hcloud_server.backend1.ipv4_address
   type    = "A"
   ttl     = 600
 }
@@ -155,7 +155,7 @@ resource "hetznerdns_record" "monero_a" {
 resource "hetznerdns_record" "anderia_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "anderia"
-  value   = data.hcloud_floating_ip.main_ip.ip_address
+  value   = hcloud_server.backend1.ipv4_address
   type    = "A"
   ttl     = 600
 }
@@ -163,7 +163,7 @@ resource "hetznerdns_record" "anderia_a" {
 resource "hetznerdns_record" "arkadia_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "arkadia"
-  value   = data.hcloud_floating_ip.main_ip.ip_address
+  value   = hcloud_server.backend1.ipv4_address
   type    = "A"
   ttl     = 600
 }
@@ -186,7 +186,7 @@ resource "hetznerdns_record" "banditlair_dedicated_a" {
 resource "hetznerdns_record" "nextcloud_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "cloud"
-  value   = data.hcloud_floating_ip.main_ip.ip_address
+  value   = hcloud_server.backend1.ipv4_address
   type    = "A"
   ttl     = 600
 }
@@ -195,7 +195,7 @@ resource "hetznerdns_record" "nextcloud_a" {
 resource "hetznerdns_record" "matrix_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "matrix"
-  value   = data.hcloud_floating_ip.main_ip.ip_address
+  value   = hcloud_server.backend1.ipv4_address
   type    = "A"
   ttl     = 600
 }
@@ -211,7 +211,7 @@ resource "hetznerdns_record" "matrix_srv" {
 resource "hetznerdns_record" "coturn_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "turn"
-  value   = data.hcloud_floating_ip.main_ip.ip_address
+  value   = hcloud_server.backend1.ipv4_address
   type    = "A"
   ttl     = 600
 }
@@ -332,7 +332,7 @@ resource "hetznerdns_record" "froidmont_a" {
 resource "hetznerdns_record" "website_marie_a" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
   name    = "osteopathie"
-  value   = data.hcloud_floating_ip.main_ip.ip_address
+  value   = hcloud_server.backend1.ipv4_address
   type    = "A"
   ttl     = 600
 }

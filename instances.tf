@@ -2,10 +2,6 @@ data "hcloud_image" "nixos_stable" {
   with_selector = "nixos=21.05"
 }
 
-data "hcloud_floating_ip" "main_ip" {
-  with_selector = "external=main"
-}
-
 resource "hcloud_network" "private_network" {
   name     = "private"
   ip_range = "10.0.0.0/16"
@@ -73,9 +69,3 @@ resource "hcloud_server" "backend1" {
     hcloud_network_subnet.db_network_subnet
   ]
 }
-
-resource "hcloud_floating_ip_assignment" "main" {
-  floating_ip_id = data.hcloud_floating_ip.main_ip.id
-  server_id      = hcloud_server.backend1.id
-}
-

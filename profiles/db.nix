@@ -8,7 +8,7 @@
     ../modules/monitoring-exporters.nix
   ];
 
-  networking.firewall.interfaces."eth2".allowedTCPPorts = [ config.services.prometheus.exporters.node.port config.services.postgresql.port ];
+  networking.firewall.interfaces."eth1".allowedTCPPorts = [ config.services.prometheus.exporters.node.port config.services.postgresql.port ];
 
   sops.secrets = {
     borgSshKey = {
