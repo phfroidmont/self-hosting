@@ -57,6 +57,9 @@
               status = 401
               with timeout 20 seconds
           then alert
+
+        check host osteoview with address osteoview.app
+          if failed port 443 protocol https with timeout 5 seconds then alert
       '';
     };
 

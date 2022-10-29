@@ -59,6 +59,9 @@
 
         check program raid-md127 with path "${pkgs.mdadm}/bin/mdadm --misc --detail --test /dev/md127"
           if status != 0 then alert
+
+        check host osteoview with address osteoview.app
+          if failed port 443 protocol https with timeout 5 seconds then alert
       '';
     };
 
