@@ -65,6 +65,7 @@
               status = 200
               request "/api/_health"
               with timeout 5 seconds
+              content = '[{"]Healthy["]:[{}}]'
           then alert
       '';
     };
