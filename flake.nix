@@ -20,6 +20,10 @@
           ];
         };
       };
+
+      openssl1_1Overlay = final: prev: {
+        nginxStable = prev.nginxStable.override { openssl = pkgs.openssl_1_1; };
+      };
     in
     {
       devShells.x86_64-linux.default = pkgs.mkShell {
@@ -50,6 +54,7 @@
             ./profiles/db.nix
             (
               {
+                nixpkgs.overlays = [ openssl1_1Overlay ];
                 sops.defaultSopsFile = ./secrets.enc.yml;
                 networking.hostName = "db1";
                 networking.domain = "banditlair.com";
@@ -68,6 +73,7 @@
             ./profiles/backend.nix
             (
               {
+                nixpkgs.overlays = [ openssl1_1Overlay ];
                 sops.defaultSopsFile = ./secrets.enc.yml;
                 networking.hostName = "backend1";
                 networking.domain = "banditlair.com";
@@ -88,6 +94,7 @@
             ./profiles/storage.nix
             (
               {
+                nixpkgs.overlays = [ openssl1_1Overlay ];
                 sops.defaultSopsFile = ./secrets.enc.yml;
                 networking.hostName = "storage1";
                 networking.domain = "banditlair.com";
