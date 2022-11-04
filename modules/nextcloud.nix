@@ -62,7 +62,7 @@ in
 
   services.nextcloud = {
     enable = true;
-    package = pkgs.nextcloud24;
+    package = pkgs.nextcloud25;
     hostName = "cloud.${config.networking.domain}";
     https = true;
     config = {
