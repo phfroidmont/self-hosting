@@ -68,6 +68,16 @@
           ];
         }];
       }
+      {
+        job_name = "synapse";
+        scrape_interval = "15s";
+        metrics_path = "/_synapse/metrics";
+        static_configs = [{
+          targets = [
+            "10.0.1.1:9000"
+          ];
+        }];
+      }
     ];
   };
 

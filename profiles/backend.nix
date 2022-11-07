@@ -97,6 +97,6 @@
 
   networking.firewall.allowedTCPPorts = [ 80 443 64738 ];
   networking.firewall.allowedUDPPorts = [ 64738 ];
-  networking.firewall.interfaces."eth1".allowedTCPPorts = [ config.services.prometheus.exporters.node.port ];
+  networking.firewall.interfaces."eth1".allowedTCPPorts = [ config.services.prometheus.exporters.node.port 9000 ];
 
 }

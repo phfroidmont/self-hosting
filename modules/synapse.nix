@@ -122,10 +122,12 @@ in
     settings = {
       server_name = config.networking.domain;
 
+      enable_metrics = true;
+
       listeners = [
         {
           port = 8008;
-          bind_addresses = [ "::1" ];
+          bind_addresses = [ "::1" "127.0.0.1" ];
           type = "http";
           tls = false;
           x_forwarded = true;
@@ -135,6 +137,13 @@ in
               compress = false;
             }
           ];
+        }
+        {
+          port = 9000;
+          bind_addresses = [ "0.0.0.0" ];
+          type = "metrics";
+          tls = false;
+          resources = [ ];
         }
       ];
 
