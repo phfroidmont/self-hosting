@@ -27,7 +27,7 @@ resource "hcloud_server" "db1" {
   image       = data.hcloud_image.nixos_stable.id
   server_type = "cpx11"
   ssh_keys = [
-    hcloud_ssh_key.phfroidmont-desktop.id
+    hcloud_ssh_key.froidmpa-desktop.id
   ]
   keep_disk = true
   location  = "hel1"
@@ -44,6 +44,13 @@ resource "hcloud_server" "db1" {
   depends_on = [
     hcloud_network_subnet.db_network_subnet
   ]
+
+  lifecycle {
+    ignore_changes = [
+      ssh_keys
+    ]
+  }
+
 }
 
 resource "hcloud_server" "backend1" {
@@ -51,7 +58,7 @@ resource "hcloud_server" "backend1" {
   image       = data.hcloud_image.nixos_stable.id
   server_type = "cpx21"
   ssh_keys = [
-    hcloud_ssh_key.phfroidmont-desktop.id
+    hcloud_ssh_key.froidmpa-desktop.id
   ]
   keep_disk = true
   location  = "hel1"
@@ -68,4 +75,10 @@ resource "hcloud_server" "backend1" {
   depends_on = [
     hcloud_network_subnet.db_network_subnet
   ]
+
+  lifecycle {
+    ignore_changes = [
+      ssh_keys
+    ]
+  }
 }

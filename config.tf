@@ -25,9 +25,9 @@ provider "hcloud" {
   token = var.hcloud_token
 }
 
-resource "hcloud_ssh_key" "phfroidmont-desktop" {
-  name = "phfroidmont-desktop"
-  public_key = file("ssh_keys/phfroidmont-desktop.pub")
+resource "hcloud_ssh_key" "froidmpa-desktop" {
+  name = "froidmpa-desktop"
+  public_key = file("ssh_keys/froidmpa-desktop.pub")
 }
 
 variable "hetznerdns_token" {}
