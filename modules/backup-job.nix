@@ -25,7 +25,7 @@ in
     postHook = mkOption {
       type = types.lines;
       default = ''
-        if [ $exitStatus -ne 0 ]; then
+        if [ $exitStatus -eq 0 ]; then
           touch /nix/var/data/backup/backup-ok
         fi
       '';
