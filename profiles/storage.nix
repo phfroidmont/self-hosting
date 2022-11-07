@@ -38,7 +38,6 @@
       enable = true;
       readWritePaths = [ "/nix/var/data/backup" ];
       preHook = "${pkgs.docker}/bin/docker exec stb-mariadb sh -c 'mysqldump -u stb -pstb stb' > /nix/var/data/backup/stb_mariadb.sql";
-      postHook = "touch /nix/var/data/backup/backup-ok";
       startAt = "04:00";
       sshKey = config.sops.secrets.borgSshKey.path;
     };

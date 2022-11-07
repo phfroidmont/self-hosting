@@ -24,7 +24,11 @@ in
 
     postHook = mkOption {
       type = types.lines;
-      default = "";
+      default = ''
+        if [ $exitStatus -ne 0 ]; then
+          touch /nix/var/data/backup/backup-ok
+        fi
+      '';
     };
 
     startAt = mkOption {
@@ -49,7 +53,7 @@ in
     services.borgbackup.jobs.data = {
       paths = [ "/nix/var/data" cfg.sshKey ] ++ cfg.additionalPaths;
       doInit = false;
-      repo = "backup@212.129.12.205:./";
+      repo = "borgbackup@212.129.12.205:./";
       encryption = {
         mode = "repokey-blake2";
         passCommand = "cat ${config.sops.secrets.borgPassphrase.path}";

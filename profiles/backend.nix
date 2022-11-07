@@ -32,9 +32,6 @@
       preHook = ''
         cp /var/lib/murmur/murmur.sqlite /nix/var/data/murmur/murmur.sqlite
       '';
-      postHook = ''
-        touch /nix/var/data/backup/backup-ok
-      '';
       startAt = "03:30";
       sshKey = config.sops.secrets.borgSshKey.path;
     };
