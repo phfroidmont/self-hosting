@@ -26,6 +26,9 @@
     nixCacheKey = {
       key = "nix/cache_secret_key";
     };
+    dmarcExporterPassword = {
+      key = "dmarc_exporter/password";
+    };
   };
 
   custom = {
@@ -74,6 +77,23 @@
     services.gitlab-runner.enable = true;
     services.openssh.enable = true;
   };
+
+  services.prometheus.exporters.dmarc = {
+    enable = true;
+    debug = true;
+    imap = {
+      host = "mail.banditlair.com";
+      username = "paultrial@banditlair.com";
+      passwordFile = "/run/credentials/prometheus-dmarc-exporter.service/password";
+    };
+    folders = {
+      inbox = "dmarc_reports";
+      done = "Archives.dmarc_report_processed";
+      error = "Archives.dmarc_report_error";
+    };
+  };
+  systemd.services.prometheus-dmarc-exporter.serviceConfig.LoadCredential =
+    "password:${config.sops.secrets.dmarcExporterPassword.path}";
 
   networking.firewall.allowedTCPPorts = [ 80 443 18080 ];
   networking.firewall.interfaces.vlan4001.allowedTCPPorts = [ config.services.loki.configuration.server.http_listen_port ];

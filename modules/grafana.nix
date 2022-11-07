@@ -78,6 +78,15 @@
           ];
         }];
       }
+      {
+        job_name = "dmarc";
+        scrape_interval = "15s";
+        static_configs = [{
+          targets = [
+            "10.0.2.3:${toString config.services.prometheus.exporters.dmarc.port}"
+          ];
+        }];
+      }
     ];
   };
 
