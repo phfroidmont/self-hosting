@@ -3,6 +3,16 @@ with lib;
 let
   cfg = config.custom.services.dokuwiki;
 
+  template-chippedsnow = pkgs.stdenv.mkDerivation {
+    name = "chippedsnow";
+    src = builtins.fetchGit {
+      url = "ssh://git@gitlab.com/desbest/Chipped-Snow-Dokuwiki-Template.git";
+      ref = "master";
+      rev = "61e525236063714cade90beb1401cde2c75e4c88";
+    };
+    installPhase = "mkdir -p $out; cp -R * $out/";
+  };
+
   configureWiki = name: {
 
     sops.secrets."usersFile-${name}" = {
@@ -17,6 +27,11 @@ let
         stateDir = "/nix/var/data/dokuwiki/${name}/data";
         usersFile = config.sops.secrets."usersFile-${name}".path;
         disableActions = "register";
+        templates = [ template-chippedsnow ];
+        extraConfig = ''
+          $conf['title']    = 'Chroniques d\'Arkadia';
+          $conf['template'] = 'chippedsnow';
+        '';
       };
     };
 
