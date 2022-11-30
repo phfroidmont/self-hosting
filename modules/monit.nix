@@ -42,7 +42,7 @@ in
         set mail-format { from: monit@banditlair.com }
         set alert alerts@banditlair.com with reminder on 120 cycles
 
-        check program failed-untis with path "${pkgs.systemd}/bin/systemctl --failed"
+        check program failed-units with path "${pkgs.systemd}/bin/systemctl --failed"
           if content != "0 loaded units listed" then alert
 
         check system $HOST
