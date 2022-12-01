@@ -17,6 +17,12 @@
     monitPassword = {
       key = "email/accounts_passwords/monit";
     };
+    noreplyBanditlairPassword = {
+      key = "email/accounts_passwords/noreply_banditlair";
+    };
+    noreplyFroidmontPassword = {
+      key = "email/accounts_passwords/noreply_froidmont";
+    };
   };
 
   mailserver = {
@@ -154,6 +160,14 @@
       };
       "monit@banditlair.com" = {
         hashedPasswordFile = config.sops.secrets.monitPassword.path;
+        sendOnly = true;
+      };
+      "noreply@banditlair.com" = {
+        hashedPasswordFile = config.sops.secrets.noreplyBanditlairPassword.path;
+        sendOnly = true;
+      };
+      "noreply@froidmont.org" = {
+        hashedPasswordFile = config.sops.secrets.noreplyFroidmontPassword.path;
         sendOnly = true;
       };
     };

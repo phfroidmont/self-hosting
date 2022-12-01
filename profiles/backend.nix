@@ -27,7 +27,7 @@
   custom = {
     services.backup-job = {
       enable = true;
-      additionalPaths = [ "/var/lib/nextcloud/config" ];
+      additionalPaths = [ "/var/lib/nextcloud/config" "/var/lib/mastodon" ];
       readWritePaths = [ "/nix/var/data/murmur" "/nix/var/data/backup/" ];
       preHook = ''
         cp /var/lib/murmur/murmur.sqlite /nix/var/data/murmur/murmur.sqlite
@@ -72,6 +72,8 @@
     services.openssh.enable = true;
 
     services.murmur.enable = true;
+
+    services.mastodon.enable = true;
   };
 
   services.wiki-js = {

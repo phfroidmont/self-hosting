@@ -88,6 +88,14 @@ resource "hetznerdns_record" "jitsi_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "mastodon_a" {
+  zone_id = data.hetznerdns_zone.froidmont_zone.id
+  name    = "social"
+  value   = hcloud_server.backend1.ipv4_address
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "elefan-test_a" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
   name    = "elefan-test"

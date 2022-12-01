@@ -25,6 +25,7 @@
         ${pkgs.postgresql_12}/bin/pg_dump -U synapse synapse > /nix/var/data/postgresql/synapse.dmp
         ${pkgs.postgresql_12}/bin/pg_dump -U nextcloud nextcloud > /nix/var/data/postgresql/nextcloud.dmp
         ${pkgs.postgresql_12}/bin/pg_dump -U roundcube roundcube > /nix/var/data/postgresql/roundcube.dmp
+        ${pkgs.postgresql_12}/bin/pg_dump -U mastodon mastodon > /nix/var/data/postgresql/mastodon.dmp
       '';
       startAt = "03:00";
       sshKey = config.sops.secrets.borgSshKey.path;

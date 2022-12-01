@@ -6,5 +6,6 @@
     ./gitlab-runner.nix
     ./openssh.nix
     ./murmur.nix
+    ./mastodon.nix
   ];
 }

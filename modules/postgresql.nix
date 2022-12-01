@@ -40,6 +40,11 @@
       key = "wikijs-test/db_password";
       restartUnits = [ "postgresql-setup.service" ];
     };
+    mastodonDbPassword = {
+      owner = config.services.postgresql.superUser;
+      key = "mastodon/db_password";
+      restartUnits = [ "postgresql-setup.service" ];
+    };
   };
 
   systemd.services.postgresql-setup = let pgsql = config.services.postgresql; in
@@ -61,16 +66,19 @@
         PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'nextcloud'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "nextcloud"'
         PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'roundcube'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "roundcube"'
         PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'wikijs-test'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "wikijs-test"'
+        PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'mastodon'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "mastodon"'
         
         PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'synapse'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "synapse" OWNER "synapse" TEMPLATE template0 LC_COLLATE = "C" LC_CTYPE = "C"'
         PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'nextcloud'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "nextcloud" OWNER "nextcloud"'
         PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'roundcube'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "roundcube" OWNER "roundcube"'
         PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'wikijs-test'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "wikijs-test" OWNER "wikijs-test"'
+        PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'mastodon'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "mastodon" OWNER "mastodon"'
 
         PSQL -tAc  "ALTER ROLE synapse LOGIN"
         PSQL -tAc  "ALTER ROLE nextcloud LOGIN"
         PSQL -tAc  "ALTER ROLE roundcube LOGIN"
         PSQL -tAc  "ALTER ROLE \"wikijs-test\" LOGIN"
+        PSQL -tAc  "ALTER ROLE mastodon LOGIN"
 
         synapse_password="$(<'${config.sops.secrets.synapseDbPassword.path}')"
         PSQL -tAc  "ALTER ROLE synapse WITH PASSWORD '$synapse_password'"
@@ -80,6 +88,8 @@
         PSQL -tAc  "ALTER ROLE roundcube WITH PASSWORD '$roundcube_password'"
         wikijstest_password="$(<'${config.sops.secrets.wikiJsTestDbPassword.path}')"
         PSQL -tAc  "ALTER ROLE \"wikijs-test\" WITH PASSWORD '$wikijstest_password'"
+        mastodon_password="$(<'${config.sops.secrets.mastodonDbPassword.path}')"
+        PSQL -tAc  "ALTER ROLE mastodon WITH PASSWORD '$mastodon_password'"
       '';
 
       serviceConfig = {
