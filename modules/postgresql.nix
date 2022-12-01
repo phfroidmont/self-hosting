@@ -11,6 +11,7 @@
       root_as_others         root                  nextcloud
       root_as_others         root                  roundcube
       root_as_others         root                  wikijs-test
+      root_as_others         root                  mastodon
     '';
     authentication = ''
       local  all     postgres               peer
