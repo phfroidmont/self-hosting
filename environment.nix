@@ -14,4 +14,6 @@
   };
 
   services.nscd.enableNsncd = true;
+
+  zramSwap.enable = true;
 }
