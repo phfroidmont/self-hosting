@@ -80,6 +80,14 @@ resource "hetznerdns_record" "jellyfin_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "status_banditlair_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "status"
+  value   = hcloud_server.backend1.ipv4_address
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "jitsi_a" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
   name    = "jitsi"
@@ -91,6 +99,14 @@ resource "hetznerdns_record" "jitsi_a" {
 resource "hetznerdns_record" "mastodon_a" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
   name    = "social"
+  value   = hcloud_server.backend1.ipv4_address
+  type    = "A"
+  ttl     = 600
+}
+
+resource "hetznerdns_record" "uptime_a" {
+  zone_id = data.hetznerdns_zone.froidmont_zone.id
+  name    = "uptime"
   value   = hcloud_server.backend1.ipv4_address
   type    = "A"
   ttl     = 600

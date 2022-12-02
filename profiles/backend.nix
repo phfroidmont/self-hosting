@@ -97,6 +97,24 @@
     };
   };
 
+  services.uptime-kuma = {
+    enable = true;
+    settings = {
+      PORT = "3001";
+    };
+  };
+
+  services.nginx.virtualHosts."uptime.froidmont.org" = {
+    serverAliases = [ "status.${config.networking.domain}" ];
+    forceSSL = true;
+    enableACME = true;
+
+    locations."/" = {
+      proxyPass = "http://127.0.0.1:${config.services.uptime-kuma.settings.PORT}";
+      proxyWebsockets = true;
+    };
+  };
+
   networking.firewall.allowedTCPPorts = [ 80 443 64738 ];
   networking.firewall.allowedUDPPorts = [ 64738 ];
   networking.firewall.interfaces."eth1".allowedTCPPorts = [ config.services.prometheus.exporters.node.port 9000 ];
