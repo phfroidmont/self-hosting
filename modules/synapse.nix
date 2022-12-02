@@ -65,7 +65,7 @@ in
         '';
 
         # forward all Matrix API calls to the synapse Matrix homeserver
-        locations."/_matrix" = {
+        locations."~ ^(/_matrix|/health)" = {
           proxyPass = "http://[::1]:8008"; # without a trailing /
         };
       };
