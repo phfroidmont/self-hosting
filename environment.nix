@@ -12,4 +12,6 @@
       "nixpkgs=${nixpkgs}"
     ];
   };
+
+  services.nscd.enableNsncd = true;
 }

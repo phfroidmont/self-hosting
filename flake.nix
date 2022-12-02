@@ -1,16 +1,18 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.11";
+    nixpkgs-old.url = "github:nixos/nixpkgs/nixos-22.05"; # Keep it until php74 is no longer needed for elefan
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     deploy-rs.url = "github:serokell/deploy-rs";
-    simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-22.05";
+    simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-22.11";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, deploy-rs, sops-nix, simple-nixos-mailserver }:
+  outputs = { self, nixpkgs, nixpkgs-old, nixpkgs-unstable, deploy-rs, sops-nix, simple-nixos-mailserver }:
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      pkgs-old = nixpkgs-old.legacyPackages.x86_64-linux;
       pkgs-unstable = nixpkgs-unstable.legacyPackages.x86_64-linux;
       defaultModuleArgs = { pkgs, ... }: {
         _module.args.pkgs-unstable = import nixpkgs-unstable {
@@ -92,6 +94,15 @@
                 networking.hostName = "storage1";
                 networking.domain = "banditlair.com";
                 nix.registry.nixpkgs.flake = nixpkgs;
+
+                nixpkgs =
+                  {
+                    config = {
+                      packageOverrides = pkgs: {
+                        php74 = pkgs-old.php74;
+                      };
+                    };
+                  };
 
                 system.stateVersion = "21.05";
               }

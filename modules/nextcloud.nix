@@ -65,6 +65,7 @@ in
     package = pkgs.nextcloud25;
     hostName = "cloud.${config.networking.domain}";
     https = true;
+    enableBrokenCiphersForSSE = false;
     config = {
       dbtype = "pgsql";
       dbuser = "nextcloud";

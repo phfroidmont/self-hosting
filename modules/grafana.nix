@@ -11,26 +11,32 @@
 
   services.grafana = {
     enable = true;
-    domain = "grafana.${config.networking.domain}";
-    security.adminPasswordFile = config.sops.secrets.grafanaAdminPassword.path;
     dataDir = "/nix/var/data/grafana";
+    settings = {
+      server = {
+        domain = "grafana.${config.networking.domain}";
+      };
+      security.admin_password = "$__file{${config.sops.secrets.grafanaAdminPassword.path}}";
+    };
     provision = {
       enable = true;
-      datasources = [
-        {
-          name = "Prometheus";
-          type = "prometheus";
-          url = "http://127.0.0.1:${toString config.services.prometheus.port}";
-          isDefault = true;
-        }
-        {
-          name = "Loki";
-          type = "loki";
-          access = "proxy";
-          url = "http://127.0.0.1:${toString config.services.loki.configuration.server.http_listen_port}";
-        }
-      ];
-      dashboards = [
+      datasources.settings = {
+        datasources = [
+          {
+            name = "Prometheus";
+            type = "prometheus";
+            url = "http://127.0.0.1:${toString config.services.prometheus.port}";
+            isDefault = true;
+          }
+          {
+            name = "Loki";
+            type = "loki";
+            access = "proxy";
+            url = "http://127.0.0.1:${toString config.services.loki.configuration.server.http_listen_port}";
+          }
+        ];
+      };
+      dashboards.settings.providers = [
         {
           name = "Config";
           options.path = ./dashboards;
@@ -41,13 +47,13 @@
 
   services.nginx = {
     virtualHosts = {
-      "${config.services.grafana.domain}" = {
+      "${config.services.grafana.settings.server.domain}" = {
 
         enableACME = true;
         forceSSL = true;
 
         locations."/" = {
-          proxyPass = "http://127.0.0.1:${toString config.services.grafana.port}";
+          proxyPass = "http://127.0.0.1:${toString config.services.grafana.settings.server.http_port}";
           proxyWebsockets = true;
         };
       };

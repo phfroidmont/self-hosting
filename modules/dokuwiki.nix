@@ -35,8 +35,6 @@ let
       };
     };
 
-    services.phpfpm.pools."dokuwiki-${name}.${config.networking.domain}".phpPackage = lib.mkOverride 10 pkgs.php74;
-
     services.nginx.virtualHosts."${name}.${config.networking.domain}" = {
       forceSSL = true;
       enableACME = true;
