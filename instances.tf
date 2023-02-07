@@ -30,7 +30,7 @@ resource "hcloud_server" "db1" {
     hcloud_ssh_key.froidmpa-desktop.id
   ]
   keep_disk = true
-  location  = "hel1"
+  location  = "fsn1"
 
   network {
     network_id = hcloud_network.private_network.id
@@ -47,7 +47,8 @@ resource "hcloud_server" "db1" {
 
   lifecycle {
     ignore_changes = [
-      ssh_keys
+      ssh_keys,
+      image
     ]
   }
 
@@ -61,7 +62,7 @@ resource "hcloud_server" "backend1" {
     hcloud_ssh_key.froidmpa-desktop.id
   ]
   keep_disk = true
-  location  = "hel1"
+  location  = "fsn1"
 
   network {
     network_id = hcloud_network.private_network.id
@@ -78,7 +79,8 @@ resource "hcloud_server" "backend1" {
 
   lifecycle {
     ignore_changes = [
-      ssh_keys
+      ssh_keys,
+      image
     ]
   }
 }
