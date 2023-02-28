@@ -112,22 +112,6 @@ resource "hetznerdns_record" "uptime_a" {
   ttl     = 600
 }
 
-resource "hetznerdns_record" "elefan-test_a" {
-  zone_id = data.hetznerdns_zone.froidmont_zone.id
-  name    = "elefan-test"
-  value   = local.storage1_ip
-  type    = "A"
-  ttl     = 600
-}
-
-resource "hetznerdns_record" "wikijs-test_a" {
-  zone_id = data.hetznerdns_zone.froidmont_zone.id
-  name    = "wikijs-test"
-  value   = hcloud_server.backend1.ipv4_address
-  type    = "A"
-  ttl     = 600
-}
-
 resource "hetznerdns_record" "transmission_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "transmission"
