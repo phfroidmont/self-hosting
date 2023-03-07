@@ -13,6 +13,14 @@ let
           host: "10.0.1.11"
           user: "synapse"
           password: "SYNAPSE_DB_PASSWORD"
+    email:
+        smtp_host: "mail.banditlair.com"
+        smtp_port: 465
+        smtp_user: "noreply@banditlair.com"
+        force_tls: true
+        enable_tls: true
+        notif_from: "noreply@banditlair.com"
+        smtp_pass: "SMTP_PASSWORD"
     macaroon_secret_key: "MACAROON_SECRET_KEY"
     turn_shared_secret: "TURN_SHARED_SECRET"
   '';
@@ -78,6 +86,10 @@ in
       key = "synapse/db_password";
       restartUnits = [ "matrix-synapse-setup" ];
     };
+    noreplySmtpPassword = {
+      owner = config.systemd.services.matrix-synapse.serviceConfig.User;
+      key = "email/accounts_passwords/noreply_banditlair_clear";
+    };
     macaroonSecretKey = {
       owner = config.systemd.services.matrix-synapse.serviceConfig.User;
       key = "synapse/macaroon_secret_key";
@@ -99,7 +111,8 @@ in
       set -euo pipefail
       install -m 600 ${synapseDbConfig} /run/synapse/synapse-db-config.yaml
       ${pkgs.replace-secret}/bin/replace-secret 'SYNAPSE_DB_PASSWORD' '${config.sops.secrets.synapseDbPassword.path}' /run/synapse/synapse-db-config.yaml
-      ${pkgs.replace-secret}/bin/replace-secret 'MACAROON_SECRET_KEY' '${config.sops.secrets.macaroonSecretKey.path}' /run/synapse/synapse-db-config.yaml
+      ${pkgs.replace-secret}/bin/replace-secret 'SMTP_PASSWORD' '${config.sops.secrets.noreplySmtpPassword.path}' /run/synapse/synapse-db-config.yaml
+      ${pkgs.replace-secret}/bin/replace-secret 'MACAROON_SECRET_KEY' '${config.sops.secrets.noreplySmtpPassword.path}' /run/synapse/synapse-db-config.yaml
       ${pkgs.replace-secret}/bin/replace-secret 'TURN_SHARED_SECRET' '${config.sops.secrets.turnSharedSecret.path}' /run/synapse/synapse-db-config.yaml
     '';
 
