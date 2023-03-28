@@ -6,12 +6,9 @@ let
   gidFile = pkgs.writeText "gidfile" ''
     nextcloud:991
   '';
-in
-{
+in {
   sops.secrets = {
-    sshfsKey = {
-      key = "sshfs_keys/private";
-    };
+    sshfsKey = { key = "sshfs_keys/private"; };
     nextcloudDbPassword = {
       owner = config.users.users.nextcloud.name;
       key = "nextcloud/db_password";
@@ -24,9 +21,7 @@ in
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    sshfs
-  ];
+  environment.systemPackages = with pkgs; [ sshfs ];
 
   systemd.services.nextcloud-data-sshfs = {
     wantedBy = [ "multi-user.target" "nextcloud-setup.service" ];
@@ -34,21 +29,19 @@ in
     restartIfChanged = false;
     serviceConfig = {
       ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p /var/lib/nextcloud/data";
-      ExecStart =
-        let
-          options = builtins.concatStringsSep "," [
-            "identityfile=${config.sops.secrets.sshfsKey.path}"
-            "ServerAliveInterval=15"
-            "idmap=file"
-            "uidfile=${uidFile}"
-            "gidfile=${gidFile}"
-            "allow_other"
-            "default_permissions"
-            "nomap=ignore"
-          ];
-        in
-        "${pkgs.sshfs}/bin/mount.fuse.sshfs www-data@10.0.2.3:/nix/var/data/nextcloud/data "
-        + "/var/lib/nextcloud/data -o ${options}";
+      ExecStart = let
+        options = builtins.concatStringsSep "," [
+          "identityfile=${config.sops.secrets.sshfsKey.path}"
+          "ServerAliveInterval=15"
+          "idmap=file"
+          "uidfile=${uidFile}"
+          "gidfile=${gidFile}"
+          "allow_other"
+          "default_permissions"
+          "nomap=ignore"
+        ];
+      in "${pkgs.sshfs}/bin/mount.fuse.sshfs www-data@10.0.2.3:/nix/var/data/nextcloud/data "
+      + "/var/lib/nextcloud/data -o ${options}";
       ExecStopPost = "-${pkgs.fuse}/bin/fusermount -u /var/lib/nextcloud/data";
       KillMode = "process";
     };
@@ -59,13 +52,13 @@ in
     forceSSL = true;
   };
 
-
   services.nextcloud = {
     enable = true;
     package = pkgs.nextcloud25;
     hostName = "cloud.${config.networking.domain}";
     https = true;
     enableBrokenCiphersForSSE = false;
+    maxUploadSize = "1G";
     config = {
       dbtype = "pgsql";
       dbuser = "nextcloud";
