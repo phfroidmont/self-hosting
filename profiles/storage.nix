@@ -118,7 +118,7 @@
   users.groups.steam = { };
 
   services.minecraft-server = {
-    enable = true;
+    enable = false;
     package = pkgs-unstable.minecraft-server;
     eula = true;
     openFirewall = true;
@@ -136,4 +136,20 @@
     };
     dataDir = "/nix/var/data/minecraft";
   };
+
+  # virtualisation.oci-containers.containers = {
+  #   "minecraft" = {
+  #     image = "itzg/minecraft-server";
+  #     environment = {
+  #       EULA = "TRUE";
+  #       VERSION = "1.18.2";
+  #       TYPE = "AUTO_CURSEFORGE";
+  #       MEMORY = "4G";
+  #       CF_SLUG = "modecube"; # https://www.curseforge.com/minecraft/modpacks/modecube/files
+  #     };
+  #     ports = [ "25565:25565" ];
+  #     volumes = [ "/nix/var/data/minecraft-modded:/data" ];
+  #     autoStart = true;
+  #   };
+  # };
 }
