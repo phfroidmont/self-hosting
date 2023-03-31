@@ -1,9 +1,7 @@
 { config, lib, pkgs, ... }:
 with lib;
-let
-  cfg = config.custom.services.monit;
-in
-{
+let cfg = config.custom.services.monit;
+in {
   options.custom.services.monit = {
     enable = mkEnableOption "monit";
 
@@ -48,7 +46,7 @@ in
         check system $HOST
           if cpu usage > 95% for 10 cycles then alert
           if memory usage > 75% for 5 times within 15 cycles then alert
-          if swap usage > 25% then alert
+          if swap usage > 50% then alert
 
         check filesystem root with path /
           if SPACE usage > 90% then alert
@@ -56,7 +54,7 @@ in
         check file daily-backup-done with path /nix/var/data/backup/backup-ok
           if changed timestamp then alert
           if timestamp > 26 hours then alert
-        
+
         ${cfg.additionalConfig}
       '';
     };
