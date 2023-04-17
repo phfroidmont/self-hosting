@@ -1,5 +1,4 @@
-{ config, lib, pkgs, pkgs-unstable, ... }:
-{
+{ config, lib, pkgs, pkgs-unstable, ... }: {
   imports = [
     ../environment.nix
     ../hardware/hetzner-dedicated-storage1.nix
@@ -22,12 +21,8 @@
       owner = config.services.borgbackup.jobs.data.user;
       key = "borg/client_keys/storage1/private";
     };
-    nixCacheKey = {
-      key = "nix/cache_secret_key";
-    };
-    dmarcExporterPassword = {
-      key = "dmarc_exporter/password";
-    };
+    nixCacheKey = { key = "nix/cache_secret_key"; };
+    dmarcExporterPassword = { key = "dmarc_exporter/password"; };
   };
 
   custom = {
@@ -39,7 +34,8 @@
     services.backup-job = {
       enable = true;
       readWritePaths = [ "/nix/var/data/backup" ];
-      preHook = "${pkgs.docker}/bin/docker exec stb-mariadb sh -c 'mysqldump -u stb -pstb stb' > /nix/var/data/backup/stb_mariadb.sql";
+      preHook =
+        "${pkgs.docker}/bin/docker exec stb-mariadb sh -c 'mysqldump -u stb -pstb stb' > /nix/var/data/backup/stb_mariadb.sql";
       startAt = "04:00";
       sshKey = config.sops.secrets.borgSshKey.path;
     };
@@ -83,7 +79,8 @@
     imap = {
       host = "mail.banditlair.com";
       username = "paultrial@banditlair.com";
-      passwordFile = "/run/credentials/prometheus-dmarc-exporter.service/password";
+      passwordFile =
+        "/run/credentials/prometheus-dmarc-exporter.service/password";
     };
     folders = {
       inbox = "dmarc_reports";
@@ -95,7 +92,8 @@
     "password:${config.sops.secrets.dmarcExporterPassword.path}";
 
   networking.firewall.allowedTCPPorts = [ 80 443 18080 ];
-  networking.firewall.interfaces.vlan4001.allowedTCPPorts = [ config.services.loki.configuration.server.http_listen_port ];
+  networking.firewall.interfaces.vlan4001.allowedTCPPorts =
+    [ config.services.loki.configuration.server.http_listen_port ];
 
   networking.nat.enable = true;
   networking.nat.internalInterfaces = [ "ve-+" ];
@@ -152,4 +150,13 @@
   #     autoStart = true;
   #   };
   # };
+
+  services.borgbackup.repos = {
+    epicerie_du_cellier = {
+      authorizedKeys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDbiI5UOGpVbaV+xihLqKP0B3UehboMMzOy3HhjjbSz backend1@epicerieducellier.be"
+      ];
+      path = "/var/lib/epicerie_du_cellier_backup";
+    };
+  };
 }
