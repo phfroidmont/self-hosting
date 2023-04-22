@@ -33,6 +33,12 @@
 
     services.backup-job = {
       enable = true;
+      repoName = "bl";
+      patterns = [
+        "- /nix/var/data/media"
+        "- /nix/var/data/transmission/downloads"
+        "- /nix/var/data/transmission/.incomplete"
+      ];
       readWritePaths = [ "/nix/var/data/backup" ];
       preHook =
         "${pkgs.docker}/bin/docker exec stb-mariadb sh -c 'mysqldump -u stb -pstb stb' > /nix/var/data/backup/stb_mariadb.sql";

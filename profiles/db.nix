@@ -1,5 +1,4 @@
-{ config, lib, pkgs, ... }:
-{
+{ config, lib, pkgs, ... }: {
   imports = [
     ../environment.nix
     ../hardware/hcloud.nix
@@ -8,7 +7,10 @@
     ../modules/monitoring-exporters.nix
   ];
 
-  networking.firewall.interfaces."eth1".allowedTCPPorts = [ config.services.prometheus.exporters.node.port config.services.postgresql.port ];
+  networking.firewall.interfaces."eth1".allowedTCPPorts = [
+    config.services.prometheus.exporters.node.port
+    config.services.postgresql.port
+  ];
 
   sops.secrets = {
     borgSshKey = {
@@ -20,6 +22,7 @@
   custom = {
     services.backup-job = {
       enable = true;
+      repoName = "db1";
       readWritePaths = [ "/nix/var/data/postgresql" "/nix/var/data/backup/" ];
       preHook = ''
         ${pkgs.postgresql_12}/bin/pg_dump -U synapse synapse > /nix/var/data/postgresql/synapse.dmp

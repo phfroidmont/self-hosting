@@ -1,9 +1,7 @@
 { config, lib, pkgs, ... }:
 with lib;
-let
-  cfg = config.custom.services.backup-job;
-in
-{
+let cfg = config.custom.services.backup-job;
+in {
   options.custom.services.backup-job = {
     enable = mkEnableOption "backup-job";
 
@@ -11,6 +9,13 @@ in
       type = with types; listOf path;
       default = [ ];
     };
+
+    patterns = mkOption {
+      type = with types; listOf str;
+      default = [ ];
+    };
+
+    repoName = mkOption { type = types.str; };
 
     readWritePaths = mkOption {
       type = with types; listOf path;
@@ -36,9 +41,7 @@ in
       default = "03:30";
     };
 
-    sshKey = mkOption {
-      type = with types; path;
-    };
+    sshKey = mkOption { type = with types; path; };
   };
 
   config = mkIf cfg.enable {
@@ -52,8 +55,10 @@ in
 
     services.borgbackup.jobs.data = {
       paths = [ "/nix/var/data" cfg.sshKey ] ++ cfg.additionalPaths;
+      patterns = cfg.patterns;
       doInit = false;
-      repo = "borgbackup@212.129.12.205:./";
+      repo =
+        "ssh://u348077@u348077.your-storagebox.de:23/home/repos/${cfg.repoName}";
       encryption = {
         mode = "repokey-blake2";
         passCommand = "cat ${config.sops.secrets.borgPassphrase.path}";
