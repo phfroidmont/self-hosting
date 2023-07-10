@@ -1,22 +1,11 @@
-{ config, lib, pkgs, ... }:
-{
+{ config, lib, pkgs, ... }: {
 
   sops.secrets = {
-    paultrialPassword = {
-      key = "email/accounts_passwords/paultrial";
-    };
-    eliosPassword = {
-      key = "email/accounts_passwords/elios";
-    };
-    mariePassword = {
-      key = "email/accounts_passwords/marie";
-    };
-    alicePassword = {
-      key = "email/accounts_passwords/alice";
-    };
-    monitPassword = {
-      key = "email/accounts_passwords/monit";
-    };
+    paultrialPassword = { key = "email/accounts_passwords/paultrial"; };
+    eliosPassword = { key = "email/accounts_passwords/elios"; };
+    mariePassword = { key = "email/accounts_passwords/marie"; };
+    alicePassword = { key = "email/accounts_passwords/alice"; };
+    monitPassword = { key = "email/accounts_passwords/monit"; };
     noreplyBanditlairPassword = {
       key = "email/accounts_passwords/noreply_banditlair";
     };
@@ -41,10 +30,7 @@
       "paultrial@banditlair.com" = {
         # nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2 > /hashed/password/file/location
         hashedPasswordFile = config.sops.secrets.paultrialPassword.path;
-        aliases = [
-          "contact@froidmont.org"
-          "account@banditlair.com"
-        ];
+        aliases = [ "contact@froidmont.org" "account@banditlair.com" ];
       };
       "marie-alice@froidmont.org" = {
         hashedPasswordFile = config.sops.secrets.mariePassword.path;
@@ -190,8 +176,7 @@
       "@falbo.fr" = "elios@banditlair.com";
     };
 
-
-    certificateScheme = 3;
+    certificateScheme = "acme-nginx";
   };
 
 }

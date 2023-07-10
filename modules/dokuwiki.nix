@@ -18,7 +18,8 @@ let
     sops.secrets."usersFile-${name}" = {
       owner = "dokuwiki";
       key = "wiki/${name}/users_file";
-      restartUnits = [ "phpfpm-dokuwiki-${name}.${config.networking.domain}.service" ];
+      restartUnits =
+        [ "phpfpm-dokuwiki-${name}.${config.networking.domain}.service" ];
     };
 
     services.dokuwiki.sites = {
@@ -26,12 +27,13 @@ let
         enable = true;
         stateDir = "/nix/var/data/dokuwiki/${name}/data";
         usersFile = config.sops.secrets."usersFile-${name}".path;
-        disableActions = "register";
         templates = [ template-chippedsnow ];
-        extraConfig = ''
-          $conf['title']    = 'Chroniques d\'Arkadia';
-          $conf['template'] = 'chippedsnow';
-        '';
+        settings = {
+          useacl = true;
+          title = "Chroniques d`Arkadia";
+          template = "chippedsnow";
+          disableactions = "register";
+        };
       };
     };
 
@@ -40,21 +42,14 @@ let
       enableACME = true;
     };
   };
-in
-{
+in {
   options.custom.services.dokuwiki = {
 
     enable = mkEnableOption "dokuwiki";
 
-    secretKeyFile = mkOption {
-      type = types.path;
-    };
+    secretKeyFile = mkOption { type = types.path; };
   };
 
-
   config = mkIf cfg.enable
-    (lib.mkMerge [
-      (configureWiki "anderia")
-      (configureWiki "arkadia")
-    ]);
+    (lib.mkMerge [ (configureWiki "anderia") (configureWiki "arkadia") ]);
 }

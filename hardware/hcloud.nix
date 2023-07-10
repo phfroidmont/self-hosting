@@ -9,7 +9,7 @@
 
   time.timeZone = "Europe/Amsterdam";
 
-  boot.cleanTmpDir = true;
+  boot.tmp.cleanOnBoot = true;
   networking.firewall.allowPing = true;
   networking.usePredictableInterfaceNames = false;
 
