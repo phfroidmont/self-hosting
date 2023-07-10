@@ -54,7 +54,7 @@ in {
 
   services.nextcloud = {
     enable = true;
-    package = pkgs.nextcloud25;
+    package = pkgs.nextcloud26;
     hostName = "cloud.${config.networking.domain}";
     https = true;
     enableBrokenCiphersForSSE = false;
