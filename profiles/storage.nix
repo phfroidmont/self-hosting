@@ -72,6 +72,16 @@
               with timeout 5 seconds
               content = '[{"]Healthy["]:[{}}]'
           then alert
+
+        check host osteoview-demo with address demo.osteoview.app
+          if failed
+              port 443
+              protocol https
+              status = 200
+              request "/api/_health"
+              with timeout 5 seconds
+              content = '[{"]Healthy["]:[{}}]'
+          then alert
       '';
     };
 
