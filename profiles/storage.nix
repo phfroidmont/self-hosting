@@ -127,6 +127,13 @@
   };
   users.groups.www-data = { gid = 991; };
 
+  services.openssh.settings.Macs = [
+    "hmac-sha2-512-etm@openssh.com"
+    "hmac-sha2-256-etm@openssh.com"
+    "umac-128-etm@openssh.com"
+    "hmac-sha2-256" # Needed for Nextcloud sshfs
+  ];
+
   users.users.steam = {
     isNormalUser = true;
     group = config.users.groups.steam.name;
