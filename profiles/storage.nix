@@ -141,7 +141,7 @@
   users.groups.steam = { };
 
   services.minecraft-server = {
-    enable = false;
+    enable = true;
     package = pkgs-unstable.minecraft-server;
     eula = true;
     openFirewall = true;
@@ -150,6 +150,7 @@
       online-mode = true;
       force-gamemode = true;
       white-list = true;
+      diffuculty = "hard";
     };
     whitelist = {
       paulplay15 = "1d5abc95-2fdb-4dcb-98e8-4fb5a0fba953";
