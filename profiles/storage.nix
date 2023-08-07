@@ -107,7 +107,15 @@
   systemd.services.prometheus-dmarc-exporter.serviceConfig.LoadCredential =
     "password:${config.sops.secrets.dmarcExporterPassword.path}";
 
-  networking.firewall.allowedTCPPorts = [ 80 443 18080 ];
+  networking.firewall.allowedTCPPorts = [
+    80
+    443
+    18080
+    23363 # Minecraft
+  ];
+  networking.firewall.allowedUDPPorts = [
+    23363 # Minecraft
+  ];
   networking.firewall.interfaces.vlan4001.allowedTCPPorts =
     [ config.services.loki.configuration.server.http_listen_port ];
 
@@ -144,9 +152,13 @@
     enable = true;
     package = pkgs-unstable.minecraft-server;
     eula = true;
-    openFirewall = true;
+    openFirewall = false;
     declarative = true;
     serverProperties = {
+      enable-rcon = true;
+      "rcon.port" = 25575;
+      "rcon.password" = "password";
+      server-port = 23363;
       online-mode = true;
       force-gamemode = true;
       white-list = true;
@@ -154,7 +166,6 @@
     };
     whitelist = {
       paulplay15 = "1d5abc95-2fdb-4dcb-98e8-4fb5a0fba953";
-      Nixo = "ec79d755-c3c9-4307-bb66-b58b7c74422c";
       Xavier1258 = "e9059cf3-00ef-47a3-92ee-4e4a3fea0e6d";
       denisjulien3333 = "3c93e1a2-42d8-4a51-9fe3-924c8e8d5b07";
     };
