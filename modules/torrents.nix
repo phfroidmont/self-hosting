@@ -1,13 +1,8 @@
-{ config, lib, pkgs, ... }:
-{
+{ config, lib, pkgs, ... }: {
 
   sops.secrets = {
-    vpnCredentials = {
-      key = "openvpn/credentials";
-    };
-    transmissionRpcCredentials = {
-      key = "transmission/rpc_config.json";
-    };
+    vpnCredentials = { key = "openvpn/credentials"; };
+    transmissionRpcCredentials = { key = "transmission/rpc_config.json"; };
   };
 
   containers.torrents = {
@@ -40,6 +35,10 @@
       };
       "/nix/var/data/radarr" = {
         hostPath = "/nix/var/data/radarr";
+        isReadOnly = false;
+      };
+      "/nix/var/data/headphones" = {
+        hostPath = "/nix/var/data/headphones";
         isReadOnly = false;
       };
       "/nix/var/data/transmission" = {
@@ -169,6 +168,15 @@
         group = config.users.groups.www-data.name;
         dataDir = "/nix/var/data/radarr";
       };
+      services.headphones = {
+        enable = true;
+        user = config.users.users.www-data.name;
+        group = config.users.groups.www-data.name;
+        dataDir = "/nix/var/data/headphones";
+        host = "192.168.1.2";
+      };
+
+      networking.firewall.allowedTCPPorts = [ config.services.headphones.port ];
 
       system.stateVersion = "21.11";
     };
@@ -184,32 +192,34 @@
     autoStart = true;
   };
 
-  services.nginx.virtualHosts."transmission.${config.networking.domain}" = {
-    forceSSL = true;
-    enableACME = true;
-    locations."/" = {
-      proxyPass = "http://192.168.1.2:9091";
+  services.nginx.virtualHosts = {
+    "transmission.${config.networking.domain}" = {
+      forceSSL = true;
+      enableACME = true;
+      locations."/" = { proxyPass = "http://192.168.1.2:9091"; };
     };
-  };
-  services.nginx.virtualHosts."jackett.${config.networking.domain}" = {
-    forceSSL = true;
-    enableACME = true;
-    locations."/" = {
-      proxyPass = "http://192.168.1.2:9117";
+    "jackett.${config.networking.domain}" = {
+      forceSSL = true;
+      enableACME = true;
+      locations."/" = { proxyPass = "http://192.168.1.2:9117"; };
     };
-  };
-  services.nginx.virtualHosts."sonarr.${config.networking.domain}" = {
-    forceSSL = true;
-    enableACME = true;
-    locations."/" = {
-      proxyPass = "http://192.168.1.2:8989";
+    "sonarr.${config.networking.domain}" = {
+      forceSSL = true;
+      enableACME = true;
+      locations."/" = { proxyPass = "http://192.168.1.2:8989"; };
     };
-  };
-  services.nginx.virtualHosts."radarr.${config.networking.domain}" = {
-    forceSSL = true;
-    enableACME = true;
-    locations."/" = {
-      proxyPass = "http://192.168.1.2:7878";
+    "radarr.${config.networking.domain}" = {
+      forceSSL = true;
+      enableACME = true;
+      locations."/" = { proxyPass = "http://192.168.1.2:7878"; };
+    };
+    "headphones.${config.networking.domain}" = {
+      forceSSL = true;
+      enableACME = true;
+      locations."/" = {
+        proxyPass =
+          "http://192.168.1.2:${toString config.services.headphones.port}";
+      };
     };
   };
 }
