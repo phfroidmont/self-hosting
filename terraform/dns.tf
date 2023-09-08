@@ -144,9 +144,9 @@ resource "hetznerdns_record" "radarr_a" {
   ttl     = 600
 }
 
-resource "hetznerdns_record" "headphones_a" {
+resource "hetznerdns_record" "lidarr_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
-  name    = "headphones"
+  name    = "lidarr"
   value   = local.storage1_ip
   type    = "A"
   ttl     = 600

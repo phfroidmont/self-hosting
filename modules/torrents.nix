@@ -37,8 +37,8 @@
         hostPath = "/nix/var/data/radarr";
         isReadOnly = false;
       };
-      "/nix/var/data/headphones" = {
-        hostPath = "/nix/var/data/headphones";
+      "/nix/var/data/lidarr" = {
+        hostPath = "/nix/var/data/lidarr";
         isReadOnly = false;
       };
       "/nix/var/data/transmission" = {
@@ -168,15 +168,13 @@
         group = config.users.groups.www-data.name;
         dataDir = "/nix/var/data/radarr";
       };
-      services.headphones = {
+      services.lidarr = {
         enable = true;
+        openFirewall = true;
         user = config.users.users.www-data.name;
         group = config.users.groups.www-data.name;
-        dataDir = "/nix/var/data/headphones";
-        host = "192.168.1.2";
+        dataDir = "/nix/var/data/lidarr";
       };
-
-      networking.firewall.allowedTCPPorts = [ config.services.headphones.port ];
 
       system.stateVersion = "21.11";
     };
@@ -213,13 +211,10 @@
       enableACME = true;
       locations."/" = { proxyPass = "http://192.168.1.2:7878"; };
     };
-    "headphones.${config.networking.domain}" = {
+    "lidarr.${config.networking.domain}" = {
       forceSSL = true;
       enableACME = true;
-      locations."/" = {
-        proxyPass =
-          "http://192.168.1.2:${toString config.services.headphones.port}";
-      };
+      locations."/" = { proxyPass = "http://192.168.1.2:8686"; };
     };
   };
 }
