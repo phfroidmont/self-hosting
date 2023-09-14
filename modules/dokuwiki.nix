@@ -40,6 +40,7 @@ let
     services.nginx.virtualHosts."${name}.${config.networking.domain}" = {
       forceSSL = true;
       enableACME = true;
+      extraConfig = "client_max_body_size 25M;";
     };
   };
 in {
