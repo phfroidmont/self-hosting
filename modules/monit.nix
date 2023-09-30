@@ -41,7 +41,7 @@ in {
         set alert alerts@banditlair.com with reminder on 120 cycles
 
         check program failed-units with path "${pkgs.systemd}/bin/systemctl --failed"
-          if content != "0 loaded units listed" then alert
+          if content != "0 loaded units listed" for 20 times within 60 cycles then alert
 
         check system $HOST
           if cpu usage > 95% for 10 cycles then alert
