@@ -40,8 +40,11 @@
         "- /nix/var/data/transmission/.incomplete"
       ];
       readWritePaths = [ "/nix/var/data/backup" ];
-      preHook =
-        "${pkgs.docker}/bin/docker exec stb-mariadb sh -c 'mysqldump -u stb -pstb stb' > /nix/var/data/backup/stb_mariadb.sql";
+      preHook = ''
+        ${pkgs.docker}/bin/docker exec stb-mariadb sh -c 'mysqldump -u stb -pstb stb' > /nix/var/data/backup/stb_mariadb.sql
+        ${pkgs.systemd}/bin/systemctl stop jellyfin.service
+      '';
+      postHook = "${pkgs.systemd}/bin/systemctl start jellyfin.service";
       startAt = "04:00";
       sshKey = config.sops.secrets.borgSshKey.path;
     };
