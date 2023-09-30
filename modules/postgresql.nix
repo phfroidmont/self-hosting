@@ -1,9 +1,8 @@
-{ config, lib, pkgs, ... }:
-{
+{ config, lib, pkgs, ... }: {
 
   services.postgresql = {
     enable = true;
-    package = pkgs.postgresql_12;
+    package = pkgs.postgresql_15;
     enableTCPIP = true;
     identMap = ''
       root_as_others         root                  postgres
@@ -42,50 +41,47 @@
     };
   };
 
-  systemd.services.postgresql-setup = let pgsql = config.services.postgresql; in
-    {
-      after = [ "postgresql.service" ];
-      bindsTo = [ "postgresql.service" ];
-      wantedBy = [ "postgresql.service" ];
-      path = [
-        pgsql.package
-        pkgs.util-linux
-      ];
-      script = ''
-        set -u
-        PSQL() {
-            psql --port=${toString pgsql.port} "$@"
-        }
+  systemd.services.postgresql-setup = let pgsql = config.services.postgresql;
+  in {
+    after = [ "postgresql.service" ];
+    bindsTo = [ "postgresql.service" ];
+    wantedBy = [ "postgresql.service" ];
+    path = [ pgsql.package pkgs.util-linux ];
+    script = ''
+      set -u
+      PSQL() {
+          psql --port=${toString pgsql.port} "$@"
+      }
 
-        PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'synapse'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "synapse"'
-        PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'nextcloud'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "nextcloud"'
-        PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'roundcube'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "roundcube"'
-        PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'mastodon'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "mastodon"'
-        
-        PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'synapse'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "synapse" OWNER "synapse" TEMPLATE template0 LC_COLLATE = "C" LC_CTYPE = "C"'
-        PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'nextcloud'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "nextcloud" OWNER "nextcloud"'
-        PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'roundcube'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "roundcube" OWNER "roundcube"'
-        PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'mastodon'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "mastodon" OWNER "mastodon"'
+      PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'synapse'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "synapse"'
+      PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'nextcloud'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "nextcloud"'
+      PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'roundcube'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "roundcube"'
+      PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'mastodon'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "mastodon"'
 
-        PSQL -tAc  "ALTER ROLE synapse LOGIN"
-        PSQL -tAc  "ALTER ROLE nextcloud LOGIN"
-        PSQL -tAc  "ALTER ROLE roundcube LOGIN"
-        PSQL -tAc  "ALTER ROLE mastodon LOGIN"
+      PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'synapse'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "synapse" OWNER "synapse" TEMPLATE template0 LC_COLLATE = "C" LC_CTYPE = "C"'
+      PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'nextcloud'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "nextcloud" OWNER "nextcloud"'
+      PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'roundcube'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "roundcube" OWNER "roundcube"'
+      PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'mastodon'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "mastodon" OWNER "mastodon"'
 
-        synapse_password="$(<'${config.sops.secrets.synapseDbPassword.path}')"
-        PSQL -tAc  "ALTER ROLE synapse WITH PASSWORD '$synapse_password'"
-        nextcloud_password="$(<'${config.sops.secrets.nextcloudDbPassword.path}')"
-        PSQL -tAc  "ALTER ROLE nextcloud WITH PASSWORD '$nextcloud_password'"
-        roundcube_password="$(<'${config.sops.secrets.roundcubeDbPassword.path}')"
-        PSQL -tAc  "ALTER ROLE roundcube WITH PASSWORD '$roundcube_password'"
-        mastodon_password="$(<'${config.sops.secrets.mastodonDbPassword.path}')"
-        PSQL -tAc  "ALTER ROLE mastodon WITH PASSWORD '$mastodon_password'"
-      '';
+      PSQL -tAc  "ALTER ROLE synapse LOGIN"
+      PSQL -tAc  "ALTER ROLE nextcloud LOGIN"
+      PSQL -tAc  "ALTER ROLE roundcube LOGIN"
+      PSQL -tAc  "ALTER ROLE mastodon LOGIN"
 
-      serviceConfig = {
-        User = pgsql.superUser;
-        Type = "oneshot";
-        RemainAfterExit = true;
-      };
+      synapse_password="$(<'${config.sops.secrets.synapseDbPassword.path}')"
+      PSQL -tAc  "ALTER ROLE synapse WITH PASSWORD '$synapse_password'"
+      nextcloud_password="$(<'${config.sops.secrets.nextcloudDbPassword.path}')"
+      PSQL -tAc  "ALTER ROLE nextcloud WITH PASSWORD '$nextcloud_password'"
+      roundcube_password="$(<'${config.sops.secrets.roundcubeDbPassword.path}')"
+      PSQL -tAc  "ALTER ROLE roundcube WITH PASSWORD '$roundcube_password'"
+      mastodon_password="$(<'${config.sops.secrets.mastodonDbPassword.path}')"
+      PSQL -tAc  "ALTER ROLE mastodon WITH PASSWORD '$mastodon_password'"
+    '';
+
+    serviceConfig = {
+      User = pgsql.superUser;
+      Type = "oneshot";
+      RemainAfterExit = true;
     };
+  };
 }

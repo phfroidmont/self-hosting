@@ -25,10 +25,10 @@
       repoName = "db1";
       readWritePaths = [ "/nix/var/data/postgresql" "/nix/var/data/backup/" ];
       preHook = ''
-        ${pkgs.postgresql_12}/bin/pg_dump -U synapse synapse > /nix/var/data/postgresql/synapse.dmp
-        ${pkgs.postgresql_12}/bin/pg_dump -U nextcloud nextcloud > /nix/var/data/postgresql/nextcloud.dmp
-        ${pkgs.postgresql_12}/bin/pg_dump -U roundcube roundcube > /nix/var/data/postgresql/roundcube.dmp
-        ${pkgs.postgresql_12}/bin/pg_dump -U mastodon mastodon > /nix/var/data/postgresql/mastodon.dmp
+        ${config.services.postgresql.package}/bin/pg_dump -U synapse synapse > /nix/var/data/postgresql/synapse.dmp
+        ${config.services.postgresql.package}/bin/pg_dump -U nextcloud nextcloud > /nix/var/data/postgresql/nextcloud.dmp
+        ${config.services.postgresql.package}/bin/pg_dump -U roundcube roundcube > /nix/var/data/postgresql/roundcube.dmp
+        ${config.services.postgresql.package}/bin/pg_dump -U mastodon mastodon > /nix/var/data/postgresql/mastodon.dmp
       '';
       startAt = "03:00";
       sshKey = config.sops.secrets.borgSshKey.path;
