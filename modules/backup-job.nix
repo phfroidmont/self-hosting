@@ -29,11 +29,7 @@ in {
 
     postHook = mkOption {
       type = types.lines;
-      default = ''
-        if [ $exitStatus -eq 0 ]; then
-          touch /nix/var/data/backup/backup-ok
-        fi
-      '';
+      default = "";
     };
 
     startAt = mkOption {
@@ -65,7 +61,13 @@ in {
       };
       readWritePaths = cfg.readWritePaths;
       preHook = cfg.preHook;
-      postHook = cfg.postHook;
+      postHook = ''
+        ${cfg.postHook}
+        if [ $exitStatus -eq 0 ]; then
+          touch /nix/var/data/backup/backup-ok
+        fi
+      '';
+
       environment = { BORG_RSH = "ssh -i ${cfg.sshKey}"; };
       compression = "lz4";
       startAt = cfg.startAt;
