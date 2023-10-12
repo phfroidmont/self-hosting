@@ -1,4 +1,4 @@
-{ config, lib, pkgs, pkgs-unstable, ... }: {
+{ config, lib, pkgs, pkgs-unstable, inputs, ... }: {
   imports = [
     ../environment.nix
     ../hardware/hetzner-dedicated-storage1.nix
@@ -34,6 +34,7 @@
     services.backup-job = {
       enable = true;
       repoName = "bl";
+      additionalPaths = [ config.services.foundryvtt.dataDir ];
       patterns = [
         "- /nix/var/data/media"
         "- /nix/var/data/transmission/downloads"
@@ -190,6 +191,28 @@
   #     autoStart = true;
   #   };
   # };
+
+  services.foundryvtt = {
+    enable = true;
+    hostName = "vtt.${config.networking.domain}";
+    language = "fr.core";
+    proxyPort = 443;
+    proxySSL = true;
+  };
+
+  services.nginx.virtualHosts."vtt.${config.networking.domain}" = {
+    forceSSL = true;
+    enableACME = true;
+
+    locations."/" = {
+      proxyPass =
+        "http://127.0.0.1:${toString config.services.foundryvtt.port}";
+      extraConfig = ''
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+      '';
+    };
+  };
 
   services.borgbackup.repos = {
     epicerie_du_cellier = {

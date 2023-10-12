@@ -68,6 +68,24 @@
         "type": "github"
       }
     },
+    "foundryvtt": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1696777017,
+        "narHash": "sha256-yCqwecHKXGXjAlS5JrtVO2EAkFCYWqvLF+ER0WebZ6g=",
+        "owner": "reckenrode",
+        "repo": "nix-foundryvtt",
+        "rev": "9b880a901139a65bebb72d359425d45c7f5224b2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "reckenrode",
+        "repo": "nix-foundryvtt",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1671417167,
@@ -148,6 +166,22 @@
     },
     "nixpkgs_2": {
       "locked": {
+        "lastModified": 1694304580,
+        "narHash": "sha256-5tIpNodDpEKT8mM/F5zCzWEAnidOg8eb1/x3SRaaBLs=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "4c8cf44c5b9481a4f093f1df3b8b7ba997a7c760",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-23.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
         "lastModified": 1695825837,
         "narHash": "sha256-4Ne11kNRnQsmSJCRSSNkFRSnHC4Y5gPDBIQGjjPfJiU=",
         "owner": "nixos",
@@ -162,7 +196,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_3": {
+    "nixpkgs_4": {
       "locked": {
         "lastModified": 1670751203,
         "narHash": "sha256-XdoH1v3shKDGlrwjgrNX/EN8s3c+kQV7xY6cLCE8vcI=",
@@ -180,7 +214,8 @@
     "root": {
       "inputs": {
         "deploy-rs": "deploy-rs",
-        "nixpkgs": "nixpkgs_2",
+        "foundryvtt": "foundryvtt",
+        "nixpkgs": "nixpkgs_3",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "simple-nixos-mailserver": "simple-nixos-mailserver",
         "sops-nix": "sops-nix"
@@ -190,7 +225,7 @@
       "inputs": {
         "blobs": "blobs",
         "flake-compat": "flake-compat_2",
-        "nixpkgs": "nixpkgs_3",
+        "nixpkgs": "nixpkgs_4",
         "nixpkgs-22_11": "nixpkgs-22_11",
         "nixpkgs-23_05": "nixpkgs-23_05",
         "utils": "utils_2"

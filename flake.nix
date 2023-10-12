@@ -7,10 +7,11 @@
     deploy-rs.url = "github:serokell/deploy-rs";
     simple-nixos-mailserver.url =
       "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-23.05";
+    foundryvtt.url = "github:reckenrode/nix-foundryvtt";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, deploy-rs, sops-nix
-    , simple-nixos-mailserver }:
+  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, deploy-rs, sops-nix
+    , simple-nixos-mailserver, foundryvtt }:
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
       pkgs-unstable = nixpkgs-unstable.legacyPackages.x86_64-linux;
@@ -77,6 +78,7 @@
             defaultModuleArgs
             sops-nix.nixosModules.sops
             simple-nixos-mailserver.nixosModule
+            foundryvtt.nixosModules.foundryvtt
             ./profiles/storage.nix
             ({
               sops.defaultSopsFile = ./secrets.enc.yml;
