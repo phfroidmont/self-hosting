@@ -44,8 +44,14 @@
       preHook = ''
         ${pkgs.docker}/bin/docker exec stb-mariadb sh -c 'mysqldump -u stb -pstb stb' > /nix/var/data/backup/stb_mariadb.sql
         ${pkgs.systemd}/bin/systemctl stop jellyfin.service
+        ${pkgs.systemd}/bin/systemctl stop minecraft-server.service
+        ${pkgs.systemd}/bin/systemctl stop container@torrents
       '';
-      postHook = "${pkgs.systemd}/bin/systemctl start jellyfin.service";
+      postHook = ''
+        ${pkgs.systemd}/bin/systemctl start jellyfin.service
+        ${pkgs.systemd}/bin/systemctl start minecraft-server.service
+        ${pkgs.systemd}/bin/systemctl start container@torrents
+      '';
       startAt = "04:00";
       sshKey = config.sops.secrets.borgSshKey.path;
     };
