@@ -33,6 +33,7 @@ let
           title = "Chroniques d`Arkadia";
           template = "chippedsnow";
           disableactions = "register";
+          dontlog = [ "debug" "deprecated" ];
         };
       };
     };
