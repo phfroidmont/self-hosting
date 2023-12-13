@@ -5,8 +5,10 @@
 
   boot.initrd.availableKernelModules = [ "ahci" "sd_mod" ];
   boot.initrd.kernelModules = [ "dm-snapshot" ];
+  boot.swraid.enable = true;
   boot.swraid.mdadmConf = ''
     HOMEHOST <ignore>
+    PROGRAM true
   '';
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
