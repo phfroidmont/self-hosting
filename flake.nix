@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
@@ -31,7 +31,7 @@
 
         buildInputs = with pkgs-unstable; [
           nixpkgs-fmt
-          terraform
+          opentofu
           terraform-ls
           sops
           deploy-rs.packages."x86_64-linux".deploy-rs

@@ -57,7 +57,6 @@ in {
     package = pkgs.nextcloud27;
     hostName = "cloud.${config.networking.domain}";
     https = true;
-    enableBrokenCiphersForSSE = false;
     maxUploadSize = "1G";
     config = {
       dbtype = "pgsql";

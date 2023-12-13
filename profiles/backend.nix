@@ -69,7 +69,7 @@
 
     services.murmur.enable = true;
 
-    services.mastodon.enable = true;
+    services.mastodon.enable = false;
   };
 
   services.uptime-kuma = {

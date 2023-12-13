@@ -13,6 +13,7 @@
   networking.firewall.allowPing = true;
   networking.usePredictableInterfaceNames = false;
 
+  networking.useDHCP = false;
   networking.dhcpcd.enable = false;
 
   systemd.network = {
