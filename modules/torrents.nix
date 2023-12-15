@@ -130,6 +130,7 @@
           auth-user-pass ${config.sops.secrets.vpnCredentials.path}
         '';
       };
+
       services.transmission = {
         enable = true;
         openRPCPort = true;
@@ -147,6 +148,12 @@
           download-dir = "/nix/var/data/transmission/downloads";
         };
       };
+      systemd.services.transmission.serviceConfig.BindReadOnlyPaths =
+        lib.mkForce [
+          builtins.storeDir
+          "/etc"
+        ]; # https://github.com/NixOS/nixpkgs/issues/258793
+
       services.jackett = {
         enable = true;
         openFirewall = true;
@@ -181,7 +188,7 @@
   };
 
   virtualisation.oci-containers.containers.flaresolverr = {
-    image = "ghcr.io/flaresolverr/flaresolverr:v2.0.2";
+    image = "ghcr.io/flaresolverr/flaresolverr:v3.3.11";
     environment = {
       "LOG_LEVEL" = "debug";
       "CAPTCHA_SOLVER" = "hcaptcha-solver";
