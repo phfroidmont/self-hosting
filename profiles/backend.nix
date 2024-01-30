@@ -89,6 +89,24 @@
     };
   };
 
+  services.nginx.virtualHosts."www.fautlfer.com" = {
+    enableACME = true;
+    forceSSL = true;
+
+    locations."= /".extraConfig = ''
+      return 302 https://blogz.zaclys.com/faut-l-fer/;
+    '';
+  };
+
+  services.nginx.virtualHosts."fautlfer.com" = {
+    enableACME = true;
+    forceSSL = true;
+
+    locations."= /".extraConfig = ''
+      return 302 https://blogz.zaclys.com/faut-l-fer/;
+    '';
+  };
+
   networking.firewall.allowedTCPPorts = [ 80 443 64738 ];
   networking.firewall.allowedUDPPorts = [ 64738 ];
   networking.firewall.interfaces."eth1".allowedTCPPorts =
