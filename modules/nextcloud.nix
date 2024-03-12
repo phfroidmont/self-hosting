@@ -54,10 +54,11 @@ in {
 
   services.nextcloud = {
     enable = true;
-    package = pkgs.nextcloud27;
+    package = pkgs.nextcloud28;
     hostName = "cloud.${config.networking.domain}";
     https = true;
     maxUploadSize = "1G";
+
     config = {
       dbtype = "pgsql";
       dbuser = "nextcloud";
@@ -69,6 +70,8 @@ in {
       overwriteProtocol = "https";
       defaultPhoneRegion = "BE";
     };
+
+    extraOptions = { maintenance_window_start = 1; };
 
     phpOptions = {
       short_open_tag = "Off";
