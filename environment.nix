@@ -1,5 +1,5 @@
 { pkgs, nixpkgs, ... }: {
-  environment.systemPackages = with pkgs; [ htop nload tmux vim git ];
+  environment.systemPackages = with pkgs; [ htop-vim nload tmux vim git ];
 
   nix = { nixPath = [ "nixpkgs=${nixpkgs}" ]; };
 
