@@ -1,11 +1,5 @@
 { config, lib, pkgs, ... }: {
-  imports = [
-    ../environment.nix
-    ../hardware/hcloud.nix
-    ../modules
-    ../modules/postgresql.nix
-    ../modules/monitoring-exporters.nix
-  ];
+  imports = [ ../environment.nix ../hardware/hcloud.nix ../modules ];
 
   networking.firewall.interfaces."eth1".allowedTCPPorts = [
     config.services.prometheus.exporters.node.port
@@ -35,6 +29,8 @@
     };
 
     services.openssh.enable = true;
+    services.postgresql.enable = true;
+    services.monitoring-exporters.enable = true;
   };
 
 }

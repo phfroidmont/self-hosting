@@ -1,16 +1,5 @@
 { config, lib, pkgs, ... }: {
-  imports = [
-    ../environment.nix
-    ../hardware/hcloud.nix
-    ../modules
-    ../modules/nginx.nix
-    ../modules/synapse.nix
-    ../modules/nextcloud.nix
-    ../modules/dokuwiki.nix
-    ../modules/website-marie.nix
-    ../modules/roundcube.nix
-    ../modules/monitoring-exporters.nix
-  ];
+  imports = [ ../environment.nix ../hardware/hcloud.nix ../modules ];
 
   sops.secrets = {
     borgSshKey = {
@@ -20,6 +9,7 @@
   };
 
   custom = {
+
     services.backup-job = {
       enable = true;
       repoName = "bk1";
@@ -63,13 +53,15 @@
       '';
     };
 
+    services.nginx.enable = true;
     services.dokuwiki.enable = true;
-
     services.openssh.enable = true;
-
     services.murmur.enable = true;
-
     services.mastodon.enable = false;
+    services.synapse.enable = true;
+    services.nextcloud.enable = true;
+    services.roundcube.enable = true;
+    services.monitoring-exporters.enable = true;
   };
 
   services.uptime-kuma = {
@@ -77,34 +69,42 @@
     settings = { PORT = "3001"; };
   };
 
-  services.nginx.virtualHosts."uptime.froidmont.org" = {
-    serverAliases = [ "status.${config.networking.domain}" ];
-    forceSSL = true;
-    enableACME = true;
-
-    locations."/" = {
-      proxyPass =
-        "http://127.0.0.1:${config.services.uptime-kuma.settings.PORT}";
-      proxyWebsockets = true;
+  services.nginx.virtualHosts = {
+    "osteopathie.froidmont.org" = {
+      enableACME = true;
+      forceSSL = true;
+      root = "/nix/var/data/website-marie";
     };
-  };
 
-  services.nginx.virtualHosts."www.fautlfer.com" = {
-    enableACME = true;
-    forceSSL = true;
+    "uptime.froidmont.org" = {
+      serverAliases = [ "status.${config.networking.domain}" ];
+      forceSSL = true;
+      enableACME = true;
 
-    locations."= /".extraConfig = ''
-      return 302 https://blogz.zaclys.com/faut-l-fer/;
-    '';
-  };
+      locations."/" = {
+        proxyPass =
+          "http://127.0.0.1:${config.services.uptime-kuma.settings.PORT}";
+        proxyWebsockets = true;
+      };
+    };
 
-  services.nginx.virtualHosts."fautlfer.com" = {
-    enableACME = true;
-    forceSSL = true;
+    "www.fautlfer.com" = {
+      enableACME = true;
+      forceSSL = true;
 
-    locations."= /".extraConfig = ''
-      return 302 https://blogz.zaclys.com/faut-l-fer/;
-    '';
+      locations."= /".extraConfig = ''
+        return 302 https://blogz.zaclys.com/faut-l-fer/;
+      '';
+    };
+
+    "fautlfer.com" = {
+      enableACME = true;
+      forceSSL = true;
+
+      locations."= /".extraConfig = ''
+        return 302 https://blogz.zaclys.com/faut-l-fer/;
+      '';
+    };
   };
 
   networking.firewall.allowedTCPPorts = [ 80 443 64738 ];

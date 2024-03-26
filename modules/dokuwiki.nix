@@ -1,5 +1,4 @@
 { config, lib, pkgs, ... }:
-with lib;
 let
   cfg = config.custom.services.dokuwiki;
 
@@ -47,11 +46,11 @@ let
 in {
   options.custom.services.dokuwiki = {
 
-    enable = mkEnableOption "dokuwiki";
+    enable = lib.mkEnableOption "dokuwiki";
 
-    secretKeyFile = mkOption { type = types.path; };
+    secretKeyFile = lib.mkOption { type = lib.types.path; };
   };
 
-  config = mkIf cfg.enable
+  config = lib.mkIf cfg.enable
     (lib.mkMerge [ (configureWiki "anderia") (configureWiki "arkadia") ]);
 }

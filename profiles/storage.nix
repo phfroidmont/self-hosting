@@ -3,17 +3,6 @@
     ../environment.nix
     ../hardware/hetzner-dedicated-storage1.nix
     ../modules
-    ../modules/openssh.nix
-    ../modules/mailserver.nix
-    ../modules/nginx.nix
-    ../modules/jellyfin.nix
-    ../modules/stb.nix
-    ../modules/monero.nix
-    ../modules/torrents.nix
-    ../modules/jitsi.nix
-    ../modules/binary-cache.nix
-    ../modules/grafana.nix
-    ../modules/monitoring-exporters.nix
   ];
 
   sops.secrets = {
@@ -23,6 +12,17 @@
     };
     nixCacheKey = { key = "nix/cache_secret_key"; };
     dmarcExporterPassword = { key = "dmarc_exporter/password"; };
+    paultrialPassword = { key = "email/accounts_passwords/paultrial"; };
+    eliosPassword = { key = "email/accounts_passwords/elios"; };
+    mariePassword = { key = "email/accounts_passwords/marie"; };
+    alicePassword = { key = "email/accounts_passwords/alice"; };
+    monitPassword = { key = "email/accounts_passwords/monit"; };
+    noreplyBanditlairPassword = {
+      key = "email/accounts_passwords/noreply_banditlair";
+    };
+    noreplyFroidmontPassword = {
+      key = "email/accounts_passwords/noreply_froidmont";
+    };
   };
 
   custom = {
@@ -95,8 +95,80 @@
       '';
     };
 
+    services.nginx.enable = true;
     services.gitlab-runner.enable = true;
     services.openssh.enable = true;
+    services.jellyfin.enable = true;
+    services.stb.enable = true;
+    services.monero.enable = true;
+    services.torrents.enable = true;
+    services.jitsi.enable = true;
+    services.grafana.enable = true;
+    services.monitoring-exporters.enable = true;
+  };
+
+  mailserver = {
+    enable = true;
+    fqdn = "mail.banditlair.com";
+    domains = [ "banditlair.com" "froidmont.org" "falbo.fr" ];
+    localDnsResolver = false;
+    enableManageSieve = true;
+    mailDirectory = "/nix/var/data/vmail";
+    sieveDirectory = "/nix/var/data/sieve";
+    lmtpSaveToDetailMailbox = "no";
+    policydSPFExtraConfig = ''
+      Domain_Whitelist = skynet.be
+    '';
+    loginAccounts = {
+      "paultrial@banditlair.com" = {
+        # nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2 > /hashed/password/file/location
+        hashedPasswordFile = config.sops.secrets.paultrialPassword.path;
+        aliases = [ "contact@froidmont.org" "account@banditlair.com" ];
+      };
+      "marie-alice@froidmont.org" = {
+        hashedPasswordFile = config.sops.secrets.mariePassword.path;
+        aliases = [ "osteopathie@froidmont.org" "communication@froidmont.org" ];
+      };
+      "alice@froidmont.org" = {
+        hashedPasswordFile = config.sops.secrets.alicePassword.path;
+      };
+      "elios@banditlair.com" = {
+        hashedPasswordFile = config.sops.secrets.eliosPassword.path;
+        aliases = [ "webshit@banditlair.com" "outlook-pascal@banditlair.com" ];
+      };
+      "monit@banditlair.com" = {
+        hashedPasswordFile = config.sops.secrets.monitPassword.path;
+        sendOnly = true;
+      };
+      "noreply@banditlair.com" = {
+        hashedPasswordFile = config.sops.secrets.noreplyBanditlairPassword.path;
+        sendOnly = true;
+      };
+      "noreply@froidmont.org" = {
+        hashedPasswordFile = config.sops.secrets.noreplyFroidmontPassword.path;
+        sendOnly = true;
+      };
+    };
+    extraVirtualAliases = {
+      "info@banditlair.com" = "paultrial@banditlair.com";
+      "postmaster@banditlair.com" = "paultrial@banditlair.com";
+      "abuse@banditlair.com" = "paultrial@banditlair.com";
+
+      "info@froidmont.org" = "paultrial@banditlair.com";
+      "postmaster@froidmont.org" = "paultrial@banditlair.com";
+      "abuse@froidmont.org" = "paultrial@banditlair.com";
+
+      "info@falbo.fr" = "paultrial@banditlair.com";
+      "postmaster@falbo.fr" = "paultrial@banditlair.com";
+      "abuse@falbo.fr" = "paultrial@banditlair.com";
+
+      #Catch all
+      "@banditlair.com" = "paultrial@banditlair.com";
+      "@froidmont.org" = "paultrial@banditlair.com";
+      "@falbo.fr" = "elios@banditlair.com";
+    };
+
+    certificateScheme = "acme-nginx";
   };
 
   services.prometheus.exporters.dmarc = {

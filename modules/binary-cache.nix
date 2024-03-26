@@ -1,20 +1,14 @@
 { config, lib, ... }:
-with lib;
-let
-  cfg = config.custom.services.binary-cache;
-in
-{
+let cfg = config.custom.services.binary-cache;
+in {
   options.custom.services.binary-cache = {
 
-    enable = mkEnableOption "binary-cache";
+    enable = lib.mkEnableOption "binary-cache";
 
-    secretKeyFile = mkOption {
-      type = types.path;
-    };
+    secretKeyFile = lib.mkOption { type = lib.types.path; };
   };
 
-
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services.nix-serve = {
       enable = true;
       port = 1500;
@@ -29,7 +23,9 @@ in
           forceSSL = true;
 
           locations."/".extraConfig = ''
-            proxy_pass http://localhost:${toString config.services.nix-serve.port};
+            proxy_pass http://localhost:${
+              toString config.services.nix-serve.port
+            };
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

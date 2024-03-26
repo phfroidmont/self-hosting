@@ -1,5 +1,6 @@
-{ config, lib, pkgs, ... }:
+{ pkgs, config, lib, ... }:
 let
+  cfg = config.custom.services.stb;
   uploadWordpressConfig = pkgs.writeText "upload.ini" ''
     file_uploads = On
     memory_limit = 64M
@@ -7,62 +8,62 @@ let
     post_max_size = 64M
     max_execution_time = 600
   '';
-in
-{
-  systemd.services.init-stb-network = {
-    description = "Create the network bridge stb-br for wordpress.";
-    after = [ "network.target" ];
-    wantedBy = [ "multi-user.target" ];
+in {
+  options.custom.services.stb = { enable = lib.mkEnableOption "stb"; };
 
-    serviceConfig.Type = "oneshot";
-    script =
-      let dockercli = "${config.virtualisation.docker.package}/bin/docker";
-      in
-      ''
-        # Put a true at the end to prevent getting non-zero return code, which will
-        # crash the whole service.
-        check=$(${dockercli} network ls | grep "stb-br" || true)
-        if [ -z "$check" ]; then
-          ${dockercli} network create stb-br
-        else
-          echo "stb-br already exists in docker"
-        fi
-      '';
-  };
+  config = lib.mkIf cfg.enable {
+    systemd.services.init-stb-network = {
+      description = "Create the network bridge stb-br for wordpress.";
+      after = [ "network.target" ];
+      wantedBy = [ "multi-user.target" ];
 
-  virtualisation.oci-containers.containers = {
-    "stb-mariadb" = {
-      image = "mariadb:10.7";
-      environment = {
-        "MYSQL_ROOT_PASSWORD" = "root";
-        "MYSQL_USER" = "stb";
-        "MYSQL_PASSWORD" = "stb";
-        "MYSQL_DATABASE" = "stb";
+      serviceConfig.Type = "oneshot";
+      script =
+        let dockercli = "${config.virtualisation.docker.package}/bin/docker";
+        in ''
+          # Put a true at the end to prevent getting non-zero return code, which will
+          # crash the whole service.
+          check=$(${dockercli} network ls | grep "stb-br" || true)
+          if [ -z "$check" ]; then
+            ${dockercli} network create stb-br
+          else
+            echo "stb-br already exists in docker"
+          fi
+        '';
+    };
+
+    virtualisation.oci-containers.containers = {
+      "stb-mariadb" = {
+        image = "mariadb:10.7";
+        environment = {
+          "MYSQL_ROOT_PASSWORD" = "root";
+          "MYSQL_USER" = "stb";
+          "MYSQL_PASSWORD" = "stb";
+          "MYSQL_DATABASE" = "stb";
+        };
+        volumes = [ "/var/lib/mariadb/stb:/var/lib/mysql" ];
+        extraOptions = [ "--network=stb-br" ];
+        autoStart = true;
       };
-      volumes = [ "/var/lib/mariadb/stb:/var/lib/mysql" ];
-      extraOptions = [ "--network=stb-br" ];
-      autoStart = true;
+
+      "stb-wordpress" = {
+        image = "wordpress:5.8-php7.4-apache";
+        volumes = [
+          "/nix/var/data/stb-wordpress:/var/www/html"
+          "${uploadWordpressConfig}:/usr/local/etc/php/conf.d/uploads.ini"
+        ];
+        ports = [ "127.0.0.1:8180:80" ];
+        extraOptions = [ "--network=stb-br" ];
+        autoStart = true;
+      };
     };
 
-    "stb-wordpress" = {
-      image = "wordpress:5.8-php7.4-apache";
-      volumes = [
-        "/nix/var/data/stb-wordpress:/var/www/html"
-        "${uploadWordpressConfig}:/usr/local/etc/php/conf.d/uploads.ini"
-      ];
-      ports = [ "127.0.0.1:8180:80" ];
-      extraOptions = [ "--network=stb-br" ];
-      autoStart = true;
-    };
-  };
+    services.nginx.virtualHosts."www.societe-de-tir-bertrix.com" = {
+      serverAliases = [ "societe-de-tir-bertrix.com" ];
+      forceSSL = true;
+      enableACME = true;
 
-  services.nginx.virtualHosts."www.societe-de-tir-bertrix.com" = {
-    serverAliases = [ "societe-de-tir-bertrix.com" ];
-    forceSSL = true;
-    enableACME = true;
-
-    locations."/" = {
-      proxyPass = "http://127.0.0.1:8180";
+      locations."/" = { proxyPass = "http://127.0.0.1:8180"; };
     };
   };
 }

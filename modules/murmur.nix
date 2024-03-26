@@ -1,15 +1,9 @@
 { config, lib, ... }:
-with lib;
-let
-  cfg = config.custom.services.murmur;
-in
-{
-  options.custom.services.murmur = {
-    enable = mkEnableOption "murmur";
-  };
+let cfg = config.custom.services.murmur;
+in {
+  options.custom.services.murmur = { enable = lib.mkEnableOption "murmur"; };
 
-
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     sops.secrets.murmurEnvFile = {
       owner = config.systemd.services.murmur.serviceConfig.User;
       key = "murmur.env";
