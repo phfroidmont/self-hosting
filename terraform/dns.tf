@@ -183,6 +183,15 @@ resource "hetznerdns_record" "arkadia_a" {
   type    = "A"
   ttl     = 600
 }
+
+resource "hetznerdns_record" "cifirpg_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "scifirpg"
+  value   = hcloud_server.backend1.ipv4_address
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "db1_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "db1"

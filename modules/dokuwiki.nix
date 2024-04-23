@@ -12,7 +12,17 @@ let
     installPhase = "mkdir -p $out; cp -R * $out/";
   };
 
-  configureWiki = name: {
+  template-darkblue = pkgs.stdenv.mkDerivation {
+    name = "darkblue";
+    src = builtins.fetchGit {
+      url = "git@github.com:ms101/dokuwiki-template-darkblue.git";
+      ref = "main";
+      rev = "14f8e738c83c16f2633d23fe30b7c6031551fa77";
+    };
+    installPhase = "mkdir -p $out; cp -R darkblue/* $out/";
+  };
+
+  configureWiki = name: title: templatePackage: templateName: {
 
     sops.secrets."usersFile-${name}" = {
       owner = "dokuwiki";
@@ -26,11 +36,11 @@ let
         enable = true;
         stateDir = "/nix/var/data/dokuwiki/${name}/data";
         usersFile = config.sops.secrets."usersFile-${name}".path;
-        templates = [ template-chippedsnow ];
+        templates = [ templatePackage ];
         settings = {
           useacl = true;
-          title = "Chroniques d`Arkadia";
-          template = "chippedsnow";
+          title = title;
+          template = templateName;
           disableactions = "register";
           dontlog = [ "debug" "deprecated" ];
         };
@@ -51,6 +61,11 @@ in {
     secretKeyFile = lib.mkOption { type = lib.types.path; };
   };
 
-  config = lib.mkIf cfg.enable
-    (lib.mkMerge [ (configureWiki "anderia") (configureWiki "arkadia") ]);
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+    (configureWiki "anderia" "Choniques d`Arkadia" template-chippedsnow
+      "chippedsnow")
+    (configureWiki "arkadia" "Choniques d`Arkadia" template-chippedsnow
+      "chippedsnow")
+    (configureWiki "scifirpg" "2324" template-darkblue "darkblue")
+  ]);
 }
