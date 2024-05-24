@@ -17,6 +17,9 @@ in {
       };
     };
 
+    # Required because roundcube uses psql: https://github.com/NixOS/nixpkgs/blob/46397778ef1f73414b03ed553a3368f0e7e33c2f/nixos/modules/services/mail/roundcube.nix#L247
+    services.postgresql.package = pkgs.postgresql_15;
+
     services.roundcube = {
       enable = true;
       plugins = [ "managesieve" ];
