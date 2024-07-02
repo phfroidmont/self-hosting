@@ -3,7 +3,7 @@
 
   networking.firewall.interfaces."eth1".allowedTCPPorts = [
     config.services.prometheus.exporters.node.port
-    config.services.postgresql.port
+    config.services.postgresql.settings.port
   ];
 
   sops.secrets = {

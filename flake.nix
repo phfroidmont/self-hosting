@@ -1,12 +1,12 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     deploy-rs.url = "github:serokell/deploy-rs";
     simple-nixos-mailserver.url =
-      "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-23.11";
+      "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-24.05";
     foundryvtt.url = "github:reckenrode/nix-foundryvtt";
   };
 
@@ -73,7 +73,7 @@
         };
         storage1 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit nixpkgs; };
+          specialArgs = { inherit nixpkgs inputs; };
           modules = [
             defaultModuleArgs
             sops-nix.nixosModules.sops

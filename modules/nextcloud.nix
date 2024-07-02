@@ -74,11 +74,13 @@ in {
         dbpassFile = "${config.sops.secrets.nextcloudDbPassword.path}";
         adminpassFile = "${config.sops.secrets.nextcloudAdminPassword.path}";
         adminuser = "root";
-        overwriteProtocol = "https";
-        defaultPhoneRegion = "BE";
       };
 
-      extraOptions = { maintenance_window_start = 1; };
+      settings = {
+        overwriteProtocol = "https";
+        default_phone_region = "BE";
+        maintenance_window_start = 1;
+      };
 
       phpOptions = {
         short_open_tag = "Off";

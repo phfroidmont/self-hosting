@@ -56,7 +56,7 @@ in {
       script = ''
         set -u
         PSQL() {
-            psql --port=${toString pgsql.port} "$@"
+            psql --port=${toString pgsql.settings.port} "$@"
         }
 
         PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'synapse'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "synapse"'

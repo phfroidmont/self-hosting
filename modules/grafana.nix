@@ -126,10 +126,12 @@ in {
           max_chunk_age = "1h";
           chunk_target_size = 999999;
           chunk_retain_period = "30s";
-          max_transfer_retries = 0;
         };
 
-        limits_config = { ingestion_rate_mb = 16; };
+        limits_config = {
+          ingestion_rate_mb = 16;
+          allow_structured_metadata = false;
+        };
 
         schema_config = {
           configs = [{
@@ -150,7 +152,6 @@ in {
               "${config.services.loki.dataDir}/boltdb-index";
             cache_location = "${config.services.loki.dataDir}/boltdb-cache";
             cache_ttl = "24h";
-            shared_store = "filesystem";
           };
 
           filesystem = {
@@ -163,7 +164,7 @@ in {
           reject_old_samples_max_age = "168h";
         };
 
-        chunk_store_config = { max_look_back_period = "0s"; };
+        querier.engine.max_look_back_period = "0s";
 
         table_manager = {
           retention_deletes_enabled = false;
@@ -172,7 +173,6 @@ in {
 
         compactor = {
           working_directory = "${config.services.loki.dataDir}";
-          shared_store = "filesystem";
           compactor_ring = { kvstore = { store = "inmemory"; }; };
         };
 

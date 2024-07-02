@@ -272,10 +272,12 @@
 
   services.foundryvtt = {
     enable = true;
+    package = inputs.foundryvtt.packages.${pkgs.system}.foundryvtt_11;
     hostName = "vtt.${config.networking.domain}";
     language = "fr.core";
     proxyPort = 443;
     proxySSL = true;
+    upnp = false;
   };
 
   services.nginx.virtualHosts."vtt.${config.networking.domain}" = {
