@@ -154,11 +154,12 @@ in {
             download-dir = "/nix/var/data/transmission/downloads";
           };
         };
-        systemd.services.transmission.serviceConfig.BindReadOnlyPaths =
-          lib.mkForce [
-            builtins.storeDir
-            "/etc"
-          ]; # https://github.com/NixOS/nixpkgs/issues/258793
+
+        # https://github.com/NixOS/nixpkgs/issues/258793
+        systemd.services.transmission.serviceConfig = {
+          RootDirectoryStartOnly = lib.mkForce false;
+          RootDirectory = lib.mkForce "";
+        };
 
         services.jackett = {
           enable = true;
