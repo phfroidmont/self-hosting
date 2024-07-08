@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.custom.services.gitlab-runner;
-in {
+let
+  cfg = config.custom.services.gitlab-runner;
+in
+{
   options.custom.services.gitlab-runner = {
     enable = mkEnableOption "gitlab-runner";
   };
@@ -33,52 +40,61 @@ in {
         };
       };
 
-      config = let hostConfig = config;
-      in args@{ config, ... }: {
+      config =
+        let
+          hostConfig = config;
+        in
+        args@{ config, ... }:
+        {
 
-        nix = {
-          package = pkgs.nixVersions.latest;
-          extraOptions = ''
-            experimental-features = nix-command flakes
+          nix = {
+            package = pkgs.nixVersions.latest;
+            extraOptions = ''
+              experimental-features = nix-command flakes
+            '';
+          };
+
+          environment.systemPackages = with pkgs; [
+            git
+            htop
+            nload
+          ];
+
+          users.groups.gitlab-runner = { };
+          users.users.gitlab-runner = {
+            isSystemUser = true;
+            group = config.users.groups.gitlab-runner.name;
+          };
+
+          programs.ssh.extraConfig = ''
+            StrictHostKeyChecking=no
+            UserKnownHostsFile=/dev/null
           '';
-        };
 
-        environment.systemPackages = with pkgs; [ git htop nload ];
+          networking.useHostResolvConf = lib.mkForce false;
 
-        users.groups.gitlab-runner = { };
-        users.users.gitlab-runner = {
-          isSystemUser = true;
-          group = config.users.groups.gitlab-runner.name;
-        };
-
-        programs.ssh.extraConfig = ''
-          StrictHostKeyChecking=no
-          UserKnownHostsFile=/dev/null
-        '';
-
-        services = {
-          openssh.enable = true;
-          gitlab-runner = {
-            enable = true;
-            services = {
-              shell = {
-                registrationConfigFile =
-                  hostConfig.sops.secrets.runnerRegistrationConfig.path;
-                executor = "shell";
-                tagList = [ "nix" ];
+          services = {
+            openssh.enable = true;
+            resolved.enable = true;
+            gitlab-runner = {
+              enable = true;
+              services = {
+                shell = {
+                  authenticationTokenConfigFile = hostConfig.sops.secrets.runnerRegistrationConfig.path;
+                  executor = "shell";
+                };
               };
             };
           };
-        };
 
-        systemd.services.gitlab-runner.serviceConfig = {
-          DynamicUser = lib.mkForce false;
-          User = config.users.users.gitlab-runner.name;
-          Group = config.users.groups.gitlab-runner.name;
-        };
+          systemd.services.gitlab-runner.serviceConfig = {
+            DynamicUser = lib.mkForce false;
+            User = config.users.users.gitlab-runner.name;
+            Group = config.users.groups.gitlab-runner.name;
+          };
 
-        system.stateVersion = "22.05";
-      };
+          system.stateVersion = "22.05";
+        };
     };
   };
 }
