@@ -1,4 +1,12 @@
-{ config, lib, pkgs, pkgs-unstable, inputs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  pkgs-unstable,
+  inputs,
+  ...
+}:
+{
   imports = [
     ../environment.nix
     ../hardware/hetzner-dedicated-storage1.nix
@@ -10,13 +18,27 @@
       owner = config.services.borgbackup.jobs.data.user;
       key = "borg/client_keys/storage1/private";
     };
-    nixCacheKey = { key = "nix/cache_secret_key"; };
-    dmarcExporterPassword = { key = "dmarc_exporter/password"; };
-    paultrialPassword = { key = "email/accounts_passwords/paultrial"; };
-    eliosPassword = { key = "email/accounts_passwords/elios"; };
-    mariePassword = { key = "email/accounts_passwords/marie"; };
-    alicePassword = { key = "email/accounts_passwords/alice"; };
-    monitPassword = { key = "email/accounts_passwords/monit"; };
+    nixCacheKey = {
+      key = "nix/cache_secret_key";
+    };
+    dmarcExporterPassword = {
+      key = "dmarc_exporter/password";
+    };
+    paultrialPassword = {
+      key = "email/accounts_passwords/paultrial";
+    };
+    eliosPassword = {
+      key = "email/accounts_passwords/elios";
+    };
+    mariePassword = {
+      key = "email/accounts_passwords/marie";
+    };
+    alicePassword = {
+      key = "email/accounts_passwords/alice";
+    };
+    monitPassword = {
+      key = "email/accounts_passwords/monit";
+    };
     noreplyBanditlairPassword = {
       key = "email/accounts_passwords/noreply_banditlair";
     };
@@ -80,7 +102,7 @@
               status = 200
               request "/api/_health"
               with timeout 5 seconds
-              content = '[{"]Healthy["]:[{}}]'
+              content = "Healthy"
           then alert
 
         check host osteoview-demo with address demo.osteoview.app
@@ -90,7 +112,7 @@
               status = 200
               request "/api/_health"
               with timeout 5 seconds
-              content = '[{"]Healthy["]:[{}}]'
+              content = "Healthy"
           then alert
       '';
     };
@@ -110,7 +132,11 @@
   mailserver = {
     enable = true;
     fqdn = "mail.banditlair.com";
-    domains = [ "banditlair.com" "froidmont.org" "falbo.fr" ];
+    domains = [
+      "banditlair.com"
+      "froidmont.org"
+      "falbo.fr"
+    ];
     localDnsResolver = false;
     enableManageSieve = true;
     mailDirectory = "/nix/var/data/vmail";
@@ -123,18 +149,27 @@
       "paultrial@banditlair.com" = {
         # nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2 > /hashed/password/file/location
         hashedPasswordFile = config.sops.secrets.paultrialPassword.path;
-        aliases = [ "contact@froidmont.org" "account@banditlair.com" ];
+        aliases = [
+          "contact@froidmont.org"
+          "account@banditlair.com"
+        ];
       };
       "marie-alice@froidmont.org" = {
         hashedPasswordFile = config.sops.secrets.mariePassword.path;
-        aliases = [ "osteopathie@froidmont.org" "communication@froidmont.org" ];
+        aliases = [
+          "osteopathie@froidmont.org"
+          "communication@froidmont.org"
+        ];
       };
       "alice@froidmont.org" = {
         hashedPasswordFile = config.sops.secrets.alicePassword.path;
       };
       "elios@banditlair.com" = {
         hashedPasswordFile = config.sops.secrets.eliosPassword.path;
-        aliases = [ "webshit@banditlair.com" "outlook-pascal@banditlair.com" ];
+        aliases = [
+          "webshit@banditlair.com"
+          "outlook-pascal@banditlair.com"
+        ];
       };
       "monit@banditlair.com" = {
         hashedPasswordFile = config.sops.secrets.monitPassword.path;
@@ -177,8 +212,7 @@
     imap = {
       host = "mail.banditlair.com";
       username = "paultrial@banditlair.com";
-      passwordFile =
-        "/run/credentials/prometheus-dmarc-exporter.service/password";
+      passwordFile = "/run/credentials/prometheus-dmarc-exporter.service/password";
     };
     folders = {
       inbox = "dmarc_reports";
@@ -186,8 +220,7 @@
       error = "Archives.dmarc_report_error";
     };
   };
-  systemd.services.prometheus-dmarc-exporter.serviceConfig.LoadCredential =
-    "password:${config.sops.secrets.dmarcExporterPassword.path}";
+  systemd.services.prometheus-dmarc-exporter.serviceConfig.LoadCredential = "password:${config.sops.secrets.dmarcExporterPassword.path}";
 
   networking.firewall.allowedTCPPorts = [
     80
@@ -198,8 +231,9 @@
   networking.firewall.allowedUDPPorts = [
     23363 # Minecraft
   ];
-  networking.firewall.interfaces.vlan4001.allowedTCPPorts =
-    [ config.services.loki.configuration.server.http_listen_port ];
+  networking.firewall.interfaces.vlan4001.allowedTCPPorts = [
+    config.services.loki.configuration.server.http_listen_port
+  ];
 
   networking.nat.enable = true;
   networking.nat.internalInterfaces = [ "ve-+" ];
@@ -215,7 +249,9 @@
       "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDc7kX8riTSxRNwqIwZ/XwTKHzl1C786TbeU5qx2gTidR4H56+GxA5jrpWLZrcu0MRBu11/URzyGrJGxdBps6Hu/Arp482Y5OxZeDUzD+tZJa79NylG9GQFMTmGLjH3IqBbmgx91WdYsLmgXjz0f+NxANzmgvzRt2IolHc4hxIkrDickfT2dT3uVtaJOGBsLC2BxVT0rCHFmvjB7+qnJ4jvC8b/V+F6+hijom1kUq9zhZzWEg8H5imR0UoXrXLetxY+PGAqKkDLm/pNQ/cUSX4FaKZ5bpGYed7ioSeRHW3xIh4zHhWbiyBPsrjyOmEnxNL5f4o4KgHfUDY0DpVrhs+6JPJTsMfsyb0GciqSYR5PCL73zY+IEo+ZHdGubib4G5+t1UqaK+ZZGqW+a7DLHMFR6tr3I/b/Jz8KHjYztdx/ZHS3CA2+17JgLG/ycq+a3ETBkIGSta5I4BUfcbVvkxKq7A99aODDyYc+jMp7gbQlwKhdHcAoVcWRKqck/sL0Qnb4e+BoUm+ajxRo6DNcpGL5LLtD/i1NuWjFugh6q1KcgXP/Bc11Owhqg3nlIUMUoVc2/h/9Er9Eaplv27rw180ItGR1UEQ4gQHCGQB6vCF5NRPjAS5y515UcDu+rceFIr1W15IZvhMrcphb8clu8E2us68ghas7ZgXKU2xypsaGPw== sshfs-2021-07-16"
     ];
   };
-  users.groups.www-data = { gid = 991; };
+  users.groups.www-data = {
+    gid = 991;
+  };
 
   services.openssh.settings.Macs = [
     "hmac-sha2-512-etm@openssh.com"
@@ -285,8 +321,7 @@
     enableACME = true;
 
     locations."/" = {
-      proxyPass =
-        "http://127.0.0.1:${toString config.services.foundryvtt.port}";
+      proxyPass = "http://127.0.0.1:${toString config.services.foundryvtt.port}";
       extraConfig = ''
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";

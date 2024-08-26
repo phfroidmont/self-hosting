@@ -1,5 +1,15 @@
-{ config, lib, pkgs, ... }: {
-  imports = [ ../environment.nix ../hardware/hcloud.nix ../modules ];
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
+  imports = [
+    ../environment.nix
+    ../hardware/hcloud.nix
+    ../modules
+  ];
 
   sops.secrets = {
     borgSshKey = {
@@ -13,8 +23,14 @@
     services.backup-job = {
       enable = true;
       repoName = "bk1";
-      additionalPaths = [ "/var/lib/nextcloud/config" "/var/lib/mastodon" ];
-      readWritePaths = [ "/nix/var/data/murmur" "/nix/var/data/backup/" ];
+      additionalPaths = [
+        "/var/lib/nextcloud/config"
+        "/var/lib/mastodon"
+      ];
+      readWritePaths = [
+        "/nix/var/data/murmur"
+        "/nix/var/data/backup/"
+      ];
       preHook = ''
         cp /var/lib/murmur/murmur.sqlite /nix/var/data/murmur/murmur.sqlite
       '';
@@ -48,7 +64,7 @@
               status = 200
               request "/api/_health"
               with timeout 5 seconds
-              content = '[{"]Healthy["]:[{}}]'
+              content = "Healthy"
           then alert
       '';
     };
@@ -66,7 +82,9 @@
 
   services.uptime-kuma = {
     enable = true;
-    settings = { PORT = "3001"; };
+    settings = {
+      PORT = "3001";
+    };
   };
 
   services.nginx.virtualHosts = {
@@ -82,8 +100,7 @@
       enableACME = true;
 
       locations."/" = {
-        proxyPass =
-          "http://127.0.0.1:${config.services.uptime-kuma.settings.PORT}";
+        proxyPass = "http://127.0.0.1:${config.services.uptime-kuma.settings.PORT}";
         proxyWebsockets = true;
       };
     };
@@ -107,9 +124,15 @@
     };
   };
 
-  networking.firewall.allowedTCPPorts = [ 80 443 64738 ];
+  networking.firewall.allowedTCPPorts = [
+    80
+    443
+    64738
+  ];
   networking.firewall.allowedUDPPorts = [ 64738 ];
-  networking.firewall.interfaces."eth1".allowedTCPPorts =
-    [ config.services.prometheus.exporters.node.port 9000 ];
+  networking.firewall.interfaces."eth1".allowedTCPPorts = [
+    config.services.prometheus.exporters.node.port
+    9000
+  ];
 
 }
