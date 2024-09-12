@@ -8,6 +8,10 @@ data "hetznerdns_zone" "banditlair_zone" {
   name = "banditlair.com"
 }
 
+data "hetznerdns_zone" "froidmont_solutions_zone" {
+  name = "froidmont.solutions"
+}
+
 resource "hetznerdns_record" "banditlair_hcloud_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "@"
@@ -83,6 +87,14 @@ resource "hetznerdns_record" "jellyfin_a" {
 resource "hetznerdns_record" "status_banditlair_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "status"
+  value   = hcloud_server.backend1.ipv4_address
+  type    = "A"
+  ttl     = 600
+}
+
+resource "hetznerdns_record" "dolibarr_a" {
+  zone_id = data.hetznerdns_zone.froidmont_solutions_zone.id
+  name    = "dolibarr"
   value   = hcloud_server.backend1.ipv4_address
   type    = "A"
   ttl     = 600

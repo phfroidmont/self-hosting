@@ -16,6 +16,11 @@
       owner = config.services.borgbackup.jobs.data.user;
       key = "borg/client_keys/backend1/private";
     };
+    dolibarrDbPassword = {
+      owner = config.users.users.dolibarr.name;
+      key = "dolibarr/db_password";
+      restartUnits = [ "phpfpm-dolibarr.service" ];
+    };
   };
 
   custom = {
@@ -122,6 +127,24 @@
         return 302 https://blogz.zaclys.com/faut-l-fer/;
       '';
     };
+  };
+
+  services.dolibarr = {
+    enable = true;
+    domain = "dolibarr.froidmont.solutions";
+    stateDir = "/nix/var/data/dolibarr";
+    database = {
+      createLocally = false;
+      host = "10.0.1.11";
+      port = 5432;
+      name = "dolibarr";
+      user = "dolibarr";
+      passwordFile = config.sops.secrets.dolibarrDbPassword.path;
+    };
+    settings = {
+      dolibarr_main_db_type = lib.mkForce "pgsql";
+    };
+    nginx = { };
   };
 
   networking.firewall.allowedTCPPorts = [
