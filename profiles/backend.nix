@@ -144,7 +144,16 @@
     settings = {
       dolibarr_main_db_type = lib.mkForce "pgsql";
     };
-    nginx = { };
+    nginx = {
+      # https://wiki.dolibarr.org/index.php/Module_Web_Services_API_REST_(developer)#Nginx_setup
+      locations."~ [^/]\\.php(/|$)".extraConfig = ''
+        fastcgi_param  SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include        ${config.services.nginx.package}/conf/fastcgi_params;
+        # Dolibarr Rest API path support
+        fastcgi_param  PATH_INFO       $fastcgi_path_info;
+        fastcgi_param  PATH_TRANSLATED $document_root$fastcgi_script_name;
+      '';
+    };
   };
 
   networking.firewall.allowedTCPPorts = [
