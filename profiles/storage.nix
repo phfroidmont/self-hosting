@@ -316,6 +316,11 @@
     upnp = false;
   };
 
+  services.rustdesk-server = {
+    enable = true;
+    openFirewall = true;
+  };
+
   services.nginx.virtualHosts."vtt.${config.networking.domain}" = {
     forceSSL = true;
     enableACME = true;

@@ -100,6 +100,14 @@ resource "hetznerdns_record" "dolibarr_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "odoo_a" {
+  zone_id = data.hetznerdns_zone.froidmont_solutions_zone.id
+  name    = "odoo"
+  value   = hcloud_server.backend1.ipv4_address
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "jitsi_a" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
   name    = "jitsi"

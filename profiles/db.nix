@@ -37,6 +37,7 @@
         ${config.services.postgresql.package}/bin/pg_dump -U roundcube roundcube > /nix/var/data/postgresql/roundcube.dmp
         ${config.services.postgresql.package}/bin/pg_dump -U mastodon mastodon > /nix/var/data/postgresql/mastodon.dmp
         ${config.services.postgresql.package}/bin/pg_dump -U dolibarr dolibarr > /nix/var/data/postgresql/dolibarr.dmp
+        ${config.services.postgresql.package}/bin/pg_dump -U odoo odoo > /nix/var/data/postgresql/odoo.dmp
       '';
       startAt = "03:00";
       sshKey = config.sops.secrets.borgSshKey.path;
