@@ -308,7 +308,7 @@
 
   services.foundryvtt = {
     enable = true;
-    package = inputs.foundryvtt.packages.${pkgs.system}.foundryvtt_11;
+    package = inputs.foundryvtt.packages.${pkgs.system}.foundryvtt_12;
     hostName = "vtt.${config.networking.domain}";
     language = "fr.core";
     proxyPort = 443;
@@ -316,10 +316,10 @@
     upnp = false;
   };
 
-  services.rustdesk-server = {
-    enable = true;
-    openFirewall = true;
-  };
+  # services.rustdesk-server = {
+  #   enable = true;
+  #   openFirewall = true;
+  # };
 
   services.nginx.virtualHosts."vtt.${config.networking.domain}" = {
     forceSSL = true;
