@@ -79,7 +79,6 @@
     services.dokuwiki.enable = true;
     services.openssh.enable = true;
     services.murmur.enable = true;
-    services.mastodon.enable = false;
     services.synapse.enable = true;
     services.nextcloud.enable = true;
     services.roundcube.enable = true;
@@ -129,69 +128,6 @@
       '';
     };
   };
-
-  services.dolibarr = {
-    enable = true;
-    domain = "dolibarr.froidmont.solutions";
-    stateDir = "/nix/var/data/dolibarr";
-    database = {
-      createLocally = false;
-      host = "10.0.1.11";
-      port = 5432;
-      name = "dolibarr";
-      user = "dolibarr";
-      passwordFile = config.sops.secrets.dolibarrDbPassword.path;
-    };
-    settings = {
-      dolibarr_main_db_type = lib.mkForce "pgsql";
-    };
-    nginx = {
-      # https://wiki.dolibarr.org/index.php/Module_Web_Services_API_REST_(developer)#Nginx_setup
-      locations."~ [^/]\\.php(/|$)".extraConfig = ''
-        fastcgi_param  SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include        ${config.services.nginx.package}/conf/fastcgi_params;
-        # Dolibarr Rest API path support
-        fastcgi_param  PATH_INFO       $fastcgi_path_info;
-        fastcgi_param  PATH_TRANSLATED $document_root$fastcgi_script_name;
-      '';
-    };
-  };
-
-  nixpkgs.config.permittedInsecurePackages = [ "qtwebkit-5.212.0-alpha4" ];
-  services.odoo = {
-    enable = false;
-    package = pkgs-unstable.odoo.override {
-      python310 = pkgs.python310.override {
-        packageOverrides = final: prev: {
-          furl = prev.furl.overridePythonAttrs (old: {
-            doCheck = false;
-          });
-        };
-      };
-    };
-    domain = "odoo.froidmont.solutions";
-    settings = {
-      options = {
-        db_host = "10.0.1.11";
-        db_port = 5432;
-        db_name = "odoo";
-        db_user = "odoo";
-        db_password = "odoo";
-        data_dir = "/var/lib/private/odoo/data";
-      };
-    };
-  };
-  services.nginx.virtualHosts = {
-    ${config.services.odoo.domain} = {
-      forceSSL = true;
-      enableACME = true;
-    };
-  };
-  services.postgresql.enable = lib.mkForce false;
-  # systemd.services.odoo = {
-  #   after = lib.mkForce [ "network.target" ];
-  #   requires = lib.mkForce [ ];
-  # };
 
   networking.firewall.allowedTCPPorts = [
     80
