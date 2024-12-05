@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.custom.services.monit;
-in {
+let
+  cfg = config.custom.services.monit;
+in
+{
   options.custom.services.monit = {
     enable = mkEnableOption "monit";
 
@@ -15,7 +22,6 @@ in {
 
     sops.secrets = {
       monitMailserverConfig = {
-        owner = config.services.borgbackup.jobs.data.user;
         key = "monit/mailserver_config";
       };
     };

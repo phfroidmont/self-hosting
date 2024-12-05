@@ -2,6 +2,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    disko.url = "github:nix-community/disko";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     deploy-rs.url = "github:serokell/deploy-rs";
@@ -14,6 +15,7 @@
       self,
       nixpkgs,
       nixpkgs-unstable,
+      disko,
       deploy-rs,
       sops-nix,
       simple-nixos-mailserver,
@@ -109,6 +111,29 @@
             }
           ];
         };
+        hel1 = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = {
+            inherit nixpkgs inputs;
+          };
+
+          modules = [
+            disko.nixosModules.disko
+            defaultModuleArgs
+            sops-nix.nixosModules.sops
+            simple-nixos-mailserver.nixosModule
+            foundryvtt.nixosModules.foundryvtt
+            ./profiles/hel.nix
+            {
+              sops.defaultSopsFile = ./secrets.enc.yml;
+              networking.hostName = "hel1";
+              networking.domain = "banditlair.com";
+              nix.registry.nixpkgs.flake = nixpkgs;
+
+              system.stateVersion = "24.05";
+            }
+          ];
+        };
       };
 
       deploy.nodes =
@@ -131,6 +156,10 @@
           storage1 = {
             hostname = "78.46.96.243";
             profiles.system = createSystemProfile self.nixosConfigurations.storage1;
+          };
+          hel1 = {
+            hostname = "37.27.138.62";
+            profiles.system = createSystemProfile self.nixosConfigurations.hel1;
           };
         };
 

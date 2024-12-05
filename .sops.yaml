@@ -3,11 +3,13 @@ keys:
   - &elios 0C143D8AFF5FBCD2293897658E66EDB0546158DF
   - &server ebdabf42731801d79db14c893639d8f0c7ff61ed
   - &storage1 7675e1c632a9a0644c6ab828dbcc48a5300773a8
+  - &hel1 0f0c4c2f9877cb8a53efadacb90613a2af502673
 creation_rules:
   - path_regex: secrets.enc.yml$
     key_groups:
-    - pgp:
-      - *admin
-      - *elios
-      - *server
-      - *storage1
+      - pgp:
+          - *admin
+          - *elios
+          - *server
+          - *storage1
+          - *hel1
