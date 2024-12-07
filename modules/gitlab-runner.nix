@@ -11,15 +11,10 @@ in
 {
   options.custom.services.gitlab-runner = {
     enable = mkEnableOption "gitlab-runner";
+    runnerRegistrationConfigFile = lib.mkOption { type = lib.types.path; };
   };
 
   config = mkIf cfg.enable {
-    sops.secrets = {
-      runnerRegistrationConfig = {
-        owner = config.users.users.gitlab-runner.name;
-        key = "gitlab/runner_registration_config";
-      };
-    };
 
     users.groups.gitlab-runner = { };
     users.users.gitlab-runner = {
@@ -35,16 +30,13 @@ in
       localAddress = "192.168.100.2";
 
       bindMounts = {
-        "${config.sops.secrets.runnerRegistrationConfig.path}" = {
-          hostPath = config.sops.secrets.runnerRegistrationConfig.path;
+        "${cfg.runnerRegistrationConfigFile}" = {
+          hostPath = cfg.runnerRegistrationConfigFile;
         };
       };
 
       config =
-        let
-          hostConfig = config;
-        in
-        args@{ config, ... }:
+        { config, ... }:
         {
 
           nix = {
@@ -80,7 +72,7 @@ in
               enable = true;
               services = {
                 shell = {
-                  authenticationTokenConfigFile = hostConfig.sops.secrets.runnerRegistrationConfig.path;
+                  authenticationTokenConfigFile = cfg.runnerRegistrationConfigFile;
                   executor = "shell";
                 };
               };
@@ -93,7 +85,7 @@ in
             Group = config.users.groups.gitlab-runner.name;
           };
 
-          system.stateVersion = "22.05";
+          system.stateVersion = "24.05";
         };
     };
   };

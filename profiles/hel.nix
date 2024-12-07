@@ -1,9 +1,5 @@
 {
   config,
-  lib,
-  pkgs,
-  pkgs-unstable,
-  inputs,
   ...
 }:
 {
@@ -13,7 +9,20 @@
     ../modules
   ];
 
+  sops.secrets = {
+    runnerRegistrationConfig = {
+      owner = config.users.users.gitlab-runner.name;
+      key = "gitlab/runner_registration_config/hel1";
+    };
+  };
+
   time.timeZone = "Europe/Amsterdam";
+
+  networking.nat = {
+    enable = true;
+    internalInterfaces = [ "ve-+" ];
+    externalInterface = "enp41s0";
+  };
 
   disko.devices = {
     disk = {
@@ -160,6 +169,10 @@
 
   custom = {
     services.openssh.enable = true;
+    services.gitlab-runner = {
+      enable = true;
+      runnerRegistrationConfigFile = config.sops.secrets.runnerRegistrationConfig.path;
+    };
   };
 
 }

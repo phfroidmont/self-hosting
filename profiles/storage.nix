@@ -118,7 +118,6 @@
     };
 
     services.nginx.enable = true;
-    services.gitlab-runner.enable = true;
     services.openssh.enable = true;
     services.jellyfin.enable = true;
     services.stb.enable = true;
