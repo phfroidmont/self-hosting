@@ -1,7 +1,11 @@
 { config, lib, ... }:
-let cfg = config.custom.services.murmur;
-in {
-  options.custom.services.murmur = { enable = lib.mkEnableOption "murmur"; };
+let
+  cfg = config.custom.services.murmur;
+in
+{
+  options.custom.services.murmur = {
+    enable = lib.mkEnableOption "murmur";
+  };
 
   config = lib.mkIf cfg.enable {
     sops.secrets.murmurEnvFile = {
@@ -16,6 +20,7 @@ in {
       password = "$MURMURD_PASSWORD";
       environmentFile = config.sops.secrets.murmurEnvFile.path;
       imgMsgLength = 13107200;
+      openFirewall = true;
     };
   };
 }

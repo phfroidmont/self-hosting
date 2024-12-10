@@ -1,9 +1,7 @@
 {
   config,
-  lib,
   pkgs,
   pkgs-unstable,
-  inputs,
   ...
 }:
 {
@@ -56,24 +54,12 @@
     services.backup-job = {
       enable = true;
       repoName = "bl";
-      additionalPaths = [ config.services.foundryvtt.dataDir ];
       patterns = [
         "- /nix/var/data/media"
         "- /nix/var/data/transmission/downloads"
         "- /nix/var/data/transmission/.incomplete"
       ];
       readWritePaths = [ "/nix/var/data/backup" ];
-      preHook = ''
-        ${pkgs.docker}/bin/docker exec stb-mariadb sh -c 'mysqldump -u stb -pstb stb' > /nix/var/data/backup/stb_mariadb.sql
-        ${pkgs.systemd}/bin/systemctl stop jellyfin.service
-        ${pkgs.systemd}/bin/systemctl stop minecraft-server.service
-        ${pkgs.systemd}/bin/systemctl stop container@torrents
-      '';
-      postHook = ''
-        ${pkgs.systemd}/bin/systemctl start jellyfin.service
-        ${pkgs.systemd}/bin/systemctl start minecraft-server.service
-        ${pkgs.systemd}/bin/systemctl start container@torrents
-      '';
       startAt = "04:00";
       sshKey = config.sops.secrets.borgSshKey.path;
     };
@@ -81,49 +67,15 @@
     services.monit = {
       enable = true;
       additionalConfig = ''
-        check host nextcloud with address cloud.banditlair.com
-          if failed port 443 protocol https with timeout 20 seconds then alert
-        check host anderia-wiki with address anderia.banditlair.com
-          if failed port 443 protocol https with timeout 20 seconds then alert
-        check host arkadia-wiki with address arkadia.banditlair.com
-          if failed port 443 protocol https with timeout 20 seconds then alert
-        check host website-marie with address osteopathie.froidmont.org
-          if failed port 443 protocol https with timeout 20 seconds then alert
-        check host webmail with address webmail.banditlair.com
-          if failed port 443 protocol https with timeout 20 seconds then alert
-
         check program raid-md127 with path "${pkgs.mdadm}/bin/mdadm --misc --detail --test /dev/md127"
           if status != 0 then alert
-
-        check host osteoview with address osteoview.app
-          if failed
-              port 443
-              protocol https
-              status = 200
-              request "/api/_health"
-              with timeout 5 seconds
-              content = "Healthy"
-          then alert
-
-        check host osteoview-demo with address demo.osteoview.app
-          if failed
-              port 443
-              protocol https
-              status = 200
-              request "/api/_health"
-              with timeout 5 seconds
-              content = "Healthy"
-          then alert
       '';
     };
 
     services.nginx.enable = true;
     services.openssh.enable = true;
-    services.jellyfin.enable = true;
-    services.stb.enable = true;
-    services.monero.enable = true;
-    services.torrents.enable = true;
-    services.jitsi.enable = true;
+
+    services.monero.enable = false;
     services.grafana.enable = true;
     services.monitoring-exporters.enable = true;
   };
@@ -238,6 +190,10 @@
   networking.nat.internalInterfaces = [ "ve-+" ];
   networking.nat.externalInterface = "enp2s0";
 
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDQKmE04ZeXN65PTt5cc0YAgBeFukwhP39Ccq9ZxlCkovUMcm9q1Gqgb1tw0hfHCUYK9D6In/qLgNQ6h0Etnesi9HUncl6GC0EE89kNOANZVLuPir0V9Rm7zo55UUUM/qlZe1L7b19oO4qT5tIUlM1w4LfduZuyaag2RDpJxh4xBontftZnCS6O2OI4++/6OKLkn4qtsepxPWb9M6lY/sb6w75LqyUXyjxxArrQMHpE4RQHTCEJiK9t+z5xpfI4WfTnIRQaCw6LxZhE9Kh/pOSVbLU6c5VdBHfCOPk6xrB3TbuUvMpR0cRtn5q0nJQHGhL0A709UXR1fnPm7Xs4GTIf2LWXch6mcrjkTocz8qmKDuMxQzY76QXy6A+rvghhOxnrZTEhLKExZxNqag72MIeippPFNbyOJgke3htHy74b9WjM1vZJ9VRYnmhxpGz0af//GF6LZQy7gOxBasSOv5u5r//1Ow7FNf2K5xYPGYzWRIDx+abMa+JwOyPHdZ9bR+jmB5R9VohFECFLgjm+O5Ed1LJgRX/6vYlB+8gZeeflbZpYYsSY/EcpsUKgtOmIBJT1svdjVTDdplihdFUzWfjL+n2O30K7yniNz6dGbXhxfqOVlp9R6ZsEdbGTX0IGpG+0ZgkUkLrgROAH1xiOYNhpXuD3l6rNXLw4HP3Mqjp3Fw== root@hel1"
+  ];
+
   users.users.www-data = {
     uid = 993;
     createHome = true;
@@ -266,7 +222,7 @@
   users.groups.steam = { };
 
   services.minecraft-server = {
-    enable = true;
+    enable = false;
     package = pkgs-unstable.minecraft-server;
     eula = true;
     openFirewall = false;
@@ -305,33 +261,10 @@
   #   };
   # };
 
-  services.foundryvtt = {
-    enable = true;
-    package = inputs.foundryvtt.packages.${pkgs.system}.foundryvtt_12;
-    hostName = "vtt.${config.networking.domain}";
-    language = "fr.core";
-    proxyPort = 443;
-    proxySSL = true;
-    upnp = false;
-  };
-
   # services.rustdesk-server = {
   #   enable = true;
   #   openFirewall = true;
   # };
-
-  services.nginx.virtualHosts."vtt.${config.networking.domain}" = {
-    forceSSL = true;
-    enableACME = true;
-
-    locations."/" = {
-      proxyPass = "http://127.0.0.1:${toString config.services.foundryvtt.port}";
-      extraConfig = ''
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-      '';
-    };
-  };
 
   services.borgbackup.repos = {
     epicerie_du_cellier = {

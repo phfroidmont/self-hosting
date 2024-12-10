@@ -56,10 +56,11 @@
         db1 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = {
-            inherit nixpkgs;
+            inherit nixpkgs inputs;
           };
           modules = [
             sops-nix.nixosModules.sops
+            foundryvtt.nixosModules.foundryvtt
             ./profiles/db.nix
             {
               sops.defaultSopsFile = ./secrets.enc.yml;
@@ -74,11 +75,12 @@
         backend1 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = {
-            inherit nixpkgs;
+            inherit nixpkgs inputs;
           };
           modules = [
             defaultModuleArgs
             sops-nix.nixosModules.sops
+            foundryvtt.nixosModules.foundryvtt
             ./profiles/backend.nix
             {
               sops.defaultSopsFile = ./secrets.enc.yml;

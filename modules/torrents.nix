@@ -1,14 +1,25 @@
-{ config, lib, pkgs, ... }:
-let cfg = config.custom.services.torrents;
-in {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.custom.services.torrents;
+in
+{
   options.custom.services.torrents = {
     enable = lib.mkEnableOption "torrents";
   };
 
   config = lib.mkIf cfg.enable {
     sops.secrets = {
-      vpnCredentials = { key = "openvpn/credentials"; };
-      transmissionRpcCredentials = { key = "transmission/rpc_config.json"; };
+      vpnCredentials = {
+        key = "openvpn/credentials";
+      };
+      transmissionRpcCredentials = {
+        key = "transmission/rpc_config.json";
+      };
     };
 
     containers.torrents = {
@@ -60,7 +71,9 @@ in {
           isSystemUser = true;
           group = config.users.groups.www-data.name;
         };
-        users.groups.www-data = { gid = 991; };
+        users.groups.www-data = {
+          gid = 991;
+        };
         services.openvpn.servers.client = {
           updateResolvConf = true;
           config = ''
@@ -194,41 +207,51 @@ in {
       };
     };
 
-    virtualisation.oci-containers.containers.flaresolverr = {
-      image = "ghcr.io/flaresolverr/flaresolverr:v3.3.11";
-      environment = {
-        "LOG_LEVEL" = "debug";
-        "CAPTCHA_SOLVER" = "hcaptcha-solver";
-      };
-      ports = [ "192.168.1.1:8191:8191" ];
-      autoStart = true;
-    };
+    # virtualisation.oci-containers.containers.flaresolverr = {
+    #   image = "ghcr.io/flaresolverr/flaresolverr:v3.3.11";
+    #   environment = {
+    #     "LOG_LEVEL" = "debug";
+    #     "CAPTCHA_SOLVER" = "hcaptcha-solver";
+    #   };
+    #   ports = [ "192.168.1.1:8191:8191" ];
+    #   autoStart = true;
+    # };
 
     services.nginx.virtualHosts = {
       "transmission.${config.networking.domain}" = {
         forceSSL = true;
         enableACME = true;
-        locations."/" = { proxyPass = "http://192.168.1.2:9091"; };
+        locations."/" = {
+          proxyPass = "http://192.168.1.2:9091";
+        };
       };
       "jackett.${config.networking.domain}" = {
         forceSSL = true;
         enableACME = true;
-        locations."/" = { proxyPass = "http://192.168.1.2:9117"; };
+        locations."/" = {
+          proxyPass = "http://192.168.1.2:9117";
+        };
       };
       "sonarr.${config.networking.domain}" = {
         forceSSL = true;
         enableACME = true;
-        locations."/" = { proxyPass = "http://192.168.1.2:8989"; };
+        locations."/" = {
+          proxyPass = "http://192.168.1.2:8989";
+        };
       };
       "radarr.${config.networking.domain}" = {
         forceSSL = true;
         enableACME = true;
-        locations."/" = { proxyPass = "http://192.168.1.2:7878"; };
+        locations."/" = {
+          proxyPass = "http://192.168.1.2:7878";
+        };
       };
       "lidarr.${config.networking.domain}" = {
         forceSSL = true;
         enableACME = true;
-        locations."/" = { proxyPass = "http://192.168.1.2:8686"; };
+        locations."/" = {
+          proxyPass = "http://192.168.1.2:8686";
+        };
       };
     };
   };

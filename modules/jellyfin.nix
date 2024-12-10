@@ -1,15 +1,17 @@
 { config, lib, ... }:
-let cfg = config.custom.services.jellyfin;
-in {
+let
+  cfg = config.custom.services.jellyfin;
+in
+{
   options.custom.services.jellyfin = {
     enable = lib.mkEnableOption "jellyfin";
   };
 
   config = lib.mkIf cfg.enable {
-    services.jellyfin = { enable = true; };
-
-    systemd.services.jellyfin.serviceConfig.ExecStart = lib.mkOverride 10
-      "${config.services.jellyfin.package}/bin/jellyfin --datadir '/nix/var/data/jellyfin' --cachedir '/var/cache/jellyfin'";
+    services.jellyfin = {
+      enable = true;
+      dataDir = "/nix/var/data/jellyfin";
+    };
 
     services.nginx.virtualHosts."jellyfin.${config.networking.domain}" = {
       enableACME = true;

@@ -1,10 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  pkgs-unstable,
-  ...
-}:
+{ config, ... }:
 {
   imports = [
     ../environment.nix
@@ -12,129 +6,17 @@
     ../modules
   ];
 
-  sops.secrets = {
-    borgSshKey = {
-      owner = config.services.borgbackup.jobs.data.user;
-      key = "borg/client_keys/backend1/private";
-    };
-    dolibarrDbPassword = {
-      owner = config.users.users.dolibarr.name;
-      key = "dolibarr/db_password";
-      restartUnits = [ "phpfpm-dolibarr.service" ];
-    };
-  };
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDQKmE04ZeXN65PTt5cc0YAgBeFukwhP39Ccq9ZxlCkovUMcm9q1Gqgb1tw0hfHCUYK9D6In/qLgNQ6h0Etnesi9HUncl6GC0EE89kNOANZVLuPir0V9Rm7zo55UUUM/qlZe1L7b19oO4qT5tIUlM1w4LfduZuyaag2RDpJxh4xBontftZnCS6O2OI4++/6OKLkn4qtsepxPWb9M6lY/sb6w75LqyUXyjxxArrQMHpE4RQHTCEJiK9t+z5xpfI4WfTnIRQaCw6LxZhE9Kh/pOSVbLU6c5VdBHfCOPk6xrB3TbuUvMpR0cRtn5q0nJQHGhL0A709UXR1fnPm7Xs4GTIf2LWXch6mcrjkTocz8qmKDuMxQzY76QXy6A+rvghhOxnrZTEhLKExZxNqag72MIeippPFNbyOJgke3htHy74b9WjM1vZJ9VRYnmhxpGz0af//GF6LZQy7gOxBasSOv5u5r//1Ow7FNf2K5xYPGYzWRIDx+abMa+JwOyPHdZ9bR+jmB5R9VohFECFLgjm+O5Ed1LJgRX/6vYlB+8gZeeflbZpYYsSY/EcpsUKgtOmIBJT1svdjVTDdplihdFUzWfjL+n2O30K7yniNz6dGbXhxfqOVlp9R6ZsEdbGTX0IGpG+0ZgkUkLrgROAH1xiOYNhpXuD3l6rNXLw4HP3Mqjp3Fw== root@hel1"
+  ];
 
   custom = {
-
-    services.backup-job = {
-      enable = true;
-      repoName = "bk1";
-      additionalPaths = [
-        "/var/lib/nextcloud/config"
-        "/var/lib/mastodon"
-      ];
-      readWritePaths = [
-        "/nix/var/data/murmur"
-        "/nix/var/data/backup/"
-      ];
-      preHook = ''
-        cp /var/lib/murmur/murmur.sqlite /nix/var/data/murmur/murmur.sqlite
-      '';
-      startAt = "03:30";
-      sshKey = config.sops.secrets.borgSshKey.path;
-    };
-
-    services.monit = {
-      enable = true;
-      additionalConfig = ''
-        check file nextcloud-data-mounted with path /var/lib/nextcloud/data/index.html
-          start = "${pkgs.systemd}/bin/systemctl start nextcloud-data-sshfs.service"
-
-        check host jellyfin with address jellyfin.banditlair.com
-          if failed port 443 protocol https with timeout 20 seconds then alert
-        check host stb with address www.societe-de-tir-bertrix.com
-          if failed port 443 protocol https with timeout 20 seconds then alert
-
-        check host transmission with address transmission.banditlair.com
-          if failed
-              port 443
-              protocol https
-              status = 401
-              with timeout 20 seconds
-          then alert
-
-        check host osteoview with address osteoview.app
-          if failed
-              port 443
-              protocol https
-              status = 200
-              request "/api/_health"
-              with timeout 5 seconds
-              content = "Healthy"
-          then alert
-      '';
-    };
-
     services.nginx.enable = true;
-    services.dokuwiki.enable = true;
     services.openssh.enable = true;
-    services.murmur.enable = true;
-    services.synapse.enable = true;
-    services.nextcloud.enable = true;
-    services.roundcube.enable = true;
+
     services.monitoring-exporters.enable = true;
   };
 
-  services.uptime-kuma = {
-    enable = true;
-    settings = {
-      PORT = "3001";
-    };
-  };
-
-  services.nginx.virtualHosts = {
-    "osteopathie.froidmont.org" = {
-      enableACME = true;
-      forceSSL = true;
-      root = "/nix/var/data/website-marie";
-    };
-
-    "uptime.froidmont.org" = {
-      serverAliases = [ "status.${config.networking.domain}" ];
-      forceSSL = true;
-      enableACME = true;
-
-      locations."/" = {
-        proxyPass = "http://127.0.0.1:${config.services.uptime-kuma.settings.PORT}";
-        proxyWebsockets = true;
-      };
-    };
-
-    "www.fautlfer.com" = {
-      enableACME = true;
-      forceSSL = true;
-
-      locations."= /".extraConfig = ''
-        return 302 https://blogz.zaclys.com/faut-l-fer/;
-      '';
-    };
-
-    "fautlfer.com" = {
-      enableACME = true;
-      forceSSL = true;
-
-      locations."= /".extraConfig = ''
-        return 302 https://blogz.zaclys.com/faut-l-fer/;
-      '';
-    };
-  };
-
-  networking.firewall.allowedTCPPorts = [
-    80
-    443
-    64738
-  ];
-  networking.firewall.allowedUDPPorts = [ 64738 ];
   networking.firewall.interfaces."eth1".allowedTCPPorts = [
     config.services.prometheus.exporters.node.port
     9000

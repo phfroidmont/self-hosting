@@ -1,4 +1,9 @@
-{ pkgs, config, lib, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 let
   cfg = config.custom.services.stb;
   uploadWordpressConfig = pkgs.writeText "upload.ini" ''
@@ -8,10 +13,17 @@ let
     post_max_size = 64M
     max_execution_time = 600
   '';
-in {
-  options.custom.services.stb = { enable = lib.mkEnableOption "stb"; };
+in
+{
+  options.custom.services.stb = {
+    enable = lib.mkEnableOption "stb";
+  };
 
   config = lib.mkIf cfg.enable {
+
+    virtualisation.podman.defaultNetwork.settings = {
+      dns_enabled = true;
+    };
     systemd.services.init-stb-network = {
       description = "Create the network bridge stb-br for wordpress.";
       after = [ "network.target" ];
@@ -19,15 +31,17 @@ in {
 
       serviceConfig.Type = "oneshot";
       script =
-        let dockercli = "${config.virtualisation.docker.package}/bin/docker";
-        in ''
+        let
+          podmancli = "${pkgs.podman}/bin/podman";
+        in
+        ''
           # Put a true at the end to prevent getting non-zero return code, which will
           # crash the whole service.
-          check=$(${dockercli} network ls | grep "stb-br" || true)
+          check=$(${podmancli} pod ps | grep "stb" || true)
           if [ -z "$check" ]; then
-            ${dockercli} network create stb-br
+            ${podmancli} pod create --publish 8180:80 stb
           else
-            echo "stb-br already exists in docker"
+            echo "stb pod already exists"
           fi
         '';
     };
@@ -42,7 +56,7 @@ in {
           "MYSQL_DATABASE" = "stb";
         };
         volumes = [ "/var/lib/mariadb/stb:/var/lib/mysql" ];
-        extraOptions = [ "--network=stb-br" ];
+        extraOptions = [ "--pod=stb" ];
         autoStart = true;
       };
 
@@ -52,8 +66,7 @@ in {
           "/nix/var/data/stb-wordpress:/var/www/html"
           "${uploadWordpressConfig}:/usr/local/etc/php/conf.d/uploads.ini"
         ];
-        ports = [ "127.0.0.1:8180:80" ];
-        extraOptions = [ "--network=stb-br" ];
+        extraOptions = [ "--pod=stb" ];
         autoStart = true;
       };
     };
@@ -63,7 +76,9 @@ in {
       forceSSL = true;
       enableACME = true;
 
-      locations."/" = { proxyPass = "http://127.0.0.1:8180"; };
+      locations."/" = {
+        proxyPass = "http://127.0.0.1:8180";
+      };
     };
   };
 }

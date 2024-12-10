@@ -1,4 +1,5 @@
-{ config, pkgs, ... }: {
+{ ... }:
+{
   imports = [
     ./backup-job.nix
     ./monit.nix
@@ -20,5 +21,6 @@
     ./roundcube.nix
     ./dokuwiki.nix
     ./postgresql.nix
+    ./foundryvtt.nix
   ];
 }

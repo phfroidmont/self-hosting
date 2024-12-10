@@ -22,9 +22,6 @@ in
         root_as_others         root                  synapse
         root_as_others         root                  nextcloud
         root_as_others         root                  roundcube
-        root_as_others         root                  mastodon
-        root_as_others         root                  dolibarr
-        root_as_others         root                  odoo
       '';
       authentication = ''
         local  all     postgres               peer
@@ -35,28 +32,16 @@ in
 
     sops.secrets = {
       synapseDbPassword = {
-        owner = config.services.postgresql.superUser;
         key = "synapse/db_password";
         restartUnits = [ "postgresql-setup.service" ];
       };
       nextcloudDbPassword = {
-        owner = config.services.postgresql.superUser;
         key = "nextcloud/db_password";
         restartUnits = [ "postgresql-setup.service" ];
       };
       roundcubeDbPassword = {
         owner = config.services.postgresql.superUser;
         key = "roundcube/db_password";
-        restartUnits = [ "postgresql-setup.service" ];
-      };
-      mastodonDbPassword = {
-        owner = config.services.postgresql.superUser;
-        key = "mastodon/db_password";
-        restartUnits = [ "postgresql-setup.service" ];
-      };
-      dolibarrDbPassword = {
-        owner = config.services.postgresql.superUser;
-        key = "dolibarr/db_password";
         restartUnits = [ "postgresql-setup.service" ];
       };
     };
@@ -82,23 +67,14 @@ in
           PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'synapse'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "synapse"'
           PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'nextcloud'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "nextcloud"'
           PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'roundcube'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "roundcube"'
-          PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'mastodon'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "mastodon"'
-          PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'dolibarr'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "dolibarr"'
-          PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'odoo'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "odoo"'
 
           PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'synapse'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "synapse" OWNER "synapse" TEMPLATE template0 LC_COLLATE = "C" LC_CTYPE = "C"'
           PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'nextcloud'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "nextcloud" OWNER "nextcloud"'
           PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'roundcube'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "roundcube" OWNER "roundcube"'
-          PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'mastodon'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "mastodon" OWNER "mastodon"'
-          PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'dolibarr'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "dolibarr" OWNER "dolibarr"'
-          PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'odoo'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "odoo" OWNER "odoo"'
 
           PSQL -tAc  "ALTER ROLE synapse LOGIN"
           PSQL -tAc  "ALTER ROLE nextcloud LOGIN"
           PSQL -tAc  "ALTER ROLE roundcube LOGIN"
-          PSQL -tAc  "ALTER ROLE mastodon LOGIN"
-          PSQL -tAc  "ALTER ROLE dolibarr LOGIN"
-          PSQL -tAc  "ALTER ROLE odoo LOGIN"
 
           synapse_password="$(<'${config.sops.secrets.synapseDbPassword.path}')"
           PSQL -tAc  "ALTER ROLE synapse WITH PASSWORD '$synapse_password'"
@@ -106,11 +82,6 @@ in
           PSQL -tAc  "ALTER ROLE nextcloud WITH PASSWORD '$nextcloud_password'"
           roundcube_password="$(<'${config.sops.secrets.roundcubeDbPassword.path}')"
           PSQL -tAc  "ALTER ROLE roundcube WITH PASSWORD '$roundcube_password'"
-          mastodon_password="$(<'${config.sops.secrets.mastodonDbPassword.path}')"
-          PSQL -tAc  "ALTER ROLE mastodon WITH PASSWORD '$mastodon_password'"
-          dolibarr_password="$(<'${config.sops.secrets.dolibarrDbPassword.path}')"
-          PSQL -tAc  "ALTER ROLE dolibarr WITH PASSWORD '$dolibarr_password'"
-          PSQL -tAc  "ALTER ROLE odoo WITH PASSWORD 'odoo'"
         '';
 
         serviceConfig = {

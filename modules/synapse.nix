@@ -1,16 +1,22 @@
-{ pkgs, config, lib, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 let
   cfg = config.custom.services.synapse;
-  fqdn = let
-    join = hostName: domain:
-      hostName + lib.optionalString (domain != null) ".${domain}";
-  in join "matrix" config.networking.domain;
+  fqdn =
+    let
+      join = hostName: domain: hostName + lib.optionalString (domain != null) ".${domain}";
+    in
+    join "matrix" config.networking.domain;
   synapseDbConfig = pkgs.writeText "synapse-db-config.yaml" ''
     database:
         name: psycopg2
         args:
           database: synapse
-          host: "10.0.1.11"
+          host: "127.0.0.1"
           user: "synapse"
           password: "SYNAPSE_DB_PASSWORD"
     email:
@@ -24,8 +30,11 @@ let
     macaroon_secret_key: "MACAROON_SECRET_KEY"
     turn_shared_secret: "TURN_SHARED_SECRET"
   '';
-in {
-  options.custom.services.synapse = { enable = lib.mkEnableOption "synapse"; };
+in
+{
+  options.custom.services.synapse = {
+    enable = lib.mkEnableOption "synapse";
+  };
 
   config = lib.mkIf cfg.enable {
     services.nginx = {
@@ -38,25 +47,35 @@ in {
           forceSSL = true;
           # acmeFallbackHost = "storage1.banditlair.com";
 
-          locations."= /.well-known/matrix/server".extraConfig = let
-            # use 443 instead of the default 8448 port to unite
-            # the client-server and server-server port for simplicity
-            server = { "m.server" = "${fqdn}:443"; };
-          in ''
-            add_header Content-Type application/json;
-            return 200 '${builtins.toJSON server}';
-          '';
-          locations."= /.well-known/matrix/client".extraConfig = let
-            client = {
-              "m.homeserver" = { "base_url" = "https://${fqdn}"; };
-              "m.identity_server" = { "base_url" = "https://vector.im"; };
-            };
+          locations."= /.well-known/matrix/server".extraConfig =
+            let
+              # use 443 instead of the default 8448 port to unite
+              # the client-server and server-server port for simplicity
+              server = {
+                "m.server" = "${fqdn}:443";
+              };
+            in
+            ''
+              add_header Content-Type application/json;
+              return 200 '${builtins.toJSON server}';
+            '';
+          locations."= /.well-known/matrix/client".extraConfig =
+            let
+              client = {
+                "m.homeserver" = {
+                  "base_url" = "https://${fqdn}";
+                };
+                "m.identity_server" = {
+                  "base_url" = "https://vector.im";
+                };
+              };
+            in
             # ACAO required to allow element-web on any URL to request this json file
-          in ''
-            add_header Content-Type application/json;
-            add_header Access-Control-Allow-Origin *;
-            return 200 '${builtins.toJSON client}';
-          '';
+            ''
+              add_header Content-Type application/json;
+              add_header Access-Control-Allow-Origin *;
+              return 200 '${builtins.toJSON client}';
+            '';
         };
 
         # Reverse proxy for Matrix client-server and server-server communication
@@ -98,7 +117,10 @@ in {
         group = "turnserver";
         mode = "0440";
         key = "synapse/turn_shared_secret";
-        restartUnits = [ "matrix-synapse-setup" "coturn" ];
+        restartUnits = [
+          "matrix-synapse-setup"
+          "coturn"
+        ];
       };
     };
 
@@ -124,7 +146,10 @@ in {
     };
 
     systemd.services.matrix-synapse = {
-      after = [ "matrix-synapse-setup.service" "network.target" ];
+      after = [
+        "matrix-synapse-setup.service"
+        "network.target"
+      ];
       bindsTo = [ "matrix-synapse-setup.service" ];
     };
 
@@ -138,14 +163,22 @@ in {
         listeners = [
           {
             port = 8008;
-            bind_addresses = [ "::1" "127.0.0.1" ];
+            bind_addresses = [
+              "::1"
+              "127.0.0.1"
+            ];
             type = "http";
             tls = false;
             x_forwarded = true;
-            resources = [{
-              names = [ "client" "federation" ];
-              compress = false;
-            }];
+            resources = [
+              {
+                names = [
+                  "client"
+                  "federation"
+                ];
+                compress = false;
+              }
+            ];
           }
           {
             port = 9000;
@@ -214,17 +247,21 @@ in {
       '';
     };
 
-    networking.firewall = let
-      range = with config.services.coturn; [{
-        from = min-port;
-        to = max-port;
-      }];
-    in {
-      allowedUDPPortRanges = range;
-      allowedUDPPorts = [ 3478 ];
-      allowedTCPPortRanges = range;
-      allowedTCPPorts = [ 3478 ];
-    };
+    networking.firewall =
+      let
+        range = with config.services.coturn; [
+          {
+            from = min-port;
+            to = max-port;
+          }
+        ];
+      in
+      {
+        allowedUDPPortRanges = range;
+        allowedUDPPorts = [ 3478 ];
+        allowedTCPPortRanges = range;
+        allowedTCPPorts = [ 3478 ];
+      };
 
     security.acme.certs.${config.services.coturn.realm} = {
       postRun = "systemctl restart coturn.service";

@@ -16,7 +16,7 @@ data "hetznerdns_zone" "froidmont_solutions_zone" {
 resource "hetznerdns_record" "banditlair_hcloud_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "@"
-  value   = hcloud_server.backend1.ipv4_address
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -32,7 +32,7 @@ resource "hetznerdns_record" "backend1_a" {
 resource "hetznerdns_record" "webmail_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "webmail"
-  value   = hcloud_server.backend1.ipv4_address
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -88,7 +88,7 @@ resource "hetznerdns_record" "cache_a" {
 resource "hetznerdns_record" "jellyfin_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "jellyfin"
-  value   = local.storage1_ip
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -96,23 +96,7 @@ resource "hetznerdns_record" "jellyfin_a" {
 resource "hetznerdns_record" "status_banditlair_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "status"
-  value   = hcloud_server.backend1.ipv4_address
-  type    = "A"
-  ttl     = 600
-}
-
-resource "hetznerdns_record" "dolibarr_a" {
-  zone_id = data.hetznerdns_zone.froidmont_solutions_zone.id
-  name    = "dolibarr"
-  value   = hcloud_server.backend1.ipv4_address
-  type    = "A"
-  ttl     = 600
-}
-
-resource "hetznerdns_record" "odoo_a" {
-  zone_id = data.hetznerdns_zone.froidmont_solutions_zone.id
-  name    = "odoo"
-  value   = hcloud_server.backend1.ipv4_address
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -120,15 +104,7 @@ resource "hetznerdns_record" "odoo_a" {
 resource "hetznerdns_record" "jitsi_a" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
   name    = "jitsi"
-  value   = local.storage1_ip
-  type    = "A"
-  ttl     = 600
-}
-
-resource "hetznerdns_record" "mastodon_a" {
-  zone_id = data.hetznerdns_zone.froidmont_zone.id
-  name    = "social"
-  value   = hcloud_server.backend1.ipv4_address
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -136,7 +112,7 @@ resource "hetznerdns_record" "mastodon_a" {
 resource "hetznerdns_record" "uptime_a" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
   name    = "uptime"
-  value   = hcloud_server.backend1.ipv4_address
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -144,7 +120,7 @@ resource "hetznerdns_record" "uptime_a" {
 resource "hetznerdns_record" "transmission_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "transmission"
-  value   = local.storage1_ip
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -152,7 +128,7 @@ resource "hetznerdns_record" "transmission_a" {
 resource "hetznerdns_record" "jackett_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "jackett"
-  value   = local.storage1_ip
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -160,7 +136,7 @@ resource "hetznerdns_record" "jackett_a" {
 resource "hetznerdns_record" "sonarr_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "sonarr"
-  value   = local.storage1_ip
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -168,7 +144,7 @@ resource "hetznerdns_record" "sonarr_a" {
 resource "hetznerdns_record" "radarr_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "radarr"
-  value   = local.storage1_ip
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -176,7 +152,7 @@ resource "hetznerdns_record" "radarr_a" {
 resource "hetznerdns_record" "lidarr_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "lidarr"
-  value   = local.storage1_ip
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -184,7 +160,7 @@ resource "hetznerdns_record" "lidarr_a" {
 resource "hetznerdns_record" "vtt_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "vtt"
-  value   = local.storage1_ip
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -192,7 +168,7 @@ resource "hetznerdns_record" "vtt_a" {
 resource "hetznerdns_record" "monero_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "monero"
-  value   = local.storage1_ip
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -200,7 +176,7 @@ resource "hetznerdns_record" "monero_a" {
 resource "hetznerdns_record" "anderia_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "anderia"
-  value   = hcloud_server.backend1.ipv4_address
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -208,7 +184,7 @@ resource "hetznerdns_record" "anderia_a" {
 resource "hetznerdns_record" "arkadia_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "arkadia"
-  value   = hcloud_server.backend1.ipv4_address
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -216,7 +192,7 @@ resource "hetznerdns_record" "arkadia_a" {
 resource "hetznerdns_record" "cifirpg_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "scifirpg"
-  value   = hcloud_server.backend1.ipv4_address
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -240,7 +216,7 @@ resource "hetznerdns_record" "banditlair_dedicated_a" {
 resource "hetznerdns_record" "nextcloud_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "cloud"
-  value   = hcloud_server.backend1.ipv4_address
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -249,7 +225,7 @@ resource "hetznerdns_record" "nextcloud_a" {
 resource "hetznerdns_record" "matrix_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "matrix"
-  value   = hcloud_server.backend1.ipv4_address
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -265,7 +241,7 @@ resource "hetznerdns_record" "matrix_srv" {
 resource "hetznerdns_record" "coturn_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "turn"
-  value   = hcloud_server.backend1.ipv4_address
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -386,7 +362,7 @@ resource "hetznerdns_record" "froidmont_a" {
 resource "hetznerdns_record" "website_marie_a" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
   name    = "osteopathie"
-  value   = hcloud_server.backend1.ipv4_address
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -438,7 +414,7 @@ data "hetznerdns_zone" "stb_zone" {
 resource "hetznerdns_record" "stb_a" {
   zone_id = data.hetznerdns_zone.stb_zone.id
   name    = "@"
-  value   = local.storage1_ip
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
