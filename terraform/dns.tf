@@ -72,7 +72,7 @@ resource "hetznerdns_record" "hel1_a" {
 resource "hetznerdns_record" "grafana_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "grafana"
-  value   = local.storage1_ip
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }

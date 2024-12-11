@@ -15,6 +15,9 @@
       owner = config.users.users.gitlab-runner.name;
       key = "gitlab/runner_registration_config/hel1";
     };
+    dmarcExporterPassword = {
+      key = "dmarc_exporter/password";
+    };
   };
 
   time.timeZone = "Europe/Amsterdam";
@@ -180,26 +183,29 @@
     };
   };
 
-  custom = {
-    services.nginx.enable = true;
-    services.postgresql.enable = true;
-    services.dokuwiki.enable = true;
-    services.openssh.enable = true;
-    services.gitlab-runner = {
+  custom.services = {
+    nginx.enable = true;
+    postgresql.enable = true;
+    dokuwiki.enable = true;
+    openssh.enable = true;
+    gitlab-runner = {
       enable = true;
       runnerRegistrationConfigFile = config.sops.secrets.runnerRegistrationConfig.path;
     };
-    services.jellyfin.enable = true;
-    services.torrents.enable = true;
-    services.foundryvtt.enable = true;
-    services.jitsi.enable = true;
-    services.stb.enable = true;
-    services.murmur.enable = true;
-    services.synapse.enable = true;
-    services.nextcloud.enable = true;
-    services.roundcube.enable = true;
+    jellyfin.enable = true;
+    torrents.enable = true;
+    foundryvtt.enable = true;
+    jitsi.enable = true;
+    stb.enable = true;
+    murmur.enable = true;
+    synapse.enable = true;
+    nextcloud.enable = true;
+    roundcube.enable = true;
+    monero.enable = true;
+    grafana.enable = true;
+    monitoring-exporters.enable = true;
 
-    services.backup-job = {
+    backup-job = {
       enable = true;
       repoName = "bl";
       additionalPaths = [
@@ -235,7 +241,7 @@
       sshKey = config.sops.secrets.borgSshKey.path;
     };
 
-    services.monit = {
+    monit = {
       enable = true;
       additionalConfig = ''
         check host nextcloud with address cloud.banditlair.com
@@ -331,6 +337,31 @@
       '';
     };
   };
+
+  # services.minecraft-server = {
+  #   enable = false;
+  #   package = pkgs-unstable.minecraft-server;
+  #   eula = true;
+  #   openFirewall = false;
+  #   declarative = true;
+  #   serverProperties = {
+  #     enable-rcon = true;
+  #     "rcon.port" = 25575;
+  #     "rcon.password" = "password";
+  #     server-port = 23363;
+  #     online-mode = true;
+  #     force-gamemode = true;
+  #     white-list = true;
+  #     diffuculty = "hard";
+  #   };
+  #   whitelist = {
+  #     paulplay15 = "1d5abc95-2fdb-4dcb-98e8-4fb5a0fba953";
+  #     Xavier1258 = "e9059cf3-00ef-47a3-92ee-4e4a3fea0e6d";
+  #     denisjulien3333 = "3c93e1a2-42d8-4a51-9fe3-924c8e8d5b07";
+  #   };
+  #   dataDir = "/nix/var/data/minecraft";
+  # };
+
   # virtualisation.oci-containers.containers = {
   #   "minecraft" = {
   #     image = "itzg/minecraft-server";

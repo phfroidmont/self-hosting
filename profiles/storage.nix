@@ -19,9 +19,6 @@
     nixCacheKey = {
       key = "nix/cache_secret_key";
     };
-    dmarcExporterPassword = {
-      key = "dmarc_exporter/password";
-    };
     paultrialPassword = {
       key = "email/accounts_passwords/paultrial";
     };
@@ -75,9 +72,6 @@
     services.nginx.enable = true;
     services.openssh.enable = true;
 
-    services.monero.enable = false;
-    services.grafana.enable = true;
-    services.monitoring-exporters.enable = true;
   };
 
   mailserver = {
@@ -157,22 +151,6 @@
     certificateScheme = "acme-nginx";
   };
 
-  services.prometheus.exporters.dmarc = {
-    enable = true;
-    debug = true;
-    imap = {
-      host = "mail.banditlair.com";
-      username = "paultrial@banditlair.com";
-      passwordFile = "/run/credentials/prometheus-dmarc-exporter.service/password";
-    };
-    folders = {
-      inbox = "dmarc_reports";
-      done = "Archives.dmarc_report_processed";
-      error = "Archives.dmarc_report_error";
-    };
-  };
-  systemd.services.prometheus-dmarc-exporter.serviceConfig.LoadCredential = "password:${config.sops.secrets.dmarcExporterPassword.path}";
-
   networking.firewall.allowedTCPPorts = [
     80
     443
@@ -181,9 +159,6 @@
   ];
   networking.firewall.allowedUDPPorts = [
     23363 # Minecraft
-  ];
-  networking.firewall.interfaces.vlan4001.allowedTCPPorts = [
-    config.services.loki.configuration.server.http_listen_port
   ];
 
   networking.nat.enable = true;
@@ -220,46 +195,6 @@
     group = config.users.groups.steam.name;
   };
   users.groups.steam = { };
-
-  services.minecraft-server = {
-    enable = false;
-    package = pkgs-unstable.minecraft-server;
-    eula = true;
-    openFirewall = false;
-    declarative = true;
-    serverProperties = {
-      enable-rcon = true;
-      "rcon.port" = 25575;
-      "rcon.password" = "password";
-      server-port = 23363;
-      online-mode = true;
-      force-gamemode = true;
-      white-list = true;
-      diffuculty = "hard";
-    };
-    whitelist = {
-      paulplay15 = "1d5abc95-2fdb-4dcb-98e8-4fb5a0fba953";
-      Xavier1258 = "e9059cf3-00ef-47a3-92ee-4e4a3fea0e6d";
-      denisjulien3333 = "3c93e1a2-42d8-4a51-9fe3-924c8e8d5b07";
-    };
-    dataDir = "/nix/var/data/minecraft";
-  };
-
-  # virtualisation.oci-containers.containers = {
-  #   "minecraft" = {
-  #     image = "itzg/minecraft-server";
-  #     environment = {
-  #       EULA = "TRUE";
-  #       VERSION = "1.18.2";
-  #       TYPE = "AUTO_CURSEFORGE";
-  #       MEMORY = "4G";
-  #       CF_SLUG = "modecube"; # https://www.curseforge.com/minecraft/modpacks/modecube/files
-  #     };
-  #     ports = [ "25565:25565" ];
-  #     volumes = [ "/nix/var/data/minecraft-modded:/data" ];
-  #     autoStart = true;
-  #   };
-  # };
 
   # services.rustdesk-server = {
   #   enable = true;

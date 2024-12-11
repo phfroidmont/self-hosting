@@ -33,10 +33,15 @@ in
       forceSSL = true;
     };
 
+    # Can't change home dir for now, use bind mount as workaround
+    # https://github.com/NixOS/nixpkgs/issues/356973
+    fileSystems."/var/lib/nextcloud" = {
+      device = "/nix/var/data/nextcloud";
+      options = [ "bind" ];
+    };
+
     services.nextcloud = {
       enable = true;
-      # Can't be changed for now, could use a bind mount as workaround
-      # https://github.com/NixOS/nixpkgs/issues/356973
       # home = "/nix/var/data/nextcloud";
       package = pkgs.nextcloud29;
       hostName = "cloud.${config.networking.domain}";
