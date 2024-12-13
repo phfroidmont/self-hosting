@@ -31,15 +31,17 @@ in
     };
 
     sops.secrets = {
-      synapseDbPassword = {
+      synapseDbPasswordPg = {
+        owner = config.services.postgresql.superUser;
         key = "synapse/db_password";
         restartUnits = [ "postgresql-setup.service" ];
       };
-      nextcloudDbPassword = {
+      nextcloudDbPasswordPg = {
+        owner = config.services.postgresql.superUser;
         key = "nextcloud/db_password";
         restartUnits = [ "postgresql-setup.service" ];
       };
-      roundcubeDbPassword = {
+      roundcubeDbPasswordPg = {
         owner = config.services.postgresql.superUser;
         key = "roundcube/db_password";
         restartUnits = [ "postgresql-setup.service" ];
@@ -76,11 +78,11 @@ in
           PSQL -tAc  "ALTER ROLE nextcloud LOGIN"
           PSQL -tAc  "ALTER ROLE roundcube LOGIN"
 
-          synapse_password="$(<'${config.sops.secrets.synapseDbPassword.path}')"
+          synapse_password="$(<'${config.sops.secrets.synapseDbPasswordPg.path}')"
           PSQL -tAc  "ALTER ROLE synapse WITH PASSWORD '$synapse_password'"
-          nextcloud_password="$(<'${config.sops.secrets.nextcloudDbPassword.path}')"
+          nextcloud_password="$(<'${config.sops.secrets.nextcloudDbPasswordPg.path}')"
           PSQL -tAc  "ALTER ROLE nextcloud WITH PASSWORD '$nextcloud_password'"
-          roundcube_password="$(<'${config.sops.secrets.roundcubeDbPassword.path}')"
+          roundcube_password="$(<'${config.sops.secrets.roundcubeDbPasswordPg.path}')"
           PSQL -tAc  "ALTER ROLE roundcube WITH PASSWORD '$roundcube_password'"
         '';
 
