@@ -22,5 +22,6 @@
     ./dokuwiki.nix
     ./postgresql.nix
     ./foundryvtt.nix
+    ./immich.nix
   ];
 }

@@ -204,6 +204,7 @@
     monero.enable = true;
     grafana.enable = true;
     monitoring-exporters.enable = true;
+    immich.enable = true;
 
     backup-job = {
       enable = true;
