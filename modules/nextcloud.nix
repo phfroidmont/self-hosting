@@ -47,6 +47,7 @@ in
       hostName = "cloud.${config.networking.domain}";
       https = true;
       maxUploadSize = "1G";
+      configureRedis = true;
 
       config = {
         dbtype = "pgsql";
