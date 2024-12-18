@@ -3,6 +3,7 @@ locals {
   storage1_ip   = "78.46.96.243"
   storage1_ipv6 = "2a01:4f8:120:8233::1"
   hel1_ip   = "37.27.138.62"
+  hel1_ipv6 = "2a01:4f9:3100:1202::2"
 }
 
 data "hetznerdns_zone" "banditlair_zone" {
@@ -40,7 +41,7 @@ resource "hetznerdns_record" "webmail_a" {
 resource "hetznerdns_record" "mail_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "mail"
-  value   = local.storage1_ip
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
@@ -48,7 +49,7 @@ resource "hetznerdns_record" "mail_a" {
 resource "hetznerdns_record" "mail_aaaa" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "mail"
-  value   = local.storage1_ipv6
+  value   = local.hel1_ipv6
   type    = "AAAA"
   ttl     = 600
 }
@@ -216,7 +217,7 @@ resource "hetznerdns_record" "db1_a" {
 resource "hetznerdns_record" "banditlair_dedicated_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "*"
-  value   = local.storage1_ip
+  value   = local.hel1_ip
   type    = "A"
   ttl     = 600
 }
