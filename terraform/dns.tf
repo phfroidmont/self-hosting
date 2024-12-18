@@ -22,14 +22,6 @@ resource "hetznerdns_record" "banditlair_hcloud_a" {
   ttl     = 600
 }
 
-resource "hetznerdns_record" "backend1_a" {
-  zone_id = data.hetznerdns_zone.banditlair_zone.id
-  name    = "backend1"
-  value   = hcloud_server.backend1.ipv4_address
-  type    = "A"
-  ttl     = 600
-}
-
 resource "hetznerdns_record" "webmail_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "webmail"
@@ -202,14 +194,6 @@ resource "hetznerdns_record" "cifirpg_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "scifirpg"
   value   = local.hel1_ip
-  type    = "A"
-  ttl     = 600
-}
-
-resource "hetznerdns_record" "db1_a" {
-  zone_id = data.hetznerdns_zone.banditlair_zone.id
-  name    = "db1"
-  value   = hcloud_server.db1.ipv4_address
   type    = "A"
   ttl     = 600
 }

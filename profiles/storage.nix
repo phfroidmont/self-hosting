@@ -24,7 +24,7 @@
     };
 
     services.monit = {
-      enable = true;
+      enable = false;
       additionalConfig = ''
         check program raid-md127 with path "${pkgs.mdadm}/bin/mdadm --misc --detail --test /dev/md127"
           if status != 0 then alert
