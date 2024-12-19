@@ -1,7 +1,6 @@
 locals {
   dmarc_value   = "\"v=DMARC1; p=none; rua=mailto:failed-dmarc@banditlair.com; ruf=mailto:dmarc@banditlair.com\""
   storage1_ip   = "78.46.96.243"
-  storage1_ipv6 = "2a01:4f8:120:8233::1"
   hel1_ip   = "37.27.138.62"
   hel1_ipv6 = "2a01:4f9:3100:1202::2"
 }
@@ -66,14 +65,6 @@ resource "hetznerdns_record" "grafana_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "grafana"
   value   = local.hel1_ip
-  type    = "A"
-  ttl     = 600
-}
-
-resource "hetznerdns_record" "cache_a" {
-  zone_id = data.hetznerdns_zone.banditlair_zone.id
-  name    = "cache"
-  value   = local.storage1_ip
   type    = "A"
   ttl     = 600
 }
