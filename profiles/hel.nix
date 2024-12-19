@@ -500,6 +500,7 @@
       write = true;
       keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIODEuNOPisaBoF+7CGpWO80n0v5kg1LNMN4yD/wr4cCL root@nixos-desktop"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPnfIxEwIgdgWCHHNAeJ9cc81A+2LVQP10onFCOzqzXp root@froidmpa-laptop"
       ];
     };
   };
