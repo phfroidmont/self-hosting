@@ -39,6 +39,9 @@
     noreplyFroidmontPassword = {
       key = "email/accounts_passwords/noreply_froidmont";
     };
+    nixCacheKey = {
+      key = "nix/cache_secret_key";
+    };
   };
 
   time.timeZone = "Europe/Amsterdam";
@@ -487,4 +490,26 @@
     certificateScheme = "acme-nginx";
   };
 
+  nix = {
+    settings = {
+      trusted-users = [ "nix-ssh" ];
+      secret-key-files = [ config.sops.secrets.nixCacheKey.path ];
+    };
+    sshServe = {
+      enable = true;
+      write = true;
+      keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIODEuNOPisaBoF+7CGpWO80n0v5kg1LNMN4yD/wr4cCL root@nixos-desktop"
+      ];
+    };
+  };
+
+  services.borgbackup.repos = {
+    epicerie_du_cellier = {
+      authorizedKeys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDbiI5UOGpVbaV+xihLqKP0B3UehboMMzOy3HhjjbSz backend1@epicerieducellier.be"
+      ];
+      path = "/nix/var/data/epicerie_du_cellier_backup";
+    };
+  };
 }
