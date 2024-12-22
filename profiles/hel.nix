@@ -292,9 +292,10 @@
               protocol https
               status = 401
               with timeout 20 seconds
+              for 10 cycles
           then alert
 
-        check program raid-md126 with path "${pkgs.mdadm}/bin/mdadm --misc --detail --test /dev/md127"
+        check program raid-md126 with path "${pkgs.mdadm}/bin/mdadm --misc --detail --test /dev/md126"
           if status != 0 then alert
         check program raid-md127 with path "${pkgs.mdadm}/bin/mdadm --misc --detail --test /dev/md127"
           if status != 0 then alert
