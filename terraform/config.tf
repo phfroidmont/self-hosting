@@ -8,11 +8,6 @@ terraform {
     username       = "phfroidmont"
   }
   required_providers {
-    hcloud = {
-      source  = "hetznercloud/hcloud"
-      version = ">=1.24.1"
-    }
-
     hetznerdns = {
       source  = "timohirt/hetznerdns"
       version = ">= 2.2.0"
@@ -30,20 +25,7 @@ data "sops_file" "secrets" {
 }
 
 
-provider "hcloud" {
-  token = data.sops_file.secrets.data["hcloud.token"]
-}
-
 provider "hetznerdns" {
   apitoken = data.sops_file.secrets.data["hcloud.dns_token"]
 }
 
-resource "hcloud_ssh_key" "froidmpa-desktop" {
-  name       = "froidmpa-desktop"
-  public_key = file("../ssh_keys/froidmpa-desktop.pub")
-}
-
-resource "hcloud_ssh_key" "froidmpa-laptop" {
-  name       = "froidmpa-laptop"
-  public_key = file("../ssh_keys/froidmpa-laptop.pub")
-}
