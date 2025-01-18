@@ -15,7 +15,7 @@ let
   template-darkblue = pkgs.stdenv.mkDerivation {
     name = "darkblue";
     src = builtins.fetchGit {
-      url = "git@github.com:ms101/dokuwiki-template-darkblue.git";
+      url = "https://github.com/ms101/dokuwiki-template-darkblue.git";
       ref = "main";
       rev = "14f8e738c83c16f2633d23fe30b7c6031551fa77";
     };
