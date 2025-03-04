@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  pkgs,
+  pkgs-unstable,
   ...
 }:
 let
@@ -185,6 +185,7 @@ in
 
         services.jackett = {
           enable = true;
+          package = pkgs-unstable.jackett;
           openFirewall = true;
           user = config.users.users.www-data.name;
           group = config.users.groups.www-data.name;
