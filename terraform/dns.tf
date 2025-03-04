@@ -342,6 +342,14 @@ resource "hetznerdns_record" "website_marie_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "forge_a" {
+  zone_id = data.hetznerdns_zone.froidmont_zone.id
+  name    = "forge"
+  value   = local.hel1_ip
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "froidmont_cname" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
   name    = "*"

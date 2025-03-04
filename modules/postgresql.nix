@@ -23,6 +23,7 @@ in
         root_as_others         root                  nextcloud
         root_as_others         root                  roundcube
         root_as_others         root                  immich
+        root_as_others         root                  forgejo
       '';
       authentication = ''
         local  all     postgres               peer
@@ -52,6 +53,11 @@ in
         key = "immich/db_password";
         restartUnits = [ "postgresql-setup.service" ];
       };
+      forgejoDbPasswordPg = {
+        owner = config.services.postgresql.superUser;
+        key = "forgejo/db_password";
+        restartUnits = [ "postgresql-setup.service" ];
+      };
     };
 
     systemd.services.postgresql-setup =
@@ -76,16 +82,19 @@ in
           PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'nextcloud'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "nextcloud"'
           PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'roundcube'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "roundcube"'
           PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'immich'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "immich"'
+          PSQL -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'forgejo'" | grep -q 1 || PSQL -tAc 'CREATE ROLE "forgejo"'
 
           PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'synapse'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "synapse" OWNER "synapse" TEMPLATE template0 LC_COLLATE = "C" LC_CTYPE = "C"'
           PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'nextcloud'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "nextcloud" OWNER "nextcloud"'
           PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'roundcube'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "roundcube" OWNER "roundcube"'
           PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'immich'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "immich" OWNER "immich"'
+          PSQL -tAc "SELECT 1 FROM pg_database WHERE datname = 'forgejo'" | grep -q 1 || PSQL -tAc 'CREATE DATABASE "forgejo" OWNER "forgejo"'
 
           PSQL -tAc  "ALTER ROLE synapse LOGIN"
           PSQL -tAc  "ALTER ROLE nextcloud LOGIN"
           PSQL -tAc  "ALTER ROLE roundcube LOGIN"
           PSQL -tAc  "ALTER ROLE immich LOGIN"
+          PSQL -tAc  "ALTER ROLE forgejo LOGIN"
 
           synapse_password="$(<'${config.sops.secrets.synapseDbPasswordPg.path}')"
           PSQL -tAc  "ALTER ROLE synapse WITH PASSWORD '$synapse_password'"
@@ -95,6 +104,8 @@ in
           PSQL -tAc  "ALTER ROLE roundcube WITH PASSWORD '$roundcube_password'"
           immich_password="$(<'${config.sops.secrets.immichDbPasswordPg.path}')"
           PSQL -tAc  "ALTER ROLE immich WITH PASSWORD '$immich_password'"
+          forgejo_password="$(<'${config.sops.secrets.forgejoDbPasswordPg.path}')"
+          PSQL -tAc  "ALTER ROLE forgejo WITH PASSWORD '$forgejo_password'"
         '';
 
         serviceConfig = {

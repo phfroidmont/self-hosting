@@ -229,6 +229,7 @@
     grafana.enable = true;
     monitoring-exporters.enable = true;
     immich.enable = true;
+    forgejo.enable = true;
 
     backup-job = {
       enable = true;
@@ -257,6 +258,8 @@
         ${config.services.postgresql.package}/bin/pg_dump -U synapse synapse > /nix/var/data/postgresql/synapse.dmp
         ${config.services.postgresql.package}/bin/pg_dump -U nextcloud nextcloud > /nix/var/data/postgresql/nextcloud.dmp
         ${config.services.postgresql.package}/bin/pg_dump -U roundcube roundcube > /nix/var/data/postgresql/roundcube.dmp
+        ${config.services.postgresql.package}/bin/pg_dump -U immich immich > /nix/var/data/postgresql/immich.dmp
+        ${config.services.postgresql.package}/bin/pg_dump -U forgejo forgejo > /nix/var/data/postgresql/forgejo.dmp
         ${pkgs.podman}/bin/podman exec stb-mariadb sh -c 'mysqldump -u stb -pstb stb' > /nix/var/data/backup/stb_mariadb.sql
         ${pkgs.systemd}/bin/systemctl stop jellyfin.service
         ${pkgs.systemd}/bin/systemctl stop container@torrents

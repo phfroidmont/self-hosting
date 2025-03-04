@@ -23,5 +23,6 @@
     ./postgresql.nix
     ./foundryvtt.nix
     ./immich.nix
+    ./forgejo.nix
   ];
 }
