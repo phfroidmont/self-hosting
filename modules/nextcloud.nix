@@ -43,7 +43,7 @@ in
     services.nextcloud = {
       enable = true;
       # home = "/nix/var/data/nextcloud";
-      package = pkgs.nextcloud30;
+      package = pkgs.nextcloud31;
       hostName = "cloud.${config.networking.domain}";
       https = true;
       maxUploadSize = "1G";
