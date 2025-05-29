@@ -430,9 +430,9 @@
     localDnsResolver = false;
     enableManageSieve = true;
     lmtpSaveToDetailMailbox = "no";
-    policydSPFExtraConfig = ''
-      Domain_Whitelist = skynet.be
-    '';
+    # policydSPFExtraConfig = ''
+    #   Domain_Whitelist = skynet.be
+    # '';
     loginAccounts = {
       "paultrial@banditlair.com" = {
         # nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2 > /hashed/password/file/location

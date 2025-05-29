@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.custom.services.dokuwiki;
 
@@ -27,13 +32,11 @@ let
     sops.secrets."usersFile-${name}" = {
       owner = "dokuwiki";
       key = "wiki/${name}/users_file";
-      restartUnits =
-        [ "phpfpm-dokuwiki-${name}.${config.networking.domain}.service" ];
+      restartUnits = [ "phpfpm-dokuwiki-${name}.${config.networking.domain}.service" ];
     };
 
     services.dokuwiki.sites = {
       "${name}.${config.networking.domain}" = {
-        enable = true;
         stateDir = "/nix/var/data/dokuwiki/${name}/data";
         usersFile = config.sops.secrets."usersFile-${name}".path;
         templates = [ templatePackage ];
@@ -42,7 +45,10 @@ let
           title = title;
           template = templateName;
           disableactions = "register";
-          dontlog = [ "debug" "deprecated" ];
+          dontlog = [
+            "debug"
+            "deprecated"
+          ];
         };
       };
     };
@@ -53,7 +59,8 @@ let
       extraConfig = "client_max_body_size 25M;";
     };
   };
-in {
+in
+{
   options.custom.services.dokuwiki = {
 
     enable = lib.mkEnableOption "dokuwiki";
@@ -61,11 +68,11 @@ in {
     secretKeyFile = lib.mkOption { type = lib.types.path; };
   };
 
-  config = lib.mkIf cfg.enable (lib.mkMerge [
-    (configureWiki "anderia" "Choniques d`Arkadia" template-chippedsnow
-      "chippedsnow")
-    (configureWiki "arkadia" "Choniques d`Arkadia" template-chippedsnow
-      "chippedsnow")
-    (configureWiki "scifirpg" "2324" template-darkblue "darkblue")
-  ]);
+  config = lib.mkIf cfg.enable (
+    lib.mkMerge [
+      (configureWiki "anderia" "Choniques d`Arkadia" template-chippedsnow "chippedsnow")
+      (configureWiki "arkadia" "Choniques d`Arkadia" template-chippedsnow "chippedsnow")
+      (configureWiki "scifirpg" "2324" template-darkblue "darkblue")
+    ]
+  );
 }
