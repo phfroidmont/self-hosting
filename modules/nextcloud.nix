@@ -48,7 +48,7 @@ in
       https = true;
       maxUploadSize = "1G";
       configureRedis = true;
-      notify_push.enable = true;
+      # notify_push.enable = true;
 
       config = {
         dbtype = "pgsql";

@@ -42,6 +42,9 @@
     nixCacheKey = {
       key = "nix/cache_secret_key";
     };
+    chiselAuthFile = {
+      key = "chisel/auth.json";
+    };
   };
 
   time.timeZone = "Europe/Amsterdam";
@@ -515,6 +518,27 @@
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDbiI5UOGpVbaV+xihLqKP0B3UehboMMzOy3HhjjbSz backend1@epicerieducellier.be"
       ];
       path = "/nix/var/data/epicerie_du_cellier_backup";
+    };
+  };
+
+  services.chisel-server = {
+    enable = true;
+    reverse = true;
+    socks5 = true;
+    port = 34220;
+    host = "127.0.0.1";
+    authfile = "/run/credentials/chisel-server.service/authfile";
+  };
+
+  systemd.services.chisel-server.serviceConfig.LoadCredential =
+    "authfile:${config.sops.secrets.chiselAuthFile.path}";
+
+  services.nginx.virtualHosts."ch.${config.networking.domain}" = {
+    enableACME = true;
+    forceSSL = true;
+    locations."/" = {
+      proxyPass = "http://127.0.0.1:${toString config.services.chisel-server.port}";
+      proxyWebsockets = true;
     };
   };
 }

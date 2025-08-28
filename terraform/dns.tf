@@ -221,6 +221,14 @@ resource "hetznerdns_record" "coturn_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "ch_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "ch"
+  value   = local.hel1_ip
+  type    = "A"
+  ttl     = 600
+}
+
 # Email
 resource "hetznerdns_record" "mail_mx" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
