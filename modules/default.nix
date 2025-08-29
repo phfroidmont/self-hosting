@@ -24,5 +24,6 @@
     ./foundryvtt.nix
     ./immich.nix
     ./forgejo.nix
+    ./headscale.nix
   ];
 }

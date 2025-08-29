@@ -233,6 +233,7 @@
     monitoring-exporters.enable = true;
     immich.enable = true;
     forgejo.enable = true;
+    headscale.enable = true;
 
     backup-job = {
       enable = true;
