@@ -498,6 +498,14 @@
     certificateScheme = "acme-nginx";
   };
 
+  services.rspamd.extraConfig = ''
+    actions {
+      reject = null; # Disable rejects, default is 15
+      add_header = 6; # Add header when reaching this score
+      greylist = null; # Disable greylist
+    }
+  '';
+
   nix = {
     settings = {
       trusted-users = [ "nix-ssh" ];
