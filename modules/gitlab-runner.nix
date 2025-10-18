@@ -74,6 +74,7 @@ in
                 shell = {
                   authenticationTokenConfigFile = cfg.runnerRegistrationConfigFile;
                   executor = "shell";
+                  tagList = [ "nix" ];
                 };
               };
             };
