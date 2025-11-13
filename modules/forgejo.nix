@@ -51,6 +51,9 @@ in
         service = {
           DISABLE_REGISTRATION = true;
         };
+        repository = {
+          DEFAULT_BRANCH = "master";
+        };
       };
     };
 
