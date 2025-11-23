@@ -4,12 +4,20 @@ locals {
   hel1_ipv6 = "2a01:4f9:3100:1202::2"
 }
 
-data "hetznerdns_zone" "banditlair_zone" {
-  name = "banditlair.com"
-}
-
 data "hetznerdns_zone" "froidmont_solutions_zone" {
   name = "froidmont.solutions"
+}
+
+resource "hetznerdns_record" "nextcloud_froidmont_solutions_a" {
+  zone_id = data.hetznerdns_zone.froidmont_solutions_zone.id
+  name    = "cloud"
+  value   = local.hel1_ip
+  type    = "A"
+  ttl     = 600
+}
+
+data "hetznerdns_zone" "banditlair_zone" {
+  name = "banditlair.com"
 }
 
 resource "hetznerdns_record" "banditlair_hcloud_a" {

@@ -31,6 +31,7 @@ in
     services.nginx.virtualHosts."${config.services.nextcloud.hostName}" = {
       enableACME = true;
       forceSSL = true;
+      serverAliases = [ "cloud.froidmont.solutions" ];
     };
 
     # Can't change home dir for now, use bind mount as workaround
@@ -64,6 +65,7 @@ in
         overwriteProtocol = "https";
         default_phone_region = "BE";
         maintenance_window_start = 1;
+        trusted_domains = [ "cloud.froidmont.solutions" ];
       };
 
       phpOptions = {
