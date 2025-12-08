@@ -496,6 +496,8 @@
     };
 
     certificateScheme = "acme-nginx";
+
+    stateVersion = 3;
   };
 
   services.rspamd.extraConfig = ''

@@ -27,6 +27,10 @@ in
         dns = {
           base_domain = "ts.net";
           nameservers = {
+            global = [
+              "9.9.9.10"
+              "149.112.112.10"
+            ];
             split = {
               "foyer.cloud" = "10.33.0.100";
               "foyer.lu" = "10.33.0.100";

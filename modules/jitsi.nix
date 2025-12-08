@@ -12,7 +12,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    nixpkgs.config.permittedInsecurePackages = [ "jitsi-meet-1.0.8043" ];
+    nixpkgs.config.permittedInsecurePackages = [ "jitsi-meet-1.0.8792" ];
     services.jitsi-meet = {
       enable = true;
       hostName = "jitsi.froidmont.org";

@@ -161,6 +161,7 @@ in
 
         services.transmission = {
           enable = true;
+          package = pkgs-unstable.transmission_4;
           openRPCPort = true;
           user = config.users.users.www-data.name;
           group = config.users.groups.www-data.name;
