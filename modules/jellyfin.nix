@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs-old,
+  ...
+}:
 let
   cfg = config.custom.services.jellyfin;
 in
@@ -10,6 +15,8 @@ in
   config = lib.mkIf cfg.enable {
     services.jellyfin = {
       enable = true;
+      # Downgrade because of https://github.com/jellyfin/jellyfin/issues/15388
+      package = pkgs-old.jellyfin;
       dataDir = "/nix/var/data/jellyfin";
     };
 

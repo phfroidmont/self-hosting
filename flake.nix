@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs-old.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     disko.url = "github:nix-community/disko";
     sops-nix.url = "github:Mic92/sops-nix";
@@ -14,6 +15,7 @@
     inputs@{
       self,
       nixpkgs,
+      nixpkgs-old,
       nixpkgs-unstable,
       disko,
       deploy-rs,
@@ -28,6 +30,7 @@
       defaultModuleArgs =
         { pkgs, ... }:
         {
+          _module.args.pkgs-old = import nixpkgs-old { system = "x86_64-linux"; };
           _module.args.pkgs-unstable = import nixpkgs-unstable {
             system = "x86_64-linux";
             config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [ "minecraft-server" ];
