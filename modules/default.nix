@@ -11,6 +11,7 @@
     ./jellyfin.nix
     ./stb.nix
     ./monero.nix
+    ./minecraft-server.nix
     ./torrents.nix
     ./jitsi.nix
     ./binary-cache.nix
