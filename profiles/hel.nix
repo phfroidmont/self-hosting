@@ -250,6 +250,7 @@
         "/var/dkim"
         "/var/sieve"
         "/var/lib/nextcloud"
+        config.services.minecraft-server.dataDir
       ];
       patterns = [
         "- /nix/var/data/media"
