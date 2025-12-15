@@ -52,13 +52,13 @@ resource "hetznerdns_record" "mail_a" {
   ttl     = 600
 }
 
-resource "hetznerdns_record" "mail_aaaa" {
-  zone_id = data.hetznerdns_zone.banditlair_zone.id
-  name    = "mail"
-  value   = local.hel1_ipv6
-  type    = "AAAA"
-  ttl     = 600
-}
+# resource "hetznerdns_record" "mail_aaaa" {
+#   zone_id = data.hetznerdns_zone.banditlair_zone.id
+#   name    = "mail"
+#   value   = local.hel1_ipv6
+#   type    = "AAAA"
+#   ttl     = 600
+# }
 
 resource "hetznerdns_record" "hel1_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
