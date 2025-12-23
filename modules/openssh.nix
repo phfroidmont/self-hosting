@@ -13,7 +13,6 @@ in
     services.openssh.settings.PermitRootLogin = "prohibit-password";
     users.users.root.openssh.authorizedKeys.keyFiles = [
       ../ssh_keys/froidmpa-desktop.pub
-      ../ssh_keys/froidmpa-laptop.pub
       ../ssh_keys/phfroidmont-stellaris.pub
       ../ssh_keys/elios-desktop.pub
     ];
