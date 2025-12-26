@@ -20,6 +20,9 @@ in
       transmissionRpcCredentials = {
         key = "transmission/rpc_config.json";
       };
+      slskdEnvFile = {
+        key = "slskd.env";
+      };
     };
 
     containers.torrents = {
@@ -37,6 +40,9 @@ in
         };
         "${config.sops.secrets.transmissionRpcCredentials.path}" = {
           hostPath = config.sops.secrets.transmissionRpcCredentials.path;
+        };
+        "${config.sops.secrets.slskdEnvFile.path}" = {
+          hostPath = config.sops.secrets.slskdEnvFile.path;
         };
         "/nix/var/data/media" = {
           hostPath = "/nix/var/data/media";
@@ -60,6 +66,10 @@ in
         };
         "/nix/var/data/transmission" = {
           hostPath = "/nix/var/data/transmission";
+          isReadOnly = false;
+        };
+        "/nix/var/data/slskd/downloads" = {
+          hostPath = "/nix/var/data/slskd/downloads";
           isReadOnly = false;
         };
       };
@@ -104,6 +114,20 @@ in
           RootDirectory = lib.mkForce "";
         };
 
+        services.slskd = {
+          enable = true;
+          openFirewall = true;
+          user = config.users.users.www-data.name;
+          group = config.users.groups.www-data.name;
+          environmentFile = config.sops.secrets.slskdEnvFile.path;
+          settings = {
+            web.ip_address = "0.0.0.0";
+            directories.downloads = "/nix/var/data/slskd/downloads";
+            shares.directories = [ "/nix/var/data/media/Music" ];
+          };
+          domain = null;
+        };
+
         services.jackett = {
           enable = true;
           package = pkgs-unstable.jackett;
@@ -132,6 +156,12 @@ in
           user = config.users.users.www-data.name;
           group = config.users.groups.www-data.name;
           dataDir = "/nix/var/data/lidarr";
+        };
+
+        networking = {
+          firewall.allowedTCPPorts = [
+            config.services.slskd.settings.web.port
+          ];
         };
 
         system.stateVersion = "21.11";
@@ -182,6 +212,14 @@ in
         enableACME = true;
         locations."/" = {
           proxyPass = "http://192.168.1.2:8686";
+        };
+      };
+      "slskd.${config.networking.domain}" = {
+        forceSSL = true;
+        enableACME = true;
+        locations."/" = {
+          proxyPass = "http://192.168.1.2:5030";
+          proxyWebsockets = true;
         };
       };
     };

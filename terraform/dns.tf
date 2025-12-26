@@ -148,6 +148,14 @@ resource "hetznerdns_record" "lidarr_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "slskd_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "slskd"
+  value   = local.hel1_ip
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "vtt_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "vtt"
