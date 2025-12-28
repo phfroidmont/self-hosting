@@ -266,6 +266,7 @@
       ];
       patterns = [
         "- /nix/var/data/media"
+        "- /nix/var/data/slskd"
         "- /nix/var/data/transmission/downloads"
         "- /nix/var/data/transmission/.incomplete"
       ];
