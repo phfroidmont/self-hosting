@@ -361,6 +361,12 @@
   };
 
   services.nginx.virtualHosts = {
+
+    "froidmont.org" = {
+      enableACME = true;
+      forceSSL = true;
+    };
+
     "uptime.froidmont.org" = {
       serverAliases = [ "status.${config.networking.domain}" ];
       forceSSL = true;
