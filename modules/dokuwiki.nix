@@ -9,7 +9,7 @@ let
 
   template-chippedsnow = pkgs.stdenv.mkDerivation {
     name = "chippedsnow";
-    src = builtins.fetchGit {
+    src = fetchGit {
       url = "ssh://git@gitlab.com/desbest/Chipped-Snow-Dokuwiki-Template.git";
       ref = "master";
       rev = "61e525236063714cade90beb1401cde2c75e4c88";
@@ -19,12 +19,22 @@ let
 
   template-darkblue = pkgs.stdenv.mkDerivation {
     name = "darkblue";
-    src = builtins.fetchGit {
+    src = fetchGit {
       url = "https://github.com/ms101/dokuwiki-template-darkblue.git";
       ref = "main";
       rev = "14f8e738c83c16f2633d23fe30b7c6031551fa77";
     };
     installPhase = "mkdir -p $out; cp -R darkblue/* $out/";
+  };
+
+  template-bootstrap3 = pkgs.stdenv.mkDerivation {
+    name = "bootstrap3";
+    src = fetchGit {
+      url = "https://github.com/giterlizzi/dokuwiki-template-bootstrap3.git";
+      ref = "master";
+      rev = "b5cec1c82345f23e4e9faa325b88ba407e2924e4";
+    };
+    installPhase = "mkdir -p $out; cp -R * $out/";
   };
 
   configureWiki = name: title: templatePackage: templateName: {
@@ -70,9 +80,10 @@ in
 
   config = lib.mkIf cfg.enable (
     lib.mkMerge [
-      (configureWiki "anderia" "Choniques d`Arkadia" template-chippedsnow "chippedsnow")
-      (configureWiki "arkadia" "Choniques d`Arkadia" template-chippedsnow "chippedsnow")
+      (configureWiki "anderia" "Chroniques d`Arkadia" template-chippedsnow "chippedsnow")
+      (configureWiki "arkadia" "Chroniques d`Arkadia" template-chippedsnow "chippedsnow")
       (configureWiki "scifirpg" "2324" template-darkblue "darkblue")
+      (configureWiki "chroniques" "Chroniques d`Arkadia" template-bootstrap3 "bootstrap3")
     ]
   );
 }

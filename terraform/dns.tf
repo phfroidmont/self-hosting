@@ -196,6 +196,14 @@ resource "hetznerdns_record" "arkadia_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "chroniques_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "chroniques"
+  value   = local.hel1_ip
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "cifirpg_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "scifirpg"
