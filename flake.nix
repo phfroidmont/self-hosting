@@ -51,6 +51,7 @@
           opentofu
           terraform-ls
           sops
+          hcloud
           deploy-rs.packages."x86_64-linux".deploy-rs
         ];
       };
@@ -75,6 +76,27 @@
               networking.domain = "banditlair.com";
               nix.registry.nixpkgs.flake = nixpkgs;
 
+              system.stateVersion = "25.11";
+            }
+          ];
+        };
+        relay1 = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = {
+            inherit nixpkgs inputs;
+          };
+
+          modules = [
+            disko.nixosModules.disko
+            defaultModuleArgs
+            sops-nix.nixosModules.sops
+            ./profiles/relay1.nix
+            {
+              sops.defaultSopsFile = ./secrets.enc.yml;
+              networking.hostName = "relay1";
+              networking.domain = "froidmont.org";
+              nix.registry.nixpkgs.flake = nixpkgs;
+
               system.stateVersion = "24.05";
             }
           ];
@@ -93,6 +115,10 @@
           hel1 = {
             hostname = "37.27.138.62";
             profiles.system = createSystemProfile self.nixosConfigurations.hel1;
+          };
+          relay1 = {
+            hostname = "rl.froidmont.org";
+            profiles.system = createSystemProfile self.nixosConfigurations.relay1;
           };
         };
 

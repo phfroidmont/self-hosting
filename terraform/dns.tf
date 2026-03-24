@@ -382,6 +382,14 @@ resource "hetznerdns_record" "froidmont_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "rl_a" {
+  zone_id = data.hetznerdns_zone.froidmont_zone.id
+  name    = "rl"
+  value   = hcloud_server.relay1.ipv4_address
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "website_marie_a" {
   zone_id = data.hetznerdns_zone.froidmont_zone.id
   name    = "osteopathie"
