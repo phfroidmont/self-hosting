@@ -68,6 +68,14 @@ resource "hetznerdns_record" "hel1_a" {
   ttl     = 600
 }
 
+resource "hetznerdns_record" "ws_a" {
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
+  name    = "ws"
+  value   = hcloud_server.relay1.ipv4_address
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hetznerdns_record" "grafana_a" {
   zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "grafana"
@@ -383,7 +391,7 @@ resource "hetznerdns_record" "froidmont_a" {
 }
 
 resource "hetznerdns_record" "rl_a" {
-  zone_id = data.hetznerdns_zone.froidmont_zone.id
+  zone_id = data.hetznerdns_zone.banditlair_zone.id
   name    = "rl"
   value   = hcloud_server.relay1.ipv4_address
   type    = "A"

@@ -117,7 +117,7 @@
             profiles.system = createSystemProfile self.nixosConfigurations.hel1;
           };
           relay1 = {
-            hostname = "rl.froidmont.org";
+            hostname = "rl.banditlair.com";
             profiles.system = createSystemProfile self.nixosConfigurations.relay1;
           };
         };

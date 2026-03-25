@@ -37,6 +37,13 @@ in
               "lefoyer.lu" = "10.33.0.100";
             };
           };
+          extra_records = [
+            {
+              name = "wsl.ts.net";
+              type = "A";
+              value = "10.250.250.2";
+            }
+          ];
         };
       };
     };

@@ -1,6 +1,5 @@
 {
   modulesPath,
-  config,
   ...
 }:
 {
@@ -23,7 +22,10 @@
 
   boot.tmp.cleanOnBoot = true;
   networking.firewall.allowPing = true;
-  networking.firewall.allowedTCPPorts = [ 443 ];
+  networking.firewall.allowedTCPPorts = [
+    80
+    443
+  ];
   networking.usePredictableInterfaceNames = false;
   custom.services.openssh.enable = true;
   services.openssh.openFirewall = true;
@@ -31,79 +33,78 @@
   services.nscd.enableNsncd = true;
   zramSwap.enable = true;
 
-  sops.secrets = {
-    openvpnCa = {
-      key = "openvpn/ca.crt";
-    };
-    openvpnServerCert = {
-      key = "openvpn/server.crt";
-    };
-    openvpnServerKey = {
-      key = "openvpn/server.key";
-    };
-    openvpnDh = {
-      key = "openvpn/dh.pem";
-    };
-    openvpnTlsCrypt = {
-      key = "openvpn/tls-crypt.key";
+  security.acme = {
+    acceptTerms = true;
+    defaults.email = "letsencrypt.account@banditlair.com";
+    certs."ws.banditlair.com" = {
+      listenHTTP = "0.0.0.0:80";
+      reloadServices = [ "wstunnel-server-relay.service" ];
     };
   };
 
-  systemd.tmpfiles.rules = [
-    "d /etc/openvpn/ccd 0750 root root -"
-  ];
+  services.wstunnel = {
+    enable = true;
+    servers.relay = {
+      listen = {
+        host = "0.0.0.0";
+        port = 443;
+        enableHTTPS = true;
+      };
+      useACMEHost = "ws.banditlair.com";
+      settings = {
+        log-lvl = "INFO";
+        restrict-to = [
+          {
+            host = "127.0.0.1";
+            port = 51820;
+          }
+        ];
+      };
+    };
+  };
 
-  environment.etc."openvpn/ccd/wsl".text = ''
-    iroute 10.33.0.0 255.255.0.0
-    iroute 10.46.0.0 255.255.0.0
-    iroute 10.133.0.0 255.255.0.0
-    iroute 10.134.0.0 255.255.0.0
-    iroute 10.161.0.0 255.255.0.0
-    iroute 10.200.0.0 255.255.0.0
-  '';
+  systemd.services.wstunnel-server-relay = {
+    after = [ "acme-ws.banditlair.com.service" ];
+    wants = [ "acme-ws.banditlair.com.service" ];
+  };
 
-  services.openvpn.servers.relay.config = ''
-    port 443
-    proto tcp-server
-    dev tun
-    topology subnet
+  networking.wireguard.enable = true;
+  networking.wireguard.interfaces.wg-relay = {
+    ips = [ "10.250.250.1/30" ];
+    listenPort = 51820;
+    privateKeyFile = "/var/lib/wireguard/wg-relay.key";
+    generatePrivateKeyFile = true;
+    peers = [
+      {
+        publicKey = "EX3QEJYNzs3sA3FUEIc9YGAhEup20qOCzUe+nMRrljQ=";
+        allowedIPs = [
+          "10.250.250.2/32"
+          "10.33.0.0/16"
+          "10.46.0.0/16"
+          "10.133.0.0/16"
+          "10.134.0.0/16"
+          "10.161.0.0/16"
+          "10.200.0.0/16"
+        ];
+      }
+    ];
+  };
 
-    user nobody
-    group nogroup
-    persist-key
-    persist-tun
-    keepalive 10 120
+  services.tailscale = {
+    enable = true;
+    useRoutingFeatures = "server";
+    extraSetFlags = [
+      "--advertise-routes=10.250.250.2/32,10.33.0.0/16,10.46.0.0/16,10.133.0.0/16,10.134.0.0/16,10.161.0.0/16,10.200.0.0/16"
+    ];
+  };
 
-    ca ${config.sops.secrets.openvpnCa.path}
-    cert ${config.sops.secrets.openvpnServerCert.path}
-    key ${config.sops.secrets.openvpnServerKey.path}
-    dh ${config.sops.secrets.openvpnDh.path}
-    tls-crypt ${config.sops.secrets.openvpnTlsCrypt.path}
+  boot.kernel.sysctl."net.ipv4.ip_forward" = true;
 
-    server 10.8.0.0 255.255.255.0
-    client-config-dir /etc/openvpn/ccd
-
-    route 10.33.0.0 255.255.0.0
-    route 10.46.0.0 255.255.0.0
-    route 10.133.0.0 255.255.0.0
-    route 10.134.0.0 255.255.0.0
-    route 10.161.0.0 255.255.0.0
-    route 10.200.0.0 255.255.0.0
-
-    push "route 10.33.0.0 255.255.0.0"
-    push "route 10.46.0.0 255.255.0.0"
-    push "route 10.133.0.0 255.255.0.0"
-    push "route 10.134.0.0 255.255.0.0"
-    push "route 10.161.0.0 255.255.0.0"
-    push "route 10.200.0.0 255.255.0.0"
-
-    push "dhcp-option DNS 1.1.1.1"
-    push "dhcp-option DNS 9.9.9.9"
-
-    status /var/log/openvpn-relay-status.log
-    log-append /var/log/openvpn-relay.log
-    verb 3
-  '';
+  networking.nat = {
+    enable = true;
+    internalInterfaces = [ "tailscale0" ];
+    externalInterface = "wg-relay";
+  };
 
   disko.devices = {
     disk.disk1 = {
