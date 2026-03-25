@@ -453,6 +453,7 @@
         aliases = [
           "osteopathie@froidmont.org"
           "communication@froidmont.org"
+          "kots-libramont@froidmont.org"
         ];
       };
       "alice@froidmont.org" = {
