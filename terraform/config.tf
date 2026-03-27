@@ -10,29 +10,11 @@ terraform {
   required_providers {
     hcloud = {
       source  = "hetznercloud/hcloud"
-      version = "~> 1.49"
+      version = "~> 1.60"
     }
     null = {
       source  = "hashicorp/null"
       version = "~> 3.2"
     }
-    hetznerdns = {
-      source  = "timohirt/hetznerdns"
-      version = ">= 2.2.0"
-    }
-
-    sops = {
-      source  = "carlpett/sops"
-      version = "~> 0.7"
-    }
   }
-}
-
-data "sops_file" "secrets" {
-  source_file = "../secrets.enc.yml"
-}
-
-
-provider "hetznerdns" {
-  apitoken = data.sops_file.secrets.data["hcloud.dns_token"]
 }
