@@ -26,5 +26,6 @@
     ./immich.nix
     ./forgejo.nix
     ./headscale.nix
+    ./kots-libramont.nix
   ];
 }

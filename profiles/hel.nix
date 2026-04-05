@@ -252,6 +252,7 @@
     minecraft-server.enable = true;
     monitoring-exporters.enable = true;
     forgejo.enable = true;
+    kots-libramont.enable = true;
 
     backup-job = {
       enable = true;
