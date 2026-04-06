@@ -287,11 +287,21 @@
         ${config.services.postgresql.package}/bin/pg_dump -U forgejo forgejo > /nix/var/data/postgresql/forgejo.dmp
         ${pkgs.podman}/bin/podman exec stb-mariadb sh -c 'mysqldump -u stb -pstb stb' > /nix/var/data/backup/stb_mariadb.sql
         ${pkgs.systemd}/bin/systemctl stop jellyfin.service
-        ${pkgs.systemd}/bin/systemctl stop container@torrents
+        ${pkgs.systemd}/bin/systemctl --machine=torrents stop transmission.service
+        ${pkgs.systemd}/bin/systemctl --machine=torrents stop slskd.service
+        ${pkgs.systemd}/bin/systemctl --machine=torrents stop jackett.service
+        ${pkgs.systemd}/bin/systemctl --machine=torrents stop sonarr.service
+        ${pkgs.systemd}/bin/systemctl --machine=torrents stop radarr.service
+        ${pkgs.systemd}/bin/systemctl --machine=torrents stop lidarr.service
       '';
       postHook = ''
+        ${pkgs.systemd}/bin/systemctl --machine=torrents start lidarr.service
+        ${pkgs.systemd}/bin/systemctl --machine=torrents start radarr.service
+        ${pkgs.systemd}/bin/systemctl --machine=torrents start sonarr.service
+        ${pkgs.systemd}/bin/systemctl --machine=torrents start jackett.service
+        ${pkgs.systemd}/bin/systemctl --machine=torrents start slskd.service
+        ${pkgs.systemd}/bin/systemctl --machine=torrents start transmission.service
         ${pkgs.systemd}/bin/systemctl start jellyfin.service
-        ${pkgs.systemd}/bin/systemctl start container@torrents
       '';
       startAt = "02:00";
       sshKey = config.sops.secrets.borgSshKey.path;
