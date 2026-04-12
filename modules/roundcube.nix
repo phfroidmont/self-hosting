@@ -13,6 +13,11 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    systemd.services.roundcube-setup = {
+      after = [ "postgresql.service" ];
+      requires = [ "postgresql.service" ];
+    };
+
     sops.secrets = {
       pgPassFile = {
         owner = "nginx";

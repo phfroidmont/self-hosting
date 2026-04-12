@@ -13,6 +13,16 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    systemd.services.nextcloud-setup = {
+      after = [ "postgresql.service" ];
+      requires = [ "postgresql.service" ];
+    };
+
+    systemd.services.nextcloud-update-db = {
+      after = [ "postgresql.service" ];
+      requires = [ "postgresql.service" ];
+    };
+
     sops.secrets = {
       nextcloudDbPassword = {
         owner = config.users.users.nextcloud.name;
