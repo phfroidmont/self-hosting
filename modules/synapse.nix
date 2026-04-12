@@ -11,6 +11,23 @@ let
       join = hostName: domain: hostName + lib.optionalString (domain != null) ".${domain}";
     in
     join "matrix" config.networking.domain;
+  createMatrixUser = pkgs.writeShellScriptBin "create-matrix-user" ''
+    set -euo pipefail
+    export PATH="${pkgs.python3}/bin:${pkgs.curl}/bin:$PATH"
+    exec "${pkgs.bash}/bin/bash" "${../scripts/create-matrix-user.sh}" \
+      --homeserver-url "http://127.0.0.1:8008" \
+      --server-name "${config.networking.domain}" \
+      --admin-user "paultrial" \
+      "$@"
+  '';
+  getMatrixAccessToken = pkgs.writeShellScriptBin "get-matrix-access-token" ''
+    set -euo pipefail
+    export PATH="${pkgs.python3}/bin:${pkgs.curl}/bin:$PATH"
+    exec "${pkgs.bash}/bin/bash" "${../scripts/get-matrix-access-token.sh}" \
+      --homeserver-url "http://127.0.0.1:8008" \
+      --server-name "${config.networking.domain}" \
+      "$@"
+  '';
   synapseDbConfig = pkgs.writeText "synapse-db-config.yaml" ''
     database:
         name: psycopg2
@@ -37,6 +54,11 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    environment.systemPackages = [
+      createMatrixUser
+      getMatrixAccessToken
+    ];
+
     services.nginx = {
       virtualHosts = {
         # This host section can be placed on a different host than the rest,
