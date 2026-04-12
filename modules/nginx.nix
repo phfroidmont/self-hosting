@@ -25,8 +25,8 @@ in
         limit_conn_zone $binary_remote_addr zone=perip_conn:20m;
 
         limit_req_status 429;
-        limit_req zone=perip burst=80 nodelay;
-        limit_conn perip_conn 40;
+        limit_req zone=perip burst=160 nodelay;
+        limit_conn perip_conn 80;
       '';
     };
   };
