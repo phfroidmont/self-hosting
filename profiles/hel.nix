@@ -1,8 +1,7 @@
-{
-  config,
-  pkgs,
-  pkgs-unstable,
-  ...
+{ config
+, pkgs
+, pkgs-unstable
+, ...
 }:
 {
   imports = [
@@ -332,6 +331,14 @@
               with timeout 20 seconds
               for 10 cycles
           then alert
+
+        check file borg-check-done with path /nix/var/data/backup/borg-check-ok
+          if changed timestamp then alert
+          if timestamp > 8 days then alert
+
+        check file restore-test-done with path /nix/var/data/backup/restore-test-ok
+          if changed timestamp then alert
+          if timestamp > 8 days then alert
 
         check program raid-md126 with path "${pkgs.mdadm}/bin/mdadm --misc --detail --test /dev/md126"
           if status != 0 then alert
