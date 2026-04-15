@@ -1,7 +1,7 @@
-{ config
-, pkgs
-, pkgs-unstable
-, ...
+{
+  config,
+  pkgs,
+  ...
 }:
 {
   imports = [
@@ -269,6 +269,7 @@
         "- /nix/var/data/slskd"
         "- /nix/var/data/transmission/downloads"
         "- /nix/var/data/transmission/.incomplete"
+        "- /nix/var/data/dokuwiki/*/data/locks"
       ];
       readWritePaths = [
         "/nix/var/data/murmur"
