@@ -1,8 +1,7 @@
-{
-  pkgs,
-  lib,
-  config,
-  ...
+{ pkgs
+, lib
+, config
+, ...
 }:
 let
   cfg = config.custom.services.roundcube;
@@ -14,8 +13,8 @@ in
 
   config = lib.mkIf cfg.enable {
     systemd.services.roundcube-setup = {
-      after = [ "postgresql.service" ];
-      requires = [ "postgresql.service" ];
+      after = [ "postgresql.target" ];
+      requires = [ "postgresql.target" ];
     };
 
     sops.secrets = {

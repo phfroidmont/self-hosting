@@ -16,6 +16,14 @@ in
     services.postgresql = {
       enable = true;
       package = pkgs.postgresql_15;
+      extensions =
+        ps: with ps; [
+          pgvector
+          vectorchord
+        ];
+      settings.shared_preload_libraries = [
+        "vchord.so"
+      ];
       enableTCPIP = true;
       identMap = ''
         root_as_others         root                  postgres
@@ -65,9 +73,9 @@ in
         pgsql = config.services.postgresql;
       in
       {
-        after = [ "postgresql.service" ];
-        bindsTo = [ "postgresql.service" ];
-        wantedBy = [ "postgresql.service" ];
+        after = [ "postgresql.target" ];
+        bindsTo = [ "postgresql.target" ];
+        wantedBy = [ "postgresql.target" ];
         path = [
           pgsql.package
           pkgs.util-linux

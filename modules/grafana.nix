@@ -13,6 +13,10 @@ in
         owner = config.users.users.grafana.name;
         key = "grafana/admin_password";
       };
+      grafanaSecretKey = {
+        owner = config.users.users.grafana.name;
+        key = "grafana/secret_key";
+      };
     };
 
     services = {
@@ -23,7 +27,10 @@ in
           server = {
             domain = "grafana.${config.networking.domain}";
           };
-          security.admin_password = "$__file{${config.sops.secrets.grafanaAdminPassword.path}}";
+          security = {
+            admin_password = "$__file{${config.sops.secrets.grafanaAdminPassword.path}}";
+            secret_key = "$__file{${config.sops.secrets.grafanaSecretKey.path}}";
+          };
         };
         provision = {
           enable = true;
@@ -84,7 +91,7 @@ in
             job_name = "synapse";
             scrape_interval = "15s";
             metrics_path = "/_synapse/metrics";
-            static_configs = [ { targets = [ "127.0.0.1:9000" ]; } ];
+            static_configs = [{ targets = [ "127.0.0.1:9000" ]; }];
           }
           {
             job_name = "dmarc";

@@ -1,7 +1,6 @@
-{
-  config,
-  pkgs,
-  ...
+{ config
+, pkgs
+, ...
 }:
 {
   imports = [
@@ -454,7 +453,7 @@
     ];
     localDnsResolver = false;
     enableManageSieve = true;
-    lmtpSaveToDetailMailbox = "no";
+    lmtpSaveToDetailMailbox = false;
     # policydSPFExtraConfig = ''
     #   Domain_Whitelist = skynet.be
     # '';
@@ -517,9 +516,9 @@
       "@falbo.fr" = "elios@banditlair.com";
     };
 
-    certificateScheme = "acme-nginx";
+    x509.useACMEHost = "mail.banditlair.com";
 
-    stateVersion = 3;
+    stateVersion = 5;
   };
 
   services.rspamd.extraConfig = ''

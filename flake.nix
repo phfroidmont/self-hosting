@@ -1,25 +1,25 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     disko.url = "github:nix-community/disko";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     deploy-rs.url = "github:serokell/deploy-rs";
-    simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-25.11";
+    simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-26.05";
     foundryvtt.url = "github:reckenrode/nix-foundryvtt";
   };
 
   outputs =
-    inputs@{
-      self,
-      nixpkgs,
-      nixpkgs-unstable,
-      disko,
-      deploy-rs,
-      sops-nix,
-      simple-nixos-mailserver,
-      foundryvtt,
+    inputs@{ self
+    , nixpkgs
+    , nixpkgs-unstable
+    , disko
+    , deploy-rs
+    , sops-nix
+    , simple-nixos-mailserver
+    , foundryvtt
+    ,
     }:
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;

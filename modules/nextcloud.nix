@@ -1,8 +1,7 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 let
   cfg = config.custom.services.nextcloud;
@@ -14,13 +13,13 @@ in
 
   config = lib.mkIf cfg.enable {
     systemd.services.nextcloud-setup = {
-      after = [ "postgresql.service" ];
-      requires = [ "postgresql.service" ];
+      after = [ "postgresql.target" ];
+      requires = [ "postgresql.target" ];
     };
 
     systemd.services.nextcloud-update-db = {
-      after = [ "postgresql.service" ];
-      requires = [ "postgresql.service" ];
+      after = [ "postgresql.target" ];
+      requires = [ "postgresql.target" ];
     };
 
     sops.secrets = {
@@ -48,6 +47,7 @@ in
     # https://github.com/NixOS/nixpkgs/issues/356973
     fileSystems."/var/lib/nextcloud" = {
       device = "/nix/var/data/nextcloud";
+      fsType = "none";
       options = [ "bind" ];
     };
 
