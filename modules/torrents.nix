@@ -89,6 +89,12 @@ in
           autostart = true;
         };
 
+        # The private /tmp copy can disappear after a systemd manager refresh.
+        systemd.services.wg-quick-wg0.preStop = lib.mkForce ''
+          cp ${config.sops.secrets.vpnWireguardConfig.path} /tmp/wg0.conf
+          wg-quick down /tmp/wg0.conf
+        '';
+
         services.transmission = {
           enable = true;
           package = pkgs-unstable.transmission_4;
