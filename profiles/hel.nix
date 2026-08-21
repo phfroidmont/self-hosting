@@ -457,7 +457,7 @@
     # policydSPFExtraConfig = ''
     #   Domain_Whitelist = skynet.be
     # '';
-    loginAccounts = {
+    accounts = {
       "paultrial@banditlair.com" = {
         # nix run nixpkgs.apacheHttpd -c htpasswd -nbB "" "super secret password" | cut -d: -f2 > /hashed/password/file/location
         hashedPasswordFile = config.sops.secrets.paultrialPassword.path;
@@ -497,7 +497,7 @@
         sendOnly = true;
       };
     };
-    extraVirtualAliases = {
+    aliases = {
       "info@banditlair.com" = "paultrial@banditlair.com";
       "postmaster@banditlair.com" = "paultrial@banditlair.com";
       "abuse@banditlair.com" = "paultrial@banditlair.com";

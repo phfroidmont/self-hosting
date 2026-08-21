@@ -1,8 +1,7 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
+{ config
+, lib
+, pkgs
+, ...
 }:
 with lib;
 let
@@ -74,7 +73,6 @@ in
                 shell = {
                   authenticationTokenConfigFile = cfg.runnerRegistrationConfigFile;
                   executor = "shell";
-                  tagList = [ "nix" ];
                 };
               };
             };

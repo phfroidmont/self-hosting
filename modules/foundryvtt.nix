@@ -1,9 +1,8 @@
-{
-  inputs,
-  pkgs,
-  config,
-  lib,
-  ...
+{ inputs
+, pkgs
+, config
+, lib
+, ...
 }:
 let
   cfg = config.custom.services.foundryvtt;
@@ -16,7 +15,7 @@ in
   config = lib.mkIf cfg.enable {
     services.foundryvtt = {
       enable = true;
-      package = inputs.foundryvtt.packages.${pkgs.system}.foundryvtt_12;
+      package = inputs.foundryvtt.packages.${pkgs.stdenv.hostPlatform.system}.foundryvtt_12;
       hostName = "vtt.${config.networking.domain}";
       language = "fr.core";
       proxyPort = 443;
