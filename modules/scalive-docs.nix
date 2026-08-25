@@ -280,7 +280,7 @@ let
         ${pkgs.coreutils}/bin/printf '%s\n' "invalid deployment generation" >&2
         exit 64
       fi
-      exec ${pkgs.sudo}/bin/sudo ${activateHelper} "$revision" "$generation"
+      exec /run/wrappers/bin/sudo ${activateHelper} "$revision" "$generation"
     else
       ${pkgs.coreutils}/bin/printf '%s\n' "unsupported command" >&2
       exit 64
