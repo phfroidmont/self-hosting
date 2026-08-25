@@ -456,3 +456,31 @@ resource "hcloud_zone_rrset" "stb_cname" {
   type    = "CNAME"
   ttl     = 600
 }
+
+data "hcloud_zone" "scalive_zone" {
+  name = "scalive.dev"
+}
+
+resource "hcloud_zone_rrset" "scalive_a" {
+  zone    = data.hcloud_zone.scalive_zone.name
+  name    = "@"
+  records = [{ value = local.hel1_ip }]
+  type    = "A"
+  ttl     = 600
+}
+
+resource "hcloud_zone_rrset" "scalive_aaaa" {
+  zone    = data.hcloud_zone.scalive_zone.name
+  name    = "@"
+  records = [{ value = local.hel1_ipv6 }]
+  type    = "AAAA"
+  ttl     = 600
+}
+
+resource "hcloud_zone_rrset" "scalive_www_cname" {
+  zone    = data.hcloud_zone.scalive_zone.name
+  name    = "www"
+  records = [{ value = "${data.hcloud_zone.scalive_zone.name}." }]
+  type    = "CNAME"
+  ttl     = 600
+}

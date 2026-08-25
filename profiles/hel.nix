@@ -48,6 +48,9 @@
     chiselAuthFile = {
       key = "chisel/auth.json";
     };
+    scaliveDocsTokenSecret = {
+      key = "scalive/docs/token_secret";
+    };
   };
 
   time.timeZone = "Europe/Amsterdam";
@@ -251,6 +254,11 @@
     monitoring-exporters.enable = true;
     forgejo.enable = true;
     kots-libramont.enable = true;
+    scalive-docs = {
+      enable = true;
+      signingSecretFile = config.sops.secrets.scaliveDocsTokenSecret.path;
+      deployAuthorizedKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEIbGHQedFV0L87e12h5wFbHVvxXOye2JHSQ8HiUkFaQ scalive-docs-github-actions";
+    };
 
     backup-job = {
       enable = true;
@@ -317,6 +325,14 @@
           if failed port 443 protocol https with timeout 20 seconds then alert
         check host website-marie with address osteopathie.froidmont.org
           if failed port 443 protocol https with timeout 20 seconds then alert
+        check host scalive-docs with address scalive.dev
+          if failed
+              port 443
+              protocol https
+              status = 200
+              request "/health"
+              with timeout 20 seconds
+          then alert
         check host webmail with address webmail.banditlair.com
           if failed port 443 protocol https with timeout 20 seconds then alert
         check host jellyfin with address jellyfin.banditlair.com

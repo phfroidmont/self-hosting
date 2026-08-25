@@ -27,5 +27,6 @@
     ./forgejo.nix
     ./headscale.nix
     ./kots-libramont.nix
+    ./scalive-docs.nix
   ];
 }
