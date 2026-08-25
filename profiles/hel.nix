@@ -256,6 +256,7 @@
     kots-libramont.enable = true;
     scalive-docs = {
       enable = true;
+      port = 4006;
       signingSecretFile = config.sops.secrets.scaliveDocsTokenSecret.path;
       deployAuthorizedKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEIbGHQedFV0L87e12h5wFbHVvxXOye2JHSQ8HiUkFaQ scalive-docs-github-actions";
     };
