@@ -1,9 +1,8 @@
-{
-  config,
-  lib,
-  pkgs,
-  pkgs-unstable,
-  ...
+{ config
+, lib
+, pkgs
+, pkgs-unstable
+, ...
 }:
 let
   cfg = config.custom.services.minecraft-server;
@@ -21,9 +20,7 @@ in
       openFirewall = true;
       declarative = true;
       serverProperties = {
-        enable-rcon = true;
-        "rcon.port" = 25575;
-        "rcon.password" = "password";
+        enable-rcon = false;
         server-port = 23363;
         online-mode = true;
         force-gamemode = true;
