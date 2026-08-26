@@ -1,0 +1,27 @@
+--- a/wp-content/themes/sport/js/jquery.isotope.js
++++ b/wp-content/themes/sport/js/jquery.isotope.js
+@@ -346,6 +346,6 @@
+     sortBy : 'original-order',
+     sortAscending : true,
+     resizesContainer : true,
+-    transformsEnabled: !$.browser.opera, // disable transforms in Opera
++    transformsEnabled: !($.browser && $.browser.opera), // disable transforms in Opera
+     itemPositionDataEnabled: false
+   };
+--- a/wp-content/plugins/sport-core-plugin/inc/blocks/block_gallery_output.php
++++ b/wp-content/plugins/sport-core-plugin/inc/blocks/block_gallery_output.php
+@@ -80,0 +81,4 @@
++	                                    if (!$post_thumbnail_src || !$post_thumbnail_src_fit || !$img_post) {
++	                                        continue;
++	                                    }
++
+--- a/wp-content/plugins/sport-core-plugin/js/jquery.isotope.js
++++ b/wp-content/plugins/sport-core-plugin/js/jquery.isotope.js
+@@ -346,6 +346,6 @@
+     sortBy : 'original-order',
+     sortAscending : true,
+     resizesContainer : true,
+-    transformsEnabled: !$.browser.opera, // disable transforms in Opera
++    transformsEnabled: !($.browser && $.browser.opera), // disable transforms in Opera
+     itemPositionDataEnabled: false
+   };

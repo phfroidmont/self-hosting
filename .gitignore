@@ -11,3 +11,5 @@ terraform.tfvars
 .direnv
 .vscode
 result
+.opencode/
+.playwright-mcp/
