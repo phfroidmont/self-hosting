@@ -82,6 +82,8 @@ in
             DynamicUser = lib.mkForce false;
             User = config.users.users.gitlab-runner.name;
             Group = config.users.groups.gitlab-runner.name;
+            Restart = "on-failure";
+            RestartSec = "10s";
           };
 
           system.stateVersion = "24.05";
