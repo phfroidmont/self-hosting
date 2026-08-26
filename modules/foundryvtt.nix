@@ -15,7 +15,7 @@ in
   config = lib.mkIf cfg.enable {
     services.foundryvtt = {
       enable = true;
-      package = inputs.foundryvtt.packages.${pkgs.stdenv.hostPlatform.system}.foundryvtt_12;
+      package = inputs.foundryvtt.packages.${pkgs.stdenv.hostPlatform.system}.foundryvtt_14;
       hostName = "vtt.${config.networking.domain}";
       language = "fr.core";
       proxyPort = 443;
