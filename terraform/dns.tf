@@ -311,57 +311,6 @@ resource "hcloud_zone_rrset" "dkim_txt" {
   ttl     = 600
 }
 
-data "hcloud_zone" "falbo_zone" {
-  name = "falbo.fr"
-}
-
-resource "hcloud_zone_rrset" "falbo_a" {
-  zone    = data.hcloud_zone.falbo_zone.name
-  name    = "@"
-  records = [{ value = local.hel1_ip }]
-  type    = "A"
-  ttl     = 600
-}
-
-resource "hcloud_zone_rrset" "falbo_cname" {
-  zone    = data.hcloud_zone.falbo_zone.name
-  name    = "*"
-  records = [{ value = "${data.hcloud_zone.falbo_zone.name}." }]
-  type    = "CNAME"
-  ttl     = 600
-}
-
-resource "hcloud_zone_rrset" "falbo_mail_mx" {
-  zone    = data.hcloud_zone.falbo_zone.name
-  name    = "@"
-  records = [{ value = "12 mail.${data.hcloud_zone.banditlair_zone.name}." }]
-  type    = "MX"
-}
-
-resource "hcloud_zone_rrset" "falbo_spf_txt" {
-  zone    = data.hcloud_zone.falbo_zone.name
-  name    = "@"
-  records = [{ value = "\"v=spf1 include:${data.hcloud_zone.banditlair_zone.name} -all\"" }]
-  type    = "TXT"
-  ttl     = 600
-}
-
-resource "hcloud_zone_rrset" "falbo_dmarc_txt" {
-  zone    = data.hcloud_zone.falbo_zone.name
-  name    = "_dmarc"
-  records = [{ value = local.dmarc_value }]
-  type    = "TXT"
-  ttl     = 600
-}
-
-resource "hcloud_zone_rrset" "falbo_dkim_txt" {
-  zone    = data.hcloud_zone.falbo_zone.name
-  name    = "mail._domainkey"
-  records = [{ value = "\"v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCY6ESTQcWbZVNxjb8TFhpyhCoG6Ri8OV1MijDHGNmpLye8AsuMzaEdcFk59AoIWPI6P9ZGIXzYTTwRxXhCIBrRJgcDGrbTAQ7tuaKggJRCXhan7FVMizZSJ53NEr3f4PFaBtrV0Ni8f7ENuT6WcQQ+JsMN3vEGbwA1LmgHH2XSBQIDAQAB\"" }]
-  type    = "TXT"
-  ttl     = 600
-}
-
 data "hcloud_zone" "froidmont_zone" {
   name = "froidmont.org"
 }
