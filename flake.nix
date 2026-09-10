@@ -98,6 +98,26 @@
             }
           ];
         };
+        pangolin1 = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = {
+            inherit nixpkgs inputs;
+          };
+
+          modules = [
+            disko.nixosModules.disko
+            defaultModuleArgs
+            sops-nix.nixosModules.sops
+            ./profiles/pangolin1.nix
+            {
+              networking.hostName = "pangolin1";
+              networking.domain = "banditlair.com";
+              nix.registry.nixpkgs.flake = nixpkgs;
+
+              system.stateVersion = "26.05";
+            }
+          ];
+        };
       };
 
       deploy.nodes =
@@ -117,8 +137,18 @@
             hostname = "rl.banditlair.com";
             profiles.system = createSystemProfile self.nixosConfigurations.relay1;
           };
+          pangolin1 = {
+            hostname = "pangolin.banditlair.com";
+            profiles.system = createSystemProfile self.nixosConfigurations.pangolin1;
+          };
         };
 
-      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+      checks = builtins.mapAttrs
+        (system: deployLib:
+          deployLib.deployChecks self.deploy
+          // nixpkgs.lib.optionalAttrs (system == "x86_64-linux") {
+            pangolin-native = import ./packages/pangolin/test.nix { inherit pkgs; };
+          })
+        deploy-rs.lib;
     };
 }

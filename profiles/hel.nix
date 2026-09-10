@@ -51,6 +51,10 @@
     scaliveDocsTokenSecret = {
       key = "scalive/docs/token_secret";
     };
+    newtHel1Environment = {
+      key = "newt/hel1/environment";
+      restartUnits = [ "newt.service" ];
+    };
   };
 
   time.timeZone = "Europe/Amsterdam";
@@ -248,7 +252,6 @@
     roundcube.enable = true;
     monero.enable = true;
     grafana.enable = true;
-    headscale.enable = true;
     immich.enable = true;
     minecraft-server.enable = true;
     monitoring-exporters.enable = true;
@@ -390,7 +393,29 @@
   services.uptime-kuma = {
     enable = true;
     settings = {
+      HOST = "127.0.0.1";
       PORT = "3001";
+    };
+  };
+
+  services.newt = {
+    enable = true;
+    package = pkgs.callPackage ../packages/pangolin/newt.nix { };
+    settings = {
+      endpoint = "https://pangolin.banditlair.com";
+      disable-ssh = true;
+    };
+    environmentFile = config.sops.secrets.newtHel1Environment.path;
+    blueprint.private-resources.uptime-kuma = {
+      name = "Uptime Kuma";
+      mode = "http";
+      destination = "127.0.0.1";
+      destination-port = 3001;
+      scheme = "http";
+      full-domain = "uptime.banditlair.com";
+      ssl = true;
+      roles = [ ];
+      users = [ ];
     };
   };
 
@@ -401,16 +426,6 @@
       forceSSL = true;
     };
 
-    "uptime.froidmont.org" = {
-      serverAliases = [ "status.${config.networking.domain}" ];
-      forceSSL = true;
-      enableACME = true;
-
-      locations."/" = {
-        proxyPass = "http://127.0.0.1:${config.services.uptime-kuma.settings.PORT}";
-        proxyWebsockets = true;
-      };
-    };
     "osteopathie.froidmont.org" = {
       enableACME = true;
       forceSSL = true;

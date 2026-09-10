@@ -63,6 +63,22 @@ resource "hcloud_zone_rrset" "ws_a" {
   ttl     = 600
 }
 
+resource "hcloud_zone_rrset" "pangolin_a" {
+  zone    = data.hcloud_zone.banditlair_zone.name
+  name    = "pangolin"
+  records = [{ value = hcloud_server.pangolin1.ipv4_address }]
+  type    = "A"
+  ttl     = 600
+}
+
+resource "hcloud_zone_rrset" "uptime_pangolin_a" {
+  zone    = data.hcloud_zone.banditlair_zone.name
+  name    = "uptime"
+  records = [{ value = hcloud_server.pangolin1.ipv4_address }]
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hcloud_zone_rrset" "grafana_a" {
   zone    = data.hcloud_zone.banditlair_zone.name
   name    = "grafana"
@@ -79,25 +95,9 @@ resource "hcloud_zone_rrset" "jellyfin_a" {
   ttl     = 600
 }
 
-resource "hcloud_zone_rrset" "status_banditlair_a" {
-  zone    = data.hcloud_zone.banditlair_zone.name
-  name    = "status"
-  records = [{ value = local.hel1_ip }]
-  type    = "A"
-  ttl     = 600
-}
-
 resource "hcloud_zone_rrset" "jitsi_a" {
   zone    = data.hcloud_zone.froidmont_zone.name
   name    = "jitsi"
-  records = [{ value = local.hel1_ip }]
-  type    = "A"
-  ttl     = 600
-}
-
-resource "hcloud_zone_rrset" "uptime_a" {
-  zone    = data.hcloud_zone.froidmont_zone.name
-  name    = "uptime"
   records = [{ value = local.hel1_ip }]
   type    = "A"
   ttl     = 600
@@ -250,14 +250,6 @@ resource "hcloud_zone_rrset" "coturn_a" {
 resource "hcloud_zone_rrset" "ch_a" {
   zone    = data.hcloud_zone.banditlair_zone.name
   name    = "ch"
-  records = [{ value = local.hel1_ip }]
-  type    = "A"
-  ttl     = 600
-}
-
-resource "hcloud_zone_rrset" "hs_a" {
-  zone    = data.hcloud_zone.banditlair_zone.name
-  name    = "hs"
   records = [{ value = local.hel1_ip }]
   type    = "A"
   ttl     = 600

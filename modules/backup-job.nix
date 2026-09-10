@@ -63,6 +63,12 @@ in
       ];
     };
 
+    restoreTestScript = mkOption {
+      type = types.lines;
+      default = "";
+      description = "Hook to validate extracted files; the restore_dir shell variable is available.";
+    };
+
     sshKey = mkOption { type = with types; path; };
   };
 
@@ -169,6 +175,8 @@ in
             exit 1
           fi
         done
+
+        ${cfg.restoreTestScript}
 
         touch /nix/var/data/backup/restore-test-ok
       '';

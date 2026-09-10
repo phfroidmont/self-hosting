@@ -1,6 +1,7 @@
-{
-  modulesPath,
-  ...
+{ config
+, modulesPath
+, pkgs
+, ...
 }:
 {
   imports = [
@@ -32,6 +33,95 @@
 
   services.nscd.enableNsncd = true;
   zramSwap.enable = true;
+
+  sops.secrets.newtRelay1Environment = {
+    key = "newt/relay1/environment";
+    restartUnits = [ "newt.service" ];
+  };
+
+  services.newt = {
+    enable = true;
+    package = pkgs.callPackage ../packages/pangolin/newt.nix { };
+    settings = {
+      endpoint = "https://pangolin.banditlair.com";
+      disable-ssh = true;
+    };
+    environmentFile = config.sops.secrets.newtRelay1Environment.path;
+    blueprint.private-resources = {
+      wsl-ssh = {
+        name = "Foyer WSL";
+        mode = "host";
+        destination = "10.250.250.2";
+        alias = "foyer-wsl.internal";
+        tcp-ports = "22,2345";
+        udp-ports = "";
+        disable-icmp = true;
+        # Pangolin always grants the Admin role; other access is opt-in here.
+        roles = [ ];
+        users = [ ];
+      };
+      foyer-10-33 = {
+        name = "Foyer 10.33.0.0/16";
+        mode = "cidr";
+        destination = "10.33.0.0/16";
+        tcp-ports = "*";
+        udp-ports = "*";
+        disable-icmp = false;
+        roles = [ ];
+        users = [ ];
+      };
+      foyer-10-46 = {
+        name = "Foyer 10.46.0.0/16";
+        mode = "cidr";
+        destination = "10.46.0.0/16";
+        tcp-ports = "*";
+        udp-ports = "*";
+        disable-icmp = false;
+        roles = [ ];
+        users = [ ];
+      };
+      foyer-10-133 = {
+        name = "Foyer 10.133.0.0/16";
+        mode = "cidr";
+        destination = "10.133.0.0/16";
+        tcp-ports = "*";
+        udp-ports = "*";
+        disable-icmp = false;
+        roles = [ ];
+        users = [ ];
+      };
+      foyer-10-134 = {
+        name = "Foyer 10.134.0.0/16";
+        mode = "cidr";
+        destination = "10.134.0.0/16";
+        tcp-ports = "*";
+        udp-ports = "*";
+        disable-icmp = false;
+        roles = [ ];
+        users = [ ];
+      };
+      foyer-10-161 = {
+        name = "Foyer 10.161.0.0/16";
+        mode = "cidr";
+        destination = "10.161.0.0/16";
+        tcp-ports = "*";
+        udp-ports = "*";
+        disable-icmp = false;
+        roles = [ ];
+        users = [ ];
+      };
+      foyer-10-200 = {
+        name = "Foyer 10.200.0.0/16";
+        mode = "cidr";
+        destination = "10.200.0.0/16";
+        tcp-ports = "*";
+        udp-ports = "*";
+        disable-icmp = false;
+        roles = [ ];
+        users = [ ];
+      };
+    };
+  };
 
   security.acme = {
     acceptTerms = true;
@@ -90,21 +180,8 @@
     ];
   };
 
-  services.tailscale = {
-    enable = true;
-    useRoutingFeatures = "server";
-    extraSetFlags = [
-      "--advertise-routes=10.250.250.2/32,10.33.0.0/16,10.46.0.0/16,10.133.0.0/16,10.134.0.0/16,10.161.0.0/16,10.200.0.0/16"
-    ];
-  };
-
-  boot.kernel.sysctl."net.ipv4.ip_forward" = true;
-
-  networking.nat = {
-    enable = true;
-    internalInterfaces = [ "tailscale0" ];
-    externalInterface = "wg-relay";
-  };
+  # Newt originates connections locally instead of forwarding client IP packets.
+  boot.kernel.sysctl."net.ipv4.ip_forward" = false;
 
   disko.devices = {
     disk.disk1 = {

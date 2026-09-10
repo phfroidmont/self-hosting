@@ -42,3 +42,33 @@ module "nixos_anywhere_install" {
 
   depends_on = [hcloud_server.relay1]
 }
+
+resource "hcloud_server" "pangolin1" {
+  name        = "pangolin1"
+  server_type = "cx23"
+  image       = "ubuntu-24.04"
+  location    = "nbg1"
+  backups     = true
+
+  public_net {
+    ipv4_enabled = true
+    ipv6_enabled = true
+  }
+
+  ssh_keys = [
+    hcloud_ssh_key.phfroidmont_stellaris.id,
+    hcloud_ssh_key.froidmpa_desktop.id,
+    hcloud_ssh_key.elios_desktop.id,
+  ]
+}
+
+module "nixos_anywhere_install_pangolin1" {
+  source = "github.com/nix-community/nixos-anywhere//terraform/install"
+
+  target_host        = hcloud_server.pangolin1.ipv4_address
+  instance_id        = hcloud_server.pangolin1.id
+  flake              = "${path.module}/..#pangolin1"
+  extra_files_script = abspath("${path.module}/../scripts/pangolin-extra-files.sh")
+
+  depends_on = [hcloud_server.pangolin1]
+}
