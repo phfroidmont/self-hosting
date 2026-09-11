@@ -30,7 +30,7 @@ automatically, so daily accounts must have no administrator privileges.
 
 | Resource group | Resources | Blueprint `roles` |
 | --- | --- | --- |
-| Foyer | Foyer WSL and six work-network ranges | `[ "Personal" ]` |
+| Foyer | Foyer WSL, six work-network ranges, and conditional DNS | `[ "Personal" ]` |
 | Shared | Uptime Kuma and future shared services | `[ "Personal" "Member" ]` |
 | Personal | Grafana, future accounting, and other owner-only services | `[ "Personal" ]` |
 
@@ -70,10 +70,99 @@ delete the server resource; retirement also requires explicit deletion in
 Pangolin. After deployment, check Newt's journal and the applied resource state,
 then test access: successful NixOS activation alone does not prove acceptance.
 
-Include new private hostnames such as `grafana.banditlair.com` in the client's
-DNS match list. Reconnect with `pangolin down` followed by `pangolin up` after
-changing connection defaults.
 Keep WireGuard and wstunnel on `relay1`; Newt uses that route to the work network.
+
+## Conditional DNS
+
+Unbound on `relay1` listens only on `127.0.0.1:53`. The Newt host resource
+`conditional-dns` targets that address, permits only TCP and UDP port 53, and
+makes the loopback listener available through the tunnel. Restrict it to the
+**Personal** role. Do not expose port 53 publicly or change `relay1`'s own host
+resolver to use Unbound.
+
+Unbound forwards the `foyer.cloud.`, `foyer.lu.`, `lefoyer.lu.`, and `internal.`
+zones to `10.33.0.100`; all other queries reaching it go to Quad9 at `9.9.9.10`
+and `149.112.112.10` (the unfiltered service, over ordinary DNS). DNSSEC validation
+is disabled only for those four forwarded zones to trust Foyer's split-horizon
+answers; public answers remain locally validated by Unbound.
+
+The laptop configuration is:
+
+```nix
+home.file.".config/pangolin/config.json".text = builtins.toJSON {
+  up = {
+    override_dns = true;
+    tunnel_dns = true;
+    upstream_dns = [ "127.0.0.1:53" ];
+    match_domains_dns = [
+      "foyer.cloud"
+      "*.foyer.cloud"
+      "foyer.lu"
+      "*.foyer.lu"
+      "lefoyer.lu"
+      "*.lefoyer.lu"
+      "*.internal"
+      "*.banditlair.com"
+    ];
+  };
+};
+```
+
+The `banditlair.com` apex is deliberately omitted; the wildcard covers subdomains.
+Private resources under other suffixes still need matching entries.
+For a matching query, Pangolin checks its own resource and alias records first;
+if none matches, it sends the query through `conditional-dns` to Unbound. A
+query outside `match_domains_dns` continues to use the laptop's normal DNS.
+The literal `127.0.0.1` upstream denotes the Newt site's loopback, not the
+laptop's, when tunnel DNS is enabled; this behavior was verified with Pangolin
+CLI 0.16.0 and Olm 1.9.0. The resource also has the alias `dns.internal`, but
+tunnel DNS requires the literal destination IP as its upstream. Do not declare
+another host resource for `127.0.0.1:53` at a different site for the same clients.
+
+While connected, all matching DNS misses depend on `relay1`, including queries
+for `pangolin.banditlair.com`. If tunnel DNS fails and prevents reconnection, run
+`pangolin down` to restore normal DNS before reconnecting. If `relay1` remains
+unavailable, remove the Bandit Lair wildcard from the client defaults temporarily
+to recover public access; private resource resolution will be unavailable for
+that suffix. Test this recovery path before relying on the setup remotely.
+
+Authorize and apply `conditional-dns` before reconnecting the laptop with
+`pangolin down` followed by `pangolin up`. On `relay1`, check the services,
+loopback-only listener, public recursion, and a Foyer answer:
+
+```console
+sudo systemctl status unbound newt
+sudo ss -lntup 'sport = :53'
+nix shell nixpkgs#bind nixpkgs#tcpdump
+dig @127.0.0.1 example.com
+dig @127.0.0.1 foyer.cloud
+dig @127.0.0.1 cloudflare.com +dnssec
+dig @127.0.0.1 dnssec-failed.org
+```
+
+The signed public answer should carry the `ad` flag; `dnssec-failed.org` should
+return `SERVFAIL`. Use a known internal Foyer hostname as well as the apex to
+check split-horizon resolution.
+
+On the connected client, compare private Pangolin resources, a Foyer name,
+a public Bandit Lair host, and an unrelated public host:
+
+```console
+dig grafana.banditlair.com
+dig foyer-wsl.internal
+dig foyer.cloud
+dig pangolin.banditlair.com
+dig example.com
+```
+
+Verify that Grafana resolves to a Pangolin private address, not its public
+placeholder, and that authenticated HTTPS access actually reaches Grafana.
+Verify WSL SSH access too. Public Bandit Lair misses must go to Quad9, whereas
+`example.com` uses the laptop's normal DNS. DNS answers alone do not prove the
+forwarding path: on `relay1`, use
+`sudo tcpdump -ni any 'port 53 and (host 10.33.0.100 or host 9.9.9.10 or host 149.112.112.10)'`
+while issuing uncached queries. Foyer queries must go only to `10.33.0.100`,
+and public Bandit Lair misses must never go there.
 
 ## HTTPS and connectivity
 

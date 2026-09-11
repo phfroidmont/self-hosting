@@ -34,6 +34,42 @@
   services.nscd.enableNsncd = true;
   zramSwap.enable = true;
 
+  services.unbound = {
+    enable = true;
+    resolveLocalQueries = false;
+    settings = {
+      server = {
+        # Newt reaches this listener locally; do not expose recursive DNS publicly.
+        interface = [ "127.0.0.1" ];
+        access-control = [ "127.0.0.0/8 allow" ];
+        # Trust Foyer's split-horizon answers rather than public DNSSEC delegations.
+        domain-insecure = [ "foyer.cloud." "foyer.lu." "lefoyer.lu." "internal." ];
+      };
+      forward-zone = [
+        {
+          name = ".";
+          forward-addr = [ "9.9.9.10" "149.112.112.10" ];
+        }
+        {
+          name = "foyer.cloud.";
+          forward-addr = [ "10.33.0.100" ];
+        }
+        {
+          name = "foyer.lu.";
+          forward-addr = [ "10.33.0.100" ];
+        }
+        {
+          name = "lefoyer.lu.";
+          forward-addr = [ "10.33.0.100" ];
+        }
+        {
+          name = "internal.";
+          forward-addr = [ "10.33.0.100" ];
+        }
+      ];
+    };
+  };
+
   sops.secrets.newtRelay1Environment = {
     key = "newt/relay1/environment";
     restartUnits = [ "newt.service" ];
@@ -48,6 +84,17 @@
     };
     environmentFile = config.sops.secrets.newtRelay1Environment.path;
     blueprint.private-resources = {
+      conditional-dns = {
+        name = "Conditional DNS";
+        mode = "host";
+        destination = "127.0.0.1";
+        alias = "dns.internal";
+        tcp-ports = "53";
+        udp-ports = "53";
+        disable-icmp = true;
+        roles = [ "Personal" ];
+        users = [ ];
+      };
       wsl-ssh = {
         name = "Foyer WSL";
         mode = "host";
