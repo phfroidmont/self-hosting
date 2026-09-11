@@ -56,8 +56,8 @@
         tcp-ports = "22,2345";
         udp-ports = "";
         disable-icmp = true;
-        # Pangolin always grants the Admin role; other access is opt-in here.
-        roles = [ ];
+        # Pangolin also retains its automatic Admin grant.
+        roles = [ "Personal" ];
         users = [ ];
       };
       foyer-10-33 = {
@@ -67,7 +67,7 @@
         tcp-ports = "*";
         udp-ports = "*";
         disable-icmp = false;
-        roles = [ ];
+        roles = [ "Personal" ];
         users = [ ];
       };
       foyer-10-46 = {
@@ -77,7 +77,7 @@
         tcp-ports = "*";
         udp-ports = "*";
         disable-icmp = false;
-        roles = [ ];
+        roles = [ "Personal" ];
         users = [ ];
       };
       foyer-10-133 = {
@@ -87,7 +87,7 @@
         tcp-ports = "*";
         udp-ports = "*";
         disable-icmp = false;
-        roles = [ ];
+        roles = [ "Personal" ];
         users = [ ];
       };
       foyer-10-134 = {
@@ -97,7 +97,7 @@
         tcp-ports = "*";
         udp-ports = "*";
         disable-icmp = false;
-        roles = [ ];
+        roles = [ "Personal" ];
         users = [ ];
       };
       foyer-10-161 = {
@@ -107,7 +107,7 @@
         tcp-ports = "*";
         udp-ports = "*";
         disable-icmp = false;
-        roles = [ ];
+        roles = [ "Personal" ];
         users = [ ];
       };
       foyer-10-200 = {
@@ -117,7 +117,7 @@
         tcp-ports = "*";
         udp-ports = "*";
         disable-icmp = false;
-        roles = [ ];
+        roles = [ "Personal" ];
         users = [ ];
       };
     };

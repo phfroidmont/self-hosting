@@ -414,7 +414,7 @@
       scheme = "http";
       full-domain = "uptime.banditlair.com";
       ssl = true;
-      roles = [ ];
+      roles = [ "Personal" "Member" ];
       users = [ ];
     };
   };

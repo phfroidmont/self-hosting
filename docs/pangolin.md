@@ -20,11 +20,42 @@ under `newt` in `secrets.enc.yml`. Keep decrypted secrets out of logs and Git.
 `scripts/pangolin-extra-files.sh` restores the encrypted RSA host key before sops-nix
 decrypts runtime secrets. Keep administrator SOPS access independent of the VM.
 
+## Access separation
+
+Community Edition permits one role per user. Use **Personal** only for the
+owner's daily non-administrator account; family and friends use their own
+**Member** accounts. Keep the separate
+**Admin** account for management: Pangolin grants administrators access
+automatically, so daily accounts must have no administrator privileges.
+
+| Resource group | Resources | Blueprint `roles` |
+| --- | --- | --- |
+| Foyer | Foyer WSL and six work-network ranges | `[ "Personal" ]` |
+| Shared | Uptime Kuma and future shared services | `[ "Personal" "Member" ]` |
+| Personal | Future accounting and other owner-only services | `[ "Personal" ]` |
+
+Every device belonging to the daily account inherits all of that account's access.
+Assigning Member grants access to all shared resources, including future ones.
+
+Keep blueprint `users` empty: identities would otherwise appear in the public
+repository and generated Nix store files. Manage account membership in Pangolin,
+not in a blueprint. Before deployment, create the non-administrator Personal role
+with the default Member-equivalent permissions, then replace the daily account's
+Member assignment with Personal.
+
+After deployment, check Newt's journal for successful blueprint application.
+Confirm that the daily account has only Personal and no server-admin privileges,
+then connect a client with it and verify work and shared access. Confirm that a
+distinct non-admin Member account can reach shared resources but not work
+resources. Reapply the blueprints and repeat those checks to confirm that
+separation persists.
+
 ## Resource changes
 
 Manage resources and grants in Newt blueprints, not the dashboard. Reapplication
 replaces declared resources' settings, labels and user, machine and non-admin role
-grants. Pangolin preserves its automatic organization Admin grant.
+grants. Pangolin preserves its automatic organization Admin grant. Account
+memberships remain manually managed in Pangolin.
 
 Blueprint keys are stable resource identifiers. Removing an entry does **not**
 delete the server resource; retirement also requires explicit deletion in
