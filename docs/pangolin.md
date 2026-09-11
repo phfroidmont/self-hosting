@@ -11,7 +11,7 @@ Newt connectors run on `relay1` and `hel1`.
 | Native services and certificate synchronization | [`modules/pangolin.nix`](../modules/pangolin.nix) |
 | Pinned packages and VM test | [`packages/pangolin/`](../packages/pangolin/) |
 | Work-network and WSL resources | [`profiles/relay1.nix`](../profiles/relay1.nix) |
-| Private Uptime Kuma resource | [`profiles/hel.nix`](../profiles/hel.nix) |
+| Private Uptime Kuma and Grafana resources on `hel1` | [`profiles/hel.nix`](../profiles/hel.nix) |
 | VM provisioning and public DNS (OpenTofu) | [`terraform/`](../terraform/) |
 | Workstation DNS and proxy | `nixos-configs/modules/services/work-proxy.nix` in the workstation repository |
 
@@ -32,7 +32,7 @@ automatically, so daily accounts must have no administrator privileges.
 | --- | --- | --- |
 | Foyer | Foyer WSL and six work-network ranges | `[ "Personal" ]` |
 | Shared | Uptime Kuma and future shared services | `[ "Personal" "Member" ]` |
-| Personal | Future accounting and other owner-only services | `[ "Personal" ]` |
+| Personal | Grafana, future accounting, and other owner-only services | `[ "Personal" ]` |
 
 Every device belonging to the daily account inherits all of that account's access.
 Assigning Member grants access to all shared resources, including future ones.
@@ -52,6 +52,14 @@ separation persists.
 
 ## Resource changes
 
+When migrating an existing public hostname, apply its DNS change to `pangolin1`
+first and allow the previous TTL to expire (600 seconds for Grafana). Then deploy
+the Newt resource and remove the old public proxy. This avoids starting HTTP-01
+validation while requests still reach the old host. Public Grafana access stops
+during this cutover. Verify certificate issuance and authorized client access
+afterward, and update any external uptime probes: Pangolin's public placeholder
+is not evidence that the private application is healthy.
+
 Manage resources and grants in Newt blueprints, not the dashboard. Reapplication
 replaces declared resources' settings, labels and user, machine and non-admin role
 grants. Pangolin preserves its automatic organization Admin grant. Account
@@ -62,8 +70,9 @@ delete the server resource; retirement also requires explicit deletion in
 Pangolin. After deployment, check Newt's journal and the applied resource state,
 then test access: successful NixOS activation alone does not prove acceptance.
 
-Include new private hostnames in the client's DNS match list. Reconnect with
-`pangolin down` followed by `pangolin up` after changing connection defaults.
+Include new private hostnames such as `grafana.banditlair.com` in the client's
+DNS match list. Reconnect with `pangolin down` followed by `pangolin up` after
+changing connection defaults.
 Keep WireGuard and wstunnel on `relay1`; Newt uses that route to the work network.
 
 ## HTTPS and connectivity

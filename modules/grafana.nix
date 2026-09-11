@@ -26,6 +26,7 @@ in
         settings = {
           server = {
             domain = "grafana.${config.networking.domain}";
+            root_url = "https://${config.services.grafana.settings.server.domain}/";
           };
           security = {
             admin_password = "$__file{${config.sops.secrets.grafanaAdminPassword.path}}";
@@ -56,21 +57,6 @@ in
               options.path = ./dashboards;
             }
           ];
-        };
-      };
-
-      nginx = {
-        virtualHosts = {
-          "${config.services.grafana.settings.server.domain}" = {
-
-            enableACME = true;
-            forceSSL = true;
-
-            locations."/" = {
-              proxyPass = "http://127.0.0.1:${toString config.services.grafana.settings.server.http_port}";
-              proxyWebsockets = true;
-            };
-          };
         };
       };
 

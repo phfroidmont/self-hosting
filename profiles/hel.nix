@@ -406,6 +406,17 @@
       disable-ssh = true;
     };
     environmentFile = config.sops.secrets.newtHel1Environment.path;
+    blueprint.private-resources.grafana = {
+      name = "Grafana";
+      mode = "http";
+      destination = "127.0.0.1";
+      destination-port = config.services.grafana.settings.server.http_port;
+      scheme = "http";
+      full-domain = config.services.grafana.settings.server.domain;
+      ssl = true;
+      roles = [ "Personal" ];
+      users = [ ];
+    };
     blueprint.private-resources.uptime-kuma = {
       name = "Uptime Kuma";
       mode = "http";

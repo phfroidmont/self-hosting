@@ -82,7 +82,7 @@ resource "hcloud_zone_rrset" "uptime_pangolin_a" {
 resource "hcloud_zone_rrset" "grafana_a" {
   zone    = data.hcloud_zone.banditlair_zone.name
   name    = "grafana"
-  records = [{ value = local.hel1_ip }]
+  records = [{ value = hcloud_server.pangolin1.ipv4_address }]
   type    = "A"
   ttl     = 600
 }
