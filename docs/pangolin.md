@@ -11,7 +11,7 @@ Newt connectors run on `relay1` and `hel1`.
 | Native services and certificate synchronization | [`modules/pangolin.nix`](../modules/pangolin.nix) |
 | Pinned packages and VM test | [`packages/pangolin/`](../packages/pangolin/) |
 | Work-network and WSL resources | [`profiles/relay1.nix`](../profiles/relay1.nix) |
-| Private Uptime Kuma and Grafana resources on `hel1` | [`profiles/hel.nix`](../profiles/hel.nix) |
+| Private Uptime Kuma, Grafana, and Monero resources on `hel1` | [`profiles/hel.nix`](../profiles/hel.nix) |
 | VM provisioning and public DNS (OpenTofu) | [`terraform/`](../terraform/) |
 | Workstation DNS and proxy | `nixos-configs/modules/services/work-proxy.nix` in the workstation repository |
 
@@ -32,7 +32,7 @@ automatically, so daily accounts must have no administrator privileges.
 | --- | --- | --- |
 | Foyer | Foyer WSL, six work-network ranges, and conditional DNS | `[ "Personal" ]` |
 | Shared | Uptime Kuma and future shared services | `[ "Personal" "Member" ]` |
-| Personal | Grafana, future accounting, and other owner-only services | `[ "Personal" ]` |
+| Personal | Grafana, Monero, future accounting, and other owner-only services | `[ "Personal" ]` |
 
 Every device belonging to the daily account inherits all of that account's access.
 Assigning Member grants access to all shared resources, including future ones.
@@ -53,9 +53,9 @@ separation persists.
 ## Resource changes
 
 When migrating an existing public hostname, apply its DNS change to `pangolin1`
-first and allow the previous TTL to expire (600 seconds for Grafana). Then deploy
+first and allow the previous TTL to expire. Then deploy
 the Newt resource and remove the old public proxy. This avoids starting HTTP-01
-validation while requests still reach the old host. Public Grafana access stops
+validation while requests still reach the old host. Public application access stops
 during this cutover. Verify certificate issuance and authorized client access
 afterward, and update any external uptime probes: Pangolin's public placeholder
 is not evidence that the private application is healthy.
@@ -71,6 +71,22 @@ Pangolin. After deployment, check Newt's journal and the applied resource state,
 then test access: successful NixOS activation alone does not prove acceptance.
 
 Keep WireGuard and wstunnel on `relay1`; Newt uses that route to the work network.
+
+## Monero RPC
+
+`https://monero.banditlair.com` is a private resource routed through the `hel1`
+Newt connector to `127.0.0.1:18081`. Access requires a connected **Personal**
+client; Pangolin's automatic organization Admin grant also applies. Monero's
+restricted RPC mode is enabled, and Pangolin controls remote client access.
+
+To check RPC health, run from an authorized connected client and verify that
+the response contains a `get_info` RPC result, not Pangolin's public placeholder:
+
+```console
+curl --fail-with-body -H 'Content-Type: application/json' \
+  --data '{"jsonrpc":"2.0","id":"0","method":"get_info"}' \
+  https://monero.banditlair.com/json_rpc
+```
 
 ## Conditional DNS
 

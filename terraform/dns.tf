@@ -170,7 +170,7 @@ resource "hcloud_zone_rrset" "photos_a" {
 resource "hcloud_zone_rrset" "monero_a" {
   zone    = data.hcloud_zone.banditlair_zone.name
   name    = "monero"
-  records = [{ value = local.hel1_ip }]
+  records = [{ value = hcloud_server.pangolin1.ipv4_address }]
   type    = "A"
   ttl     = 600
 }

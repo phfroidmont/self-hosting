@@ -417,6 +417,17 @@
       roles = [ "Personal" ];
       users = [ ];
     };
+    blueprint.private-resources.monero = {
+      name = "Monero RPC";
+      mode = "http";
+      destination = config.services.monero.rpc.address;
+      destination-port = config.services.monero.rpc.port;
+      scheme = "http";
+      full-domain = "monero.${config.networking.domain}";
+      ssl = true;
+      roles = [ "Personal" ];
+      users = [ ];
+    };
     blueprint.private-resources.uptime-kuma = {
       name = "Uptime Kuma";
       mode = "http";
