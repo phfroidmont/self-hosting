@@ -93,7 +93,7 @@ home.file.".config/pangolin/config.json".text = builtins.toJSON {
   up = {
     override_dns = true;
     tunnel_dns = true;
-    upstream_dns = [ "127.0.0.1:53" ];
+    upstream_dns = [ "100.96.128.11:53" ];
     match_domains_dns = [
       "foyer.cloud"
       "*.foyer.cloud"
@@ -113,11 +113,19 @@ Private resources under other suffixes still need matching entries.
 For a matching query, Pangolin checks its own resource and alias records first;
 if none matches, it sends the query through `conditional-dns` to Unbound. A
 query outside `match_domains_dns` continues to use the laptop's normal DNS.
-The literal `127.0.0.1` upstream denotes the Newt site's loopback, not the
-laptop's, when tunnel DNS is enabled; this behavior was verified with Pangolin
-CLI 0.16.0 and Olm 1.9.0. The resource also has the alias `dns.internal`, but
-tunnel DNS requires the literal destination IP as its upstream. Do not declare
-another host resource for `127.0.0.1:53` at a different site for the same clients.
+Use the resource's tunnel-visible virtual IP as the upstream, not its site-side
+destination `127.0.0.1`. CLI 0.15.1 / Olm 1.8.2 does not translate a loopback
+upstream into the resource's virtual IP. The `dns.internal` alias currently
+resolves to `100.96.128.11`; queries to that IP reach Unbound on `relay1`.
+Use the numeric IP, not the alias hostname, to avoid DNS bootstrap dependencies.
+
+The virtual IP is stored in Pangolin's database and survives reconnects,
+restarts, and blueprint updates to the same resource. It is not a pinned
+reservation: after deleting/recreating the resource or rebuilding the database,
+check `dig +short dns.internal A` from an authorized connected client and update
+the laptop upstream if necessary. Before activation, verify both public and
+Foyer resolution with `dig @100.96.128.11 jellyfin.banditlair.com` and
+`dig @100.96.128.11 foyer.cloud`.
 
 While connected, all matching DNS misses depend on `relay1`, including queries
 for `pangolin.banditlair.com`. If tunnel DNS fails and prevents reconnection, run
@@ -126,8 +134,11 @@ unavailable, remove the Bandit Lair wildcard from the client defaults temporaril
 to recover public access; private resource resolution will be unavailable for
 that suffix. Test this recovery path before relying on the setup remotely.
 
-Authorize and apply `conditional-dns` before reconnecting the laptop with
-`pangolin down` followed by `pangolin up`. On `relay1`, check the services,
+Authorize and apply `conditional-dns` before activating the laptop configuration.
+For the systemd-managed laptop client, rebuild its configuration and restart
+`pangolin.service` to load the new upstream; do not start a second CLI session.
+For a manually managed client, reconnect with `pangolin down` followed by
+`pangolin up`. On `relay1`, check the services,
 loopback-only listener, public recursion, and a Foyer answer:
 
 ```console
