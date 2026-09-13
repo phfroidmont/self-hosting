@@ -1,4 +1,5 @@
 { config
+, lib
 , pkgs
 , ...
 }:
@@ -232,6 +233,17 @@
     };
   };
 
+  services.openssh = {
+    # CI, Borg and Nix clients still need public SSH; root uses Newt's loopback path.
+    openFirewall = true;
+    settings.PermitRootLogin = lib.mkForce "no";
+    extraConfig = ''
+      Match User root Address 127.0.0.1,::1
+        PermitRootLogin prohibit-password
+      Match all
+    '';
+  };
+
   custom.services = {
     nginx.enable = true;
     postgresql.enable = true;
@@ -406,6 +418,17 @@
       disable-ssh = true;
     };
     environmentFile = config.sops.secrets.newtHel1Environment.path;
+    blueprint.private-resources.hel1-ssh = {
+      name = "hel1 SSH";
+      mode = "host";
+      destination = "127.0.0.1";
+      alias = "hel1.internal";
+      tcp-ports = "22";
+      udp-ports = "";
+      disable-icmp = true;
+      roles = [ "Personal" ];
+      users = [ ];
+    };
     blueprint.private-resources.grafana = {
       name = "Grafana";
       mode = "http";

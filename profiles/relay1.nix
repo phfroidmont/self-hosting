@@ -29,7 +29,8 @@
   ];
   networking.usePredictableInterfaceNames = false;
   custom.services.openssh.enable = true;
-  services.openssh.openFirewall = true;
+  # Newt reaches OpenSSH over loopback; recovery uses provider rescue access.
+  services.openssh.openFirewall = false;
 
   services.nscd.enableNsncd = true;
   zramSwap.enable = true;
@@ -84,6 +85,17 @@
     };
     environmentFile = config.sops.secrets.newtRelay1Environment.path;
     blueprint.private-resources = {
+      relay1-ssh = {
+        name = "relay1 SSH";
+        mode = "host";
+        destination = "127.0.0.1";
+        alias = "relay1.internal";
+        tcp-ports = "22";
+        udp-ports = "";
+        disable-icmp = true;
+        roles = [ "Personal" ];
+        users = [ ];
+      };
       conditional-dns = {
         name = "Conditional DNS";
         mode = "host";
