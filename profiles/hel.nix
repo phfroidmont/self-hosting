@@ -422,7 +422,7 @@
       name = "hel1 SSH";
       mode = "host";
       destination = "127.0.0.1";
-      alias = "hel1.internal";
+      alias = "hel1.bl.internal";
       tcp-ports = "22";
       udp-ports = "";
       disable-icmp = true;

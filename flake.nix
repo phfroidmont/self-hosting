@@ -130,12 +130,12 @@
         in
         {
           hel1 = {
-            hostname = "hel1.internal";
+            hostname = "hel1.bl.internal";
             sshOpts = [ "-o" "HostKeyAlias=37.27.138.62" ];
             profiles.system = createSystemProfile self.nixosConfigurations.hel1;
           };
           relay1 = {
-            hostname = "relay1.internal";
+            hostname = "relay1.bl.internal";
             sshOpts = [ "-o" "HostKeyAlias=rl.banditlair.com" ];
             profiles.system = createSystemProfile self.nixosConfigurations.relay1;
           };

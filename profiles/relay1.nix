@@ -89,7 +89,7 @@
         name = "relay1 SSH";
         mode = "host";
         destination = "127.0.0.1";
-        alias = "relay1.internal";
+        alias = "relay1.bl.internal";
         tcp-ports = "22";
         udp-ports = "";
         disable-icmp = true;
@@ -100,7 +100,7 @@
         name = "Conditional DNS";
         mode = "host";
         destination = "127.0.0.1";
-        alias = "dns.internal";
+        alias = "dns.bl.internal";
         tcp-ports = "53";
         udp-ports = "53";
         disable-icmp = true;
@@ -111,7 +111,7 @@
         name = "Foyer WSL";
         mode = "host";
         destination = "10.250.250.2";
-        alias = "foyer-wsl.internal";
+        alias = "wsl.foyer.internal";
         tcp-ports = "22,2345";
         udp-ports = "";
         disable-icmp = true;
