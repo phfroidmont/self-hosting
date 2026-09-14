@@ -75,7 +75,7 @@ Group codes describe logical ownership, not access roles or physical location:
 | Conditional DNS | `dns.bl.internal` |
 | Foyer WSL | `wsl.foyer.internal` |
 | Osteoview staging bastion | `bastion1-staging.ov.internal` |
-| Osteoview production bastion (not enrolled) | `bastion1-production.ov.internal` |
+| Osteoview production bastion | `bastion1-production.ov.internal` |
 
 Existing application URLs, including `grafana.banditlair.com`,
 `uptime.banditlair.com`, and `monero.banditlair.com`, remain unchanged. The gateway
@@ -132,6 +132,17 @@ identities. Management depends on Pangolin and Newt; restarting a connector
 interrupts its management path. Provider rescue and independently held SOPS keys
 are the recovery boundary. Fresh `relay1` provisioning requires staged public
 SSH access and working host-key/SOPS bootstrap before closing its firewall.
+
+Osteoview bastions retain their public DNS/IP allocations, but their attached
+Hetzner firewalls have no ingress rules. Public SSH is closed in both environments,
+and both restricted `/32` API recovery paths have been verified. Bastion deployments
+must use Osteoview's guarded
+`deploy-bastion.sh` over the private alias, not deploy-rs directly. Emergency
+public SSH is an explicit temporary HCloud API rule restricted to the operator's
+current IPv4 `/32` (or IPv6 CIDR), followed by strict host-key SSH and explicit
+deletion of the identical rule. This path uses locally held SOPS/admin
+credentials and does not depend on Pangolin. Console/rescue and cold-OS-failure
+drills remain untested.
 
 Gateway backups contain a consistent SQLite snapshot, application secrets,
 Gerbil key, ACME state, and RSA host key. Borg access is repository-restricted and
