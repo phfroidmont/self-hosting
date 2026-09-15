@@ -219,7 +219,10 @@
 
   networking.wireguard.enable = true;
   networking.wireguard.interfaces.wg-relay = {
-    ips = [ "10.250.250.1/30" ];
+    ips = [
+      "10.250.250.1/30"
+      "10.250.251.1/24"
+    ];
     listenPort = 51820;
     privateKeyFile = "/var/lib/wireguard/wg-relay.key";
     generatePrivateKeyFile = true;
@@ -236,11 +239,55 @@
           "10.200.0.0/16"
         ];
       }
+      {
+        publicKey = "vi85E2q83PMXW6o9ffB+cKiFHqx0wZf8fqqf6hznDGM=";
+        allowedIPs = [ "10.250.251.2/32" ];
+      }
     ];
   };
 
-  # Newt originates connections locally instead of forwarding client IP packets.
-  boot.kernel.sysctl."net.ipv4.ip_forward" = false;
+  boot.kernel.sysctl."net.ipv4.ip_forward" = true;
+
+  # Forward only Stellaris's fallback IPv4 address to the public interface. The
+  # final drop keeps the existing WSL peer and every other interface routed off.
+  networking.firewall.extraCommands = ''
+    # Keep forwarding closed during rule replacement and if the firewall stops.
+    iptables -w -P FORWARD DROP
+    iptables -w -D FORWARD -j stellaris-fallback 2>/dev/null || true
+    iptables -w -F stellaris-fallback 2>/dev/null || true
+    iptables -w -X stellaris-fallback 2>/dev/null || true
+    iptables -w -N stellaris-fallback
+
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 0.0.0.0/8 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 10.0.0.0/8 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 100.64.0.0/10 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 127.0.0.0/8 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 169.254.0.0/16 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 172.16.0.0/12 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 192.0.0.0/24 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 192.0.2.0/24 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 192.88.99.0/24 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 192.168.0.0/16 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 198.18.0.0/15 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 198.51.100.0/24 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 203.0.113.0/24 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 224.0.0.0/4 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -d 240.0.0.0/4 -j DROP
+    iptables -w -A stellaris-fallback -i wg-relay -s 10.250.251.2/32 -o eth0 -j ACCEPT
+    iptables -w -A stellaris-fallback -i eth0 -o wg-relay -d 10.250.251.2/32 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+    iptables -w -A stellaris-fallback -j DROP
+    iptables -w -I FORWARD 1 -j stellaris-fallback
+
+    iptables -w -t nat -D POSTROUTING -s 10.250.251.2/32 -o eth0 -j MASQUERADE 2>/dev/null || true
+    iptables -w -t nat -A POSTROUTING -s 10.250.251.2/32 -o eth0 -j MASQUERADE
+  '';
+
+  networking.firewall.extraStopCommands = ''
+    iptables -w -D FORWARD -j stellaris-fallback 2>/dev/null || true
+    iptables -w -F stellaris-fallback 2>/dev/null || true
+    iptables -w -X stellaris-fallback 2>/dev/null || true
+    iptables -w -t nat -D POSTROUTING -s 10.250.251.2/32 -o eth0 -j MASQUERADE 2>/dev/null || true
+  '';
 
   disko.devices = {
     disk.disk1 = {
