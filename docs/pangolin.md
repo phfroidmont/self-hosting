@@ -3,17 +3,42 @@
 ## Topology
 
 `pangolin1` hosts Pangolin, Gerbil, and Traefik. The control-plane endpoint and
-dashboard are <https://pangolin.banditlair.com>. Newt connectors on `hel1` and
-`relay1` connect outbound to the gateway and originate connections to site resources.
+dashboard are <https://pangolin.banditlair.com>. Newt connectors connect outbound
+to the gateway and originate connections to site resources.
 
 | Site | Resources |
 | --- | --- |
 | `hel1` | Grafana, Monero RPC, Uptime Kuma, host SSH |
 | `relay1` | Host SSH, conditional DNS, Foyer WSL, six Foyer network ranges |
+| `aegis` | Home router SSH and AdGuard administration; configured in `nixos-configs` |
 
 `relay1` reaches Foyer through its existing WireGuard-over-wstunnel link.
 Client traffic uses direct tunnels where possible or Gerbil relay connections;
 relay connectivity still requires UDP, with no HTTPS fallback.
+
+The Aegis configuration declares one private host resource, allowing TCP ports
+`22,3000` through `aegis.home.internal`, with UDP and ICMP disabled. Its destination
+is `aegis-target.home.internal`, resolved by a hosts entry on Aegis to
+`192.168.1.1`. A hostname destination prevents Pangolin from advertising a raw
+`192.168.1.1/32` route that would capture clients' local router traffic. It does
+not grant access to the home LAN subnet or change the router's firewall, DNS
+listeners, or Mullvad routing; the hosts entry may also be served by LAN DNS.
+The connector follows the router's existing egress; no Mullvad bypass is
+configured. Enrollment and deployment instructions
+are in the `nixos-configs` README. Credentials are encrypted for Aegis's existing
+SSH host identity and the operator recovery key; sops-nix installs them at runtime.
+
+### Aegis verification (2026-09-19)
+
+The site is online and its configuration is persisted. Verified SSH through
+`aegis.home.internal` against the existing LAN host key, AdGuard's login redirect
+and unauthenticated API rejection, and recovery after restarting Newt. The private
+resource grants only `Personal` and `Admin`, with no individual user grants.
+TCP and UDP DNS requests through the alias are blocked, while normal LAN DNS
+works and clients no longer receive a raw router `/32` route. The SOPS environment
+file is root-owned with mode `0400`; no failed units or enrollment rollback timers
+remain. Mullvad stayed disabled during live verification; VPN transitions and
+failure injection were not exercised.
 
 ## Access boundaries
 
@@ -65,6 +90,7 @@ Group codes describe logical ownership, not access roles or physical location:
 | Group | Scope |
 | --- | --- |
 | `bl` | Bandit Lair infrastructure |
+| `home` | Home infrastructure |
 | `ov` | Osteoview infrastructure |
 | `foyer` | Foyer access endpoints |
 
@@ -72,6 +98,7 @@ Group codes describe logical ownership, not access roles or physical location:
 | --- | --- |
 | Hel SSH | `hel1.bl.internal` |
 | Relay SSH | `relay1.bl.internal` |
+| Aegis management | `aegis.home.internal` |
 | Conditional DNS | `dns.bl.internal` |
 | Foyer WSL | `wsl.foyer.internal` |
 | Osteoview staging bastion | `bastion1-staging.ov.internal` |
@@ -162,3 +189,5 @@ validate extracted files, not complete replacement-host recovery.
 | Encrypted secrets | `secrets/pangolin.enc.yml`, `newt` in `secrets.enc.yml` |
 | Gateway host-key bootstrap | [`scripts/pangolin-extra-files.sh`](../scripts/pangolin-extra-files.sh) |
 | Client DNS and proxy | `nixos-configs/modules/services/work-proxy.nix` in the workstation repository |
+| Home router connector | `nixos-configs/hosts/aegis/newt.nix` in the workstation repository |
+| Home router credentials | `nixos-configs/secrets/aegis-newt.enc.yml`; sops-nix decrypts it using Aegis's SSH host identity |
