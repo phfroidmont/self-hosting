@@ -21,6 +21,14 @@ Wstunnel bootstraps against `195.201.112.227` while pinning the TLS hostname
 connection cannot route back into the tunnel and loop. Relay WSS remains
 restricted to `127.0.0.1:51820`; neither public UDP 51820 nor SSH is opened.
 
+On the relay, Newt uses the fixed UDP port `61335`. Packets from only the
+fallback peer (`10.250.251.2`) over `wg-relay` to public `195.201.112.227:61335`
+are DNATed to the relay's primary WireGuard address `10.250.250.1:61335`.
+INPUT accepts only this translated flow, not direct private-target probes or
+public Internet traffic. The target matches the source chosen by Newt's
+wildcard UDP socket; conntrack restores the public source address and port on
+replies without changing the peer's route.
+
 `relay1` forwards and masquerades only `10.250.251.2/32` from `wg-relay` to
 `eth0`, permits only established/related return traffic, and drops all other
 forwarding. Private, link-local, CGNAT, metadata, multicast, documentation, and

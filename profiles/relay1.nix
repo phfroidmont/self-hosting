@@ -82,6 +82,7 @@
     settings = {
       endpoint = "https://pangolin.banditlair.com";
       disable-ssh = true;
+      port = 61335;
     };
     environmentFile = config.sops.secrets.newtRelay1Environment.path;
     blueprint.private-resources = {
@@ -251,6 +252,16 @@
   # Forward only Stellaris's fallback IPv4 address to the public interface. The
   # final drop keeps the existing WSL peer and every other interface routed off.
   networking.firewall.extraCommands = ''
+    # Newt's wildcard UDP socket replies from wg-relay's primary 10.250.250.1.
+    # DNAT the public target there so conntrack restores the public source on
+    # replies. Only accept packets translated from the public destination.
+    iptables -w -t nat -D PREROUTING -i wg-relay -s 10.250.251.2/32 -d 195.201.112.227/32 -p udp --dport 61335 -j DNAT --to-destination 10.250.250.1:61335 2>/dev/null || true
+    iptables -w -t nat -A PREROUTING -i wg-relay -s 10.250.251.2/32 -d 195.201.112.227/32 -p udp --dport 61335 -j DNAT --to-destination 10.250.250.1:61335
+    # Insert ahead of NixOS's INPUT rejection; direct private-target probes
+    # have no DNAT state and must not be allowed through.
+    iptables -w -D INPUT -i wg-relay -s 10.250.251.2/32 -d 10.250.250.1/32 -p udp --dport 61335 -m conntrack --ctstate DNAT --ctorigdst 195.201.112.227 --ctorigdstport 61335 -j ACCEPT 2>/dev/null || true
+    iptables -w -I INPUT 1 -i wg-relay -s 10.250.251.2/32 -d 10.250.250.1/32 -p udp --dport 61335 -m conntrack --ctstate DNAT --ctorigdst 195.201.112.227 --ctorigdstport 61335 -j ACCEPT
+
     # Keep forwarding closed during rule replacement and if the firewall stops.
     iptables -w -P FORWARD DROP
     iptables -w -D FORWARD -j stellaris-fallback 2>/dev/null || true
@@ -283,6 +294,8 @@
   '';
 
   networking.firewall.extraStopCommands = ''
+    iptables -w -D INPUT -i wg-relay -s 10.250.251.2/32 -d 10.250.250.1/32 -p udp --dport 61335 -m conntrack --ctstate DNAT --ctorigdst 195.201.112.227 --ctorigdstport 61335 -j ACCEPT 2>/dev/null || true
+    iptables -w -t nat -D PREROUTING -i wg-relay -s 10.250.251.2/32 -d 195.201.112.227/32 -p udp --dport 61335 -j DNAT --to-destination 10.250.250.1:61335 2>/dev/null || true
     iptables -w -D FORWARD -j stellaris-fallback 2>/dev/null || true
     iptables -w -F stellaris-fallback 2>/dev/null || true
     iptables -w -X stellaris-fallback 2>/dev/null || true
