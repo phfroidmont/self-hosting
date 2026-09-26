@@ -47,12 +47,14 @@ in Pangolin. Blueprint users remain empty to keep identities out of the reposito
 
 | Role | Access |
 | --- | --- |
-| Personal | All declared private resources; owner's daily non-admin account |
+| Personal | Human-facing private resources; owner's daily non-admin account |
 | Member | Uptime Kuma; separate family and friend accounts |
 | Admin | Automatic organization-wide access; separate management account |
 
 All devices on an account inherit its access. Blueprint keys identify persistent
 resources; removing a declaration does not delete the resource from Pangolin.
+Telemetry machine clients use direct resource grants without human roles. The
+machine-only ingestion and exporter resources do not grant the Personal role.
 
 Host SSH resources `hel1.bl.internal` and `relay1.bl.internal` target local
 `127.0.0.1:22`. OpenSSH retains key authentication; Newt's built-in SSH is disabled.
@@ -153,6 +155,9 @@ no remaining migration rollback timers. No public DNS, firewall, resource grants
 or production Osteoview configuration was changed by this rename.
 
 ## Dependencies and recovery
+
+See [telemetry enrollment](telemetry-enrollment.md) for the operator-run,
+credential-isolated machine bootstrap and the staged monitoring rollout.
 
 SSH deployment targets use the private aliases and preserve existing host-key
 identities. Management depends on Pangolin and Newt; restarting a connector

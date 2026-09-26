@@ -8,6 +8,7 @@
     ../environment.nix
     ../hardware/hetzner-dedicated-hel1.nix
     ../modules
+    ../modules/osteoview-telemetry.nix
   ];
 
   sops.secrets = {

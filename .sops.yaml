@@ -5,6 +5,12 @@ keys:
   - &relay1 515a19ef3f9b98442331d89b2997d83ee1948d54
   - &pangolin1 B0236A83B9D8B27CBF83AB1EEACBC8EF893D30C8
 creation_rules:
+  - path_regex: ^secrets/telemetry-alerts\.enc\.yml$
+    key_groups:
+      - pgp:
+          - *admin
+          - *hel1
+          - *relay1
   - path_regex: ^secrets/pangolin\.enc\.yml$
     key_groups:
       - pgp:

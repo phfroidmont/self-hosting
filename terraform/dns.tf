@@ -87,6 +87,16 @@ resource "hcloud_zone_rrset" "grafana_a" {
   ttl     = 600
 }
 
+# HTTP-01 certificate issuance and the public placeholder only. Actual log
+# ingestion is a private Pangolin resource, reached through machine clients.
+resource "hcloud_zone_rrset" "telemetry_pangolin_a" {
+  zone    = data.hcloud_zone.banditlair_zone.name
+  name    = "telemetry"
+  records = [{ value = hcloud_server.pangolin1.ipv4_address }]
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hcloud_zone_rrset" "jellyfin_a" {
   zone    = data.hcloud_zone.banditlair_zone.name
   name    = "jellyfin"

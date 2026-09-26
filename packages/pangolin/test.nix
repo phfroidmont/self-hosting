@@ -44,6 +44,9 @@ pkgs.testers.runNixOSTest {
       traefik.wantedBy = lib.mkForce [ ];
     };
 
+    # Prove that the integration API's isolation does not depend on the firewall.
+    networking.firewall.enable = false;
+
     virtualisation.memorySize = 3072;
 
     assertions = [
@@ -60,6 +63,11 @@ pkgs.testers.runNixOSTest {
         message = "Pangolin's ACME certificate sync flag must be enabled";
       }
       {
+        assertion = config.services.pangolin.settings.flags.enable_integration_api
+          && config.services.pangolin.settings.server.integration_port == 3003;
+        message = "Pangolin's integration API must be enabled on port 3003";
+      }
+      {
         assertion = config.services.pangolin.settings.acme.acme_json_path == "/var/lib/pangolin/config/acme-sync/acme.json";
         message = "Pangolin must read certificates from its private ACME copy";
       }
@@ -73,6 +81,17 @@ pkgs.testers.runNixOSTest {
         "curl --fail --silent http://127.0.0.1:3001/api/v1/ | grep -q Healthy",
         timeout=180,
     )
+    machine.wait_until_succeeds(
+        "curl --fail --silent http://127.0.0.1:3003/v1/ | grep -q Healthy",
+        timeout=180,
+    )
+    machine.succeed("grep -q 'enable_integration_api: true' /var/lib/pangolin/config/config.yml")
+    machine.succeed("grep -q 'integration_port: 3003' /var/lib/pangolin/config/config.yml")
+    machine.succeed("test $(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3003/v1/orgs) = 401")
+    # Exactly one IPv4 loopback socket: neither an IPv4 nor IPv6 wildcard.
+    machine.succeed("test $(ss -H -ltn 'sport = :3003' | wc -l) -eq 1")
+    machine.succeed("ss -H -ltn 'sport = :3003' | grep -Eq '^[[:space:]]*LISTEN[[:space:]]+[0-9]+[[:space:]]+[0-9]+[[:space:]]+127[.]0[.]0[.]1:3003[[:space:]]'")
+    machine.fail("curl --noproxy '*' --fail --silent --connect-timeout 2 http://$(hostname -I | cut -d' ' -f1):3003/v1/")
     machine.succeed("grep -q 'disable_signup_without_invite: true' /var/lib/pangolin/config/config.yml")
     machine.succeed("grep -q 'disable_user_create_org: true' /var/lib/pangolin/config/config.yml")
     machine.succeed("grep -q 'enable_acme_cert_sync: true' /var/lib/pangolin/config/config.yml")

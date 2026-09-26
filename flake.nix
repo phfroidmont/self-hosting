@@ -48,6 +48,17 @@
           opentofu
           terraform-ls
           sops
+          jq
+          yq-go
+          curl
+          openssh
+          gnupg
+          coreutils
+          util-linux
+          shellcheck
+          shfmt
+          python3
+          openssl
           hcloud
           deploy-rs.packages."x86_64-linux".deploy-rs
         ];
@@ -150,6 +161,34 @@
           deployLib.deployChecks self.deploy
           // nixpkgs.lib.optionalAttrs (system == "x86_64-linux") {
             pangolin-native = import ./packages/pangolin/test.nix { inherit pkgs; };
+            telemetry-client = import ./packages/pangolin/telemetry-client-test.nix { inherit pkgs; };
+            telemetry-gateway = import ./packages/pangolin/telemetry-gateway-test.nix { inherit pkgs; };
+            telemetry-loki = import ./packages/pangolin/telemetry-loki-test.nix { inherit pkgs; };
+            telemetry-central = import ./packages/pangolin/telemetry-central-test.nix {
+              inherit pkgs;
+              helConfiguration = self.nixosConfigurations.hel1;
+            };
+            telemetry-alerting = import ./packages/pangolin/telemetry-alerting-test.nix { inherit pkgs; };
+            telemetry-dashboards = import ./packages/pangolin/telemetry-dashboards-test.nix { inherit pkgs; };
+            telemetry-watchdog = import ./packages/telemetry-watchdog/test.nix { inherit pkgs; };
+            telemetry-alert-secrets = pkgs.runCommand "telemetry-alert-secret-tests"
+              {
+                nativeBuildInputs = with pkgs; [ bash python3 sops gnupg openssl util-linux coreutils monit yq-go ];
+              } ''
+              export HOME="$TMPDIR/home"
+              mkdir -p "$HOME"
+              bash ${./tests/prepare-telemetry-alerts-test.sh} ${./.}
+              touch "$out"
+            '';
+            telemetry-enrollment = pkgs.runCommand "telemetry-enrollment-tests"
+              {
+                nativeBuildInputs = with pkgs; [ bash jq yq-go sops gnupg python3 curl openssh coreutils util-linux ];
+              } ''
+              export HOME="$TMPDIR/home"
+              mkdir -p "$HOME"
+              bash ${./tests/pangolin-enroll-telemetry-test.sh} ${./.}
+              touch "$out"
+            '';
           })
         deploy-rs.lib;
     };

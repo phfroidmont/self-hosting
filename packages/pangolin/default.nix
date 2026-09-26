@@ -41,6 +41,9 @@ buildNpmPackage (finalAttrs: {
     substituteInPlace server/lib/consts.ts --replace-fail \
       'export const APP_VERSION = "1.22.0";' \
       'export const APP_VERSION = "${finalAttrs.version}";'
+    substituteInPlace server/integrationApiServer.ts --replace-fail \
+      'apiServer.listen(externalPort, (err?: any) => {' \
+      'apiServer.listen(externalPort ?? 3003, "127.0.0.1", (err?: any) => {'
   '';
 
   preBuild = ''

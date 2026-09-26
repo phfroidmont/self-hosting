@@ -134,7 +134,7 @@
                     "link": true,
                     "linkTargetBlank": false,
                     "linkTooltip": "Browse host details",
-                    "linkUrl": "d/xfpJB9FGz/node-exporter?orgId=1&var-job=${job}&var-hostname=All&var-node=${__cell}&var-device=All&var-origin_prometheus=$origin_prometheus",
+                    "linkUrl": "d/xfpJB9FGz/node-exporter?orgId=1&var-job=${job}&var-environment=$environment&var-hostname=All&var-node=${__cell}&var-device=All",
                     "mappingType": 1,
                     "pattern": "instance",
                     "thresholds": [],
@@ -415,7 +415,7 @@
             ],
             "targets": [
                 {
-                    "expr": "node_uname_info{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"} - 0",
+                    "expr": "node_uname_info{environment=~\"$environment\",job=~\"$job\"} - 0",
                     "format": "table",
                     "instant": true,
                     "interval": "",
@@ -423,7 +423,7 @@
                     "refId": "A"
                 },
                 {
-                    "expr": "sum(time() - node_boot_time_seconds{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"})by(instance)",
+                    "expr": "sum(time() - node_boot_time_seconds{environment=~\"$environment\",job=~\"$job\"})by(instance)",
                     "format": "table",
                     "hide": false,
                     "instant": true,
@@ -432,7 +432,7 @@
                     "refId": "D"
                 },
                 {
-                    "expr": "node_memory_MemTotal_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"} - 0",
+                    "expr": "node_memory_MemTotal_bytes{environment=~\"$environment\",job=~\"$job\"} - 0",
                     "format": "table",
                     "hide": false,
                     "instant": true,
@@ -441,7 +441,7 @@
                     "refId": "B"
                 },
                 {
-                    "expr": "count(node_cpu_seconds_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",mode='system'}) by (instance)",
+                    "expr": "count(node_cpu_seconds_total{environment=~\"$environment\",job=~\"$job\",mode='system'}) by (instance)",
                     "format": "table",
                     "hide": false,
                     "instant": true,
@@ -450,7 +450,7 @@
                     "refId": "C"
                 },
                 {
-                    "expr": "node_load5{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}",
+                    "expr": "node_load5{environment=~\"$environment\",job=~\"$job\"}",
                     "format": "table",
                     "instant": true,
                     "interval": "",
@@ -458,7 +458,7 @@
                     "refId": "L"
                 },
                 {
-                    "expr": "(1 - avg(rate(node_cpu_seconds_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",mode=\"idle\"}[$interval])) by (instance)) * 100",
+                    "expr": "(1 - avg(rate(node_cpu_seconds_total{environment=~\"$environment\",job=~\"$job\",mode=\"idle\"}[$interval])) by (instance)) * 100",
                     "format": "table",
                     "hide": false,
                     "instant": true,
@@ -467,7 +467,7 @@
                     "refId": "F"
                 },
                 {
-                    "expr": "(1 - (node_memory_MemAvailable_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"} / (node_memory_MemTotal_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"})))* 100",
+                    "expr": "(1 - (node_memory_MemAvailable_bytes{environment=~\"$environment\",job=~\"$job\"} / (node_memory_MemTotal_bytes{environment=~\"$environment\",job=~\"$job\"})))* 100",
                     "format": "table",
                     "hide": false,
                     "instant": true,
@@ -476,7 +476,7 @@
                     "refId": "G"
                 },
                 {
-                    "expr": "max((node_filesystem_size_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"ext.?|xfs\"}-node_filesystem_free_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"ext.?|xfs\"}) *100/(node_filesystem_avail_bytes {origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"ext.?|xfs\"}+(node_filesystem_size_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"ext.?|xfs\"}-node_filesystem_free_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"ext.?|xfs\"})))by(instance)",
+                    "expr": "max((node_filesystem_size_bytes{environment=~\"$environment\",job=~\"$job\",fstype=~\"ext.?|xfs\"}-node_filesystem_free_bytes{environment=~\"$environment\",job=~\"$job\",fstype=~\"ext.?|xfs\"}) *100/(node_filesystem_avail_bytes {environment=~\"$environment\",job=~\"$job\",fstype=~\"ext.?|xfs\"}+(node_filesystem_size_bytes{environment=~\"$environment\",job=~\"$job\",fstype=~\"ext.?|xfs\"}-node_filesystem_free_bytes{environment=~\"$environment\",job=~\"$job\",fstype=~\"ext.?|xfs\"})))by(instance)",
                     "format": "table",
                     "hide": false,
                     "instant": true,
@@ -485,7 +485,7 @@
                     "refId": "E"
                 },
                 {
-                    "expr": "max(rate(node_disk_read_bytes_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}[$interval])) by (instance)",
+                    "expr": "max(rate(node_disk_read_bytes_total{environment=~\"$environment\",job=~\"$job\"}[$interval])) by (instance)",
                     "format": "table",
                     "hide": false,
                     "instant": true,
@@ -494,7 +494,7 @@
                     "refId": "H"
                 },
                 {
-                    "expr": "max(rate(node_disk_written_bytes_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}[$interval])) by (instance)",
+                    "expr": "max(rate(node_disk_written_bytes_total{environment=~\"$environment\",job=~\"$job\"}[$interval])) by (instance)",
                     "format": "table",
                     "hide": false,
                     "instant": true,
@@ -503,7 +503,7 @@
                     "refId": "I"
                 },
                 {
-                    "expr": "node_netstat_Tcp_CurrEstab{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"} - 0",
+                    "expr": "node_netstat_Tcp_CurrEstab{environment=~\"$environment\",job=~\"$job\"} - 0",
                     "format": "table",
                     "hide": false,
                     "instant": true,
@@ -512,7 +512,7 @@
                     "refId": "M"
                 },
                 {
-                    "expr": "node_sockstat_TCP_tw{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"} - 0",
+                    "expr": "node_sockstat_TCP_tw{environment=~\"$environment\",job=~\"$job\"} - 0",
                     "format": "table",
                     "hide": false,
                     "instant": true,
@@ -521,7 +521,7 @@
                     "refId": "N"
                 },
                 {
-                    "expr": "max(rate(node_network_receive_bytes_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}[$interval])*8) by (instance)",
+                    "expr": "max(rate(node_network_receive_bytes_total{environment=~\"$environment\",job=~\"$job\"}[$interval])*8) by (instance)",
                     "format": "table",
                     "hide": false,
                     "instant": true,
@@ -530,7 +530,7 @@
                     "refId": "J"
                 },
                 {
-                    "expr": "max(rate(node_network_transmit_bytes_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}[$interval])*8) by (instance)",
+                    "expr": "max(rate(node_network_transmit_bytes_total{environment=~\"$environment\",job=~\"$job\"}[$interval])*8) by (instance)",
                     "format": "table",
                     "hide": false,
                     "instant": true,
@@ -545,7 +545,6 @@
         },
         {
             "aliasColors": {
-                "192.168.200.241:9100_Total": "dark-red",
                 "Idle - Waiting for something to happen": "#052B51",
                 "guest": "#9AC48A",
                 "idle": "#052B51",
@@ -631,7 +630,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "count(node_cpu_seconds_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\", mode='system'})",
+                    "expr": "count(node_cpu_seconds_total{environment=~\"$environment\",job=~\"$job\", mode='system'})",
                     "format": "time_series",
                     "hide": false,
                     "instant": false,
@@ -642,7 +641,7 @@
                     "step": 240
                 },
                 {
-                    "expr": "sum(node_load5{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"})",
+                    "expr": "sum(node_load5{environment=~\"$environment\",job=~\"$job\"})",
                     "format": "time_series",
                     "hide": false,
                     "interval": "30m",
@@ -652,7 +651,7 @@
                     "step": 240
                 },
                 {
-                    "expr": "avg(1 - avg(rate(node_cpu_seconds_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",mode=\"idle\"}[$interval])) by (instance)) * 100",
+                    "expr": "avg(1 - avg(rate(node_cpu_seconds_total{environment=~\"$environment\",job=~\"$job\",mode=\"idle\"}[$interval])) by (instance)) * 100",
                     "format": "time_series",
                     "hide": false,
                     "interval": "30m",
@@ -699,7 +698,6 @@
         },
         {
             "aliasColors": {
-                "192.168.200.241:9100_总内存": "dark-red",
                 "内存_Avaliable": "#6ED0E0",
                 "内存_Cached": "#EF843C",
                 "内存_Free": "#629E51",
@@ -779,7 +777,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "sum(node_memory_MemTotal_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"})",
+                    "expr": "sum(node_memory_MemTotal_bytes{environment=~\"$environment\",job=~\"$job\"})",
                     "format": "time_series",
                     "hide": false,
                     "instant": false,
@@ -790,7 +788,7 @@
                     "step": 4
                 },
                 {
-                    "expr": "sum(node_memory_MemTotal_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"} - node_memory_MemAvailable_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"})",
+                    "expr": "sum(node_memory_MemTotal_bytes{environment=~\"$environment\",job=~\"$job\"} - node_memory_MemAvailable_bytes{environment=~\"$environment\",job=~\"$job\"})",
                     "format": "time_series",
                     "hide": false,
                     "interval": "30m",
@@ -800,7 +798,7 @@
                     "step": 4
                 },
                 {
-                    "expr": "(sum(node_memory_MemTotal_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"} - node_memory_MemAvailable_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}) / sum(node_memory_MemTotal_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}))*100",
+                    "expr": "(sum(node_memory_MemTotal_bytes{environment=~\"$environment\",job=~\"$job\"} - node_memory_MemAvailable_bytes{environment=~\"$environment\",job=~\"$job\"}) / sum(node_memory_MemTotal_bytes{environment=~\"$environment\",job=~\"$job\"}))*100",
                     "format": "time_series",
                     "hide": false,
                     "interval": "30m",
@@ -918,7 +916,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "sum(avg(node_filesystem_size_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance))",
+                    "expr": "sum(avg(node_filesystem_size_bytes{environment=~\"$environment\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance))",
                     "format": "time_series",
                     "instant": false,
                     "interval": "30m",
@@ -927,7 +925,7 @@
                     "refId": "E"
                 },
                 {
-                    "expr": "sum(avg(node_filesystem_size_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance)) - sum(avg(node_filesystem_free_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance))",
+                    "expr": "sum(avg(node_filesystem_size_bytes{environment=~\"$environment\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance)) - sum(avg(node_filesystem_free_bytes{environment=~\"$environment\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance))",
                     "format": "time_series",
                     "instant": false,
                     "interval": "30m",
@@ -936,7 +934,7 @@
                     "refId": "C"
                 },
                 {
-                    "expr": "(sum(avg(node_filesystem_size_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance)) - sum(avg(node_filesystem_free_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance))) *100/(sum(avg(node_filesystem_avail_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance))+(sum(avg(node_filesystem_size_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance)) - sum(avg(node_filesystem_free_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance))))",
+                    "expr": "(sum(avg(node_filesystem_size_bytes{environment=~\"$environment\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance)) - sum(avg(node_filesystem_free_bytes{environment=~\"$environment\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance))) *100/(sum(avg(node_filesystem_avail_bytes{environment=~\"$environment\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance))+(sum(avg(node_filesystem_size_bytes{environment=~\"$environment\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance)) - sum(avg(node_filesystem_free_bytes{environment=~\"$environment\",job=~\"$job\",fstype=~\"xfs|ext.*\"})by(device,instance))))",
                     "format": "time_series",
                     "instant": false,
                     "interval": "30m",
@@ -1915,7 +1913,6 @@
         },
         {
             "aliasColors": {
-                "192.168.200.241:9100_Total": "dark-red",
                 "Idle - Waiting for something to happen": "#052B51",
                 "guest": "#9AC48A",
                 "idle": "#052B51",
@@ -2073,7 +2070,6 @@
         },
         {
             "aliasColors": {
-                "192.168.200.241:9100_总内存": "dark-red",
                 "使用率": "yellow",
                 "内存_Avaliable": "#6ED0E0",
                 "内存_Cached": "#EF843C",
@@ -2269,10 +2265,7 @@
             }
         },
         {
-            "aliasColors": {
-                "192.168.10.227:9100_em1_in下载": "super-light-green",
-                "192.168.10.227:9100_em1_out上传": "dark-blue"
-            },
+            "aliasColors": {},
             "bars": false,
             "dashLength": 10,
             "dashes": false,
@@ -3160,7 +3153,6 @@
         },
         {
             "aliasColors": {
-                "192.168.200.241:9100_TCP_alloc": "semi-dark-blue",
                 "TCP": "#6ED0E0",
                 "TCP_alloc": "blue"
             },
@@ -3349,8 +3341,6 @@
         },
         {
             "aliasColors": {
-                "filefd_192.168.200.241:9100": "super-light-green",
-                "switches_192.168.200.241:9100": "semi-dark-red",
                 "使用的文件描述符_10.118.72.128:9100": "red",
                 "每秒上下文切换次数_10.118.71.245:9100": "yellow",
                 "每秒上下文切换次数_10.118.72.128:9100": "yellow"
@@ -3496,35 +3486,33 @@
     "templating": {
         "list": [
             {
-                "allValue": "",
+                "allValue": ".*",
                 "current": {
                     "isNone": true,
                     "selected": false,
-                    "text": "None",
-                    "value": ""
+                    "text": "All",
+                    "value": "$__all"
                 },
-                "datasource": {
-                    "type": "prometheus",
-                    "uid": "PBFA97CFB590B2093"
-                },
-                "definition": "label_values(origin_prometheus)",
+                "definition": "banditlair,staging,production",
                 "hide": 0,
-                "includeAll": false,
-                "label": "Origin_prom",
+                "includeAll": true,
+                "label": "Environment",
                 "multi": false,
-                "name": "origin_prometheus",
-                "options": [],
-                "query": {
-                    "query": "label_values(origin_prometheus)",
-                    "refId": "Prometheus-origin_prometheus-Variable-Query"
-                },
+                "name": "environment",
+                "options": [
+                    { "selected": false, "text": "All", "value": "$__all" },
+                    { "selected": false, "text": "banditlair", "value": "banditlair" },
+                    { "selected": false, "text": "staging", "value": "staging" },
+                    { "selected": false, "text": "production", "value": "production" }
+                ],
+                "query": "banditlair,staging,production",
                 "refresh": 1,
                 "regex": "",
                 "skipUrlSync": false,
                 "sort": 5,
                 "tagValuesQuery": "",
                 "tagsQuery": "",
-                "type": "query",
+                "type": "custom",
                 "useTags": false
             },
             {
@@ -3537,7 +3525,7 @@
                     "type": "prometheus",
                     "uid": "PBFA97CFB590B2093"
                 },
-                "definition": "label_values(node_uname_info{origin_prometheus=~\"$origin_prometheus\"}, job)",
+                "definition": "label_values(node_uname_info{environment=~\"$environment\"}, job)",
                 "hide": 0,
                 "includeAll": false,
                 "label": "JOB",
@@ -3545,7 +3533,7 @@
                 "name": "job",
                 "options": [],
                 "query": {
-                    "query": "label_values(node_uname_info{origin_prometheus=~\"$origin_prometheus\"}, job)",
+                    "query": "label_values(node_uname_info{environment=~\"$environment\"}, job)",
                     "refId": "Prometheus-job-Variable-Query"
                 },
                 "refresh": 1,
@@ -3567,7 +3555,7 @@
                     "type": "prometheus",
                     "uid": "PBFA97CFB590B2093"
                 },
-                "definition": "label_values(node_uname_info{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}, nodename)",
+                "definition": "label_values(node_uname_info{environment=~\"$environment\",job=~\"$job\"}, nodename)",
                 "hide": 0,
                 "includeAll": true,
                 "label": "Host",
@@ -3575,7 +3563,7 @@
                 "name": "hostname",
                 "options": [],
                 "query": {
-                    "query": "label_values(node_uname_info{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}, nodename)",
+                    "query": "label_values(node_uname_info{environment=~\"$environment\",job=~\"$job\"}, nodename)",
                     "refId": "Prometheus-hostname-Variable-Query"
                 },
                 "refresh": 1,
@@ -3591,27 +3579,23 @@
                 "allFormat": "glob",
                 "current": {
                     "selected": false,
-                    "text": [
-                        "10.0.1.1:9100"
-                    ],
-                    "value": [
-                        "10.0.1.1:9100"
-                    ]
+                    "text": "All",
+                    "value": "$__all"
                 },
                 "datasource": {
                     "type": "prometheus",
                     "uid": "PBFA97CFB590B2093"
                 },
-                "definition": "label_values(node_uname_info{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",nodename=~\"$hostname\"},instance)",
+                "definition": "label_values(node_uname_info{environment=~\"$environment\",job=~\"$job\",nodename=~\"$hostname\"},instance)",
                 "hide": 0,
-                "includeAll": false,
+                "includeAll": true,
                 "label": "Instance",
                 "multi": true,
                 "multiFormat": "regex values",
                 "name": "node",
                 "options": [],
                 "query": {
-                    "query": "label_values(node_uname_info{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",nodename=~\"$hostname\"},instance)",
+                    "query": "label_values(node_uname_info{environment=~\"$environment\",job=~\"$job\",nodename=~\"$hostname\"},instance)",
                     "refId": "Prometheus-node-Variable-Query"
                 },
                 "refresh": 1,
@@ -3634,7 +3618,7 @@
                     "type": "prometheus",
                     "uid": "PBFA97CFB590B2093"
                 },
-                "definition": "label_values(node_network_info{origin_prometheus=~\"$origin_prometheus\",device!~'tap.*|veth.*|br.*|docker.*|virbr.*|lo.*|cni.*'},device)",
+                "definition": "label_values(node_network_info{environment=~\"$environment\",instance=~\"$node\",device!~'tap.*|veth.*|br.*|docker.*|virbr.*|lo.*|cni.*'},device)",
                 "hide": 0,
                 "includeAll": true,
                 "label": "NIC",
@@ -3643,7 +3627,7 @@
                 "name": "device",
                 "options": [],
                 "query": {
-                    "query": "label_values(node_network_info{origin_prometheus=~\"$origin_prometheus\",device!~'tap.*|veth.*|br.*|docker.*|virbr.*|lo.*|cni.*'},device)",
+                    "query": "label_values(node_network_info{environment=~\"$environment\",instance=~\"$node\",device!~'tap.*|veth.*|br.*|docker.*|virbr.*|lo.*|cni.*'},device)",
                     "refId": "Prometheus-device-Variable-Query"
                 },
                 "refresh": 1,
@@ -3720,7 +3704,7 @@
                     "type": "prometheus",
                     "uid": "PBFA97CFB590B2093"
                 },
-                "definition": "query_result(topk(1,sort_desc (max(node_filesystem_size_bytes{origin_prometheus=~\"$origin_prometheus\",instance=~'$node',fstype=~\"ext.?|xfs\",mountpoint!~\".*pods.*\"}) by (mountpoint))))",
+                "definition": "query_result(topk(1,sort_desc (max(node_filesystem_size_bytes{environment=~\"$environment\",instance=~'$node',fstype=~\"ext.?|xfs\",mountpoint!~\".*pods.*\"}) by (mountpoint))))",
                 "hide": 2,
                 "includeAll": false,
                 "label": "maxmount",
@@ -3728,7 +3712,7 @@
                 "name": "maxmount",
                 "options": [],
                 "query": {
-                    "query": "query_result(topk(1,sort_desc (max(node_filesystem_size_bytes{origin_prometheus=~\"$origin_prometheus\",instance=~'$node',fstype=~\"ext.?|xfs\",mountpoint!~\".*pods.*\"}) by (mountpoint))))",
+                    "query": "query_result(topk(1,sort_desc (max(node_filesystem_size_bytes{environment=~\"$environment\",instance=~'$node',fstype=~\"ext.?|xfs\",mountpoint!~\".*pods.*\"}) by (mountpoint))))",
                     "refId": "Prometheus-maxmount-Variable-Query"
                 },
                 "refresh": 2,
@@ -3750,7 +3734,7 @@
                     "type": "prometheus",
                     "uid": "PBFA97CFB590B2093"
                 },
-                "definition": "label_values(node_uname_info{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",instance=~\"$node\"}, nodename)",
+                "definition": "label_values(node_uname_info{environment=~\"$environment\",job=~\"$job\",instance=~\"$node\"}, nodename)",
                 "hide": 2,
                 "includeAll": false,
                 "label": "show_hostname",
@@ -3758,7 +3742,7 @@
                 "name": "show_hostname",
                 "options": [],
                 "query": {
-                    "query": "label_values(node_uname_info{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",instance=~\"$node\"}, nodename)",
+                    "query": "label_values(node_uname_info{environment=~\"$environment\",job=~\"$job\",instance=~\"$node\"}, nodename)",
                     "refId": "Prometheus-show_hostname-Variable-Query"
                 },
                 "refresh": 1,
@@ -3780,7 +3764,7 @@
                     "type": "prometheus",
                     "uid": "PBFA97CFB590B2093"
                 },
-                "definition": "query_result(count(node_uname_info{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}))",
+                "definition": "query_result(count(node_uname_info{environment=~\"$environment\",job=~\"$job\"}))",
                 "hide": 2,
                 "includeAll": false,
                 "label": "total_servers",
@@ -3788,7 +3772,7 @@
                 "name": "total",
                 "options": [],
                 "query": {
-                    "query": "query_result(count(node_uname_info{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}))",
+                    "query": "query_result(count(node_uname_info{environment=~\"$environment\",job=~\"$job\"}))",
                     "refId": "Prometheus-total-Variable-Query"
                 },
                 "refresh": 1,

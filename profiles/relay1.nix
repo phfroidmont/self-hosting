@@ -1,15 +1,33 @@
 { config
 , modulesPath
+, lib
 , pkgs
 , ...
 }:
+let
+  alertingState = builtins.fromJSON (builtins.readFile ../telemetry-alerting.json);
+  alertsPrepared = alertingState == { schemaVersion = 1; prepared = true; };
+  enrollment = builtins.fromJSON (builtins.readFile ../telemetry-enrollment.json);
+in
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
     (modulesPath + "/profiles/qemu-guest.nix")
     ../environment.nix
     ../modules/openssh.nix
+    ../modules/telemetry-watchdog.nix
   ];
+
+  assertions = [{
+    assertion = alertingState == { } || alertsPrepared;
+    message = "Invalid telemetry-alerting.json; prepare the dedicated ciphertext with the operator helper.";
+  }];
+  custom.services.telemetryWatchdog = lib.mkIf alertsPrepared {
+    enable = true;
+    mode = "receiver";
+    secretsFile = ../secrets/telemetry-alerts.enc.yml;
+    collectorNiceId = enrollment.machines.hel1.niceId;
+  };
 
   networking.useDHCP = true;
   nixpkgs.hostPlatform = "x86_64-linux";

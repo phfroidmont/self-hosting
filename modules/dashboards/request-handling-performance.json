@@ -1,0 +1,46 @@
+{
+  "uid": "4GFbkOsZk",
+  "title": "Request Handling Performance",
+  "description": "Nginx request and upstream latency, errors, sizes and top URLs (adapted from the application request-handling dashboard).",
+  "schemaVersion": 40,
+  "version": 1,
+  "refresh": "1m",
+  "time": { "from": "now-6h", "to": "now" },
+  "templating": { "list": [
+    { "name": "environment", "label": "Environment", "type": "query", "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" }, "definition": "label_values(nginx_http_response_count_total{job=\"nginx\"},environment)", "query": { "query": "label_values(nginx_http_response_count_total{job=\"nginx\"},environment)", "refId": "environment" }, "current": { "text": "staging", "value": "staging" }, "multi": false, "includeAll": false, "refresh": 1 },
+    { "name": "instance", "label": "Instance", "type": "query", "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" }, "definition": "label_values(nginx_http_response_count_total{job=\"nginx\",environment=\"$environment\"},instance)", "query": { "query": "label_values(nginx_http_response_count_total{job=\"nginx\",environment=\"$environment\"},instance)", "refId": "instance" }, "current": { "text": "All", "value": "$__all" }, "multi": true, "includeAll": true, "allValue": ".*", "refresh": 1 }
+  ] },
+  "panels": [
+    { "id": 91, "title": "Request duration quantiles", "type": "timeseries", "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" }, "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 }, "targets": [
+      { "refId": "A", "legendFormat": "p50", "expr": "histogram_quantile(0.5, sum by (le) (rate(nginx_http_response_time_seconds_hist_bucket{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])))" },
+      { "refId": "B", "legendFormat": "p95", "expr": "histogram_quantile(0.95, sum by (le) (rate(nginx_http_response_time_seconds_hist_bucket{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])))" },
+      { "refId": "C", "legendFormat": "p99", "expr": "histogram_quantile(0.99, sum by (le) (rate(nginx_http_response_time_seconds_hist_bucket{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])))" }
+    ] },
+    { "id": 92, "title": "Upstream duration quantiles", "type": "timeseries", "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" }, "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 }, "targets": [
+      { "refId": "A", "legendFormat": "p50", "expr": "histogram_quantile(0.5, sum by (le) (rate(nginx_http_upstream_time_seconds_hist_bucket{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])))" },
+      { "refId": "B", "legendFormat": "p95", "expr": "histogram_quantile(0.95, sum by (le) (rate(nginx_http_upstream_time_seconds_hist_bucket{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])))" },
+      { "refId": "C", "legendFormat": "p99", "expr": "histogram_quantile(0.99, sum by (le) (rate(nginx_http_upstream_time_seconds_hist_bucket{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])))" }
+    ] },
+    { "id": 93, "title": "Top request URLs", "type": "timeseries", "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" }, "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 }, "targets": [
+      { "refId": "A", "legendFormat": "{{request_uri}}", "expr": "topk(10, sum by (request_uri) (rate(nginx_http_response_count_total{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])) > 0)" }
+    ] },
+    { "id": 94, "title": "Top upstream request latency", "type": "timeseries", "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" }, "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 }, "targets": [
+      { "refId": "A", "legendFormat": "{{request_uri}}", "expr": "histogram_quantile(0.95, sum by (le, request_uri) (rate(nginx_http_upstream_time_seconds_hist_bucket{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval]))) and on (request_uri) topk(10, sum by (request_uri) (rate(nginx_http_response_count_total{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])) > 0)" }
+    ] },
+    { "id": 95, "title": "Error ratio by URL", "type": "timeseries", "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" }, "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 }, "targets": [
+      { "refId": "A", "legendFormat": "{{request_uri}}", "expr": "(sum by (request_uri) (rate(nginx_http_response_count_total{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status=~\"4..|5..\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])) / sum by (request_uri) (rate(nginx_http_response_count_total{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval]))) and on (request_uri) topk(10, sum by (request_uri) (rate(nginx_http_response_count_total{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])) > 0)" }
+    ] },
+    { "id": 96, "title": "Upstream time by URL", "type": "timeseries", "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" }, "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 }, "targets": [
+      { "refId": "A", "legendFormat": "{{request_uri}}", "expr": "(sum by (request_uri) (rate(nginx_http_upstream_time_seconds_hist_sum{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])) > 0) and on (request_uri) topk(10, sum by (request_uri) (rate(nginx_http_response_count_total{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])) > 0)" }
+    ] },
+    { "id": 97, "title": "Error codes by URL", "type": "timeseries", "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" }, "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 }, "targets": [
+      { "refId": "A", "legendFormat": "{{request_uri}} {{status}}", "expr": "(sum by (request_uri, status) (rate(nginx_http_response_count_total{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status=~\"4..|5..\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])) > 0) and on (request_uri) topk(10, sum by (request_uri) (rate(nginx_http_response_count_total{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])) > 0)" }
+    ] },
+    { "id": 98, "title": "Response size by URL", "type": "timeseries", "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" }, "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 }, "targets": [
+      { "refId": "A", "legendFormat": "{{request_uri}}", "expr": "(sum by (request_uri) (rate(nginx_http_response_size_bytes{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])) / sum by (request_uri) (rate(nginx_http_response_count_total{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval]))) and on (request_uri) topk(10, sum by (request_uri) (rate(nginx_http_response_count_total{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status!=\"404\",request_uri!~\"/ws|/api/_(health|version)\"}[$__rate_interval])) > 0)" }
+    ] },
+    { "id": 99, "title": "Top 404 URLs", "type": "timeseries", "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" }, "gridPos": { "h": 8, "w": 24, "x": 0, "y": 32 }, "targets": [
+      { "refId": "A", "legendFormat": "{{request_uri}}", "expr": "topk(20, sum by (request_uri) (increase(nginx_http_response_count_total{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\",status=\"404\"}[$__range])) > 0)" }
+    ] }
+  ]
+}

@@ -105,9 +105,11 @@ in
           disable_signup_without_invite = true;
           disable_user_create_org = true;
           enable_acme_cert_sync = true;
+          enable_integration_api = true;
         };
         acme.acme_json_path = acmeDestination;
         gerbil.clients_start_port = 21820;
+        server.integration_port = 3003;
       };
     };
 
@@ -153,6 +155,9 @@ in
 
     networking.firewall.allowedUDPPorts = [ 21820 ];
 
+    # Upstream denies all IPv4 TCP binds; allow only the patched loopback API port.
+    systemd.services.pangolin.serviceConfig.SocketBindAllow = [ "ipv4:tcp:3003" ];
+
     # Badger 1.7 is the plugin released for Pangolin 1.22.
     services.traefik.staticConfigOptions = {
       experimental.plugins.badger.version = lib.mkForce "v1.7.0";
@@ -162,8 +167,8 @@ in
       };
     };
 
-    # The upstream module defines integration routers even when the integration
-    # API is disabled, leaving them without a service and requesting an unused
+    # The integration API is private to IPv4 loopback (for SSH forwarding).
+    # Do not expose upstream's integration routers or request an unused
     # api.<base-domain> certificate.
     services.traefik.dynamicConfigOptions.http.routers = lib.mkForce {
       main-app-router-redirect = {

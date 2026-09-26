@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "machines": [
+    {"host":"hel1","environment":"banditlair","role":"collector","name":"hel1-osteoview-metrics","secretKey":"telemetry/clients/hel1"},
+    {"host":"backend1-staging","environment":"staging","role":"backend","name":"osteoview-backend1-staging-logs","secretKey":"telemetry/clients/backend1-staging"},
+    {"host":"backend2-staging","environment":"staging","role":"backend","name":"osteoview-backend2-staging-logs","secretKey":"telemetry/clients/backend2-staging"},
+    {"host":"db1-staging","environment":"staging","role":"db","name":"osteoview-db1-staging-logs","secretKey":"telemetry/clients/db1-staging"},
+    {"host":"db2-staging","environment":"staging","role":"db","name":"osteoview-db2-staging-logs","secretKey":"telemetry/clients/db2-staging"},
+    {"host":"db3-staging","environment":"staging","role":"db","name":"osteoview-db3-staging-logs","secretKey":"telemetry/clients/db3-staging"},
+    {"host":"backup1-staging","environment":"staging","role":"backup","name":"osteoview-backup1-staging-logs","secretKey":"telemetry/clients/backup1-staging"},
+    {"host":"bastion1-staging","environment":"staging","role":"bastion","name":"osteoview-bastion1-staging-logs","secretKey":"telemetry/clients/bastion1-staging"},
+    {"host":"backend1-production","environment":"production","role":"backend","name":"osteoview-backend1-production-logs","secretKey":"telemetry/clients/backend1-production"},
+    {"host":"backend2-production","environment":"production","role":"backend","name":"osteoview-backend2-production-logs","secretKey":"telemetry/clients/backend2-production"},
+    {"host":"db1-production","environment":"production","role":"db","name":"osteoview-db1-production-logs","secretKey":"telemetry/clients/db1-production"},
+    {"host":"db2-production","environment":"production","role":"db","name":"osteoview-db2-production-logs","secretKey":"telemetry/clients/db2-production"},
+    {"host":"db3-production","environment":"production","role":"db","name":"osteoview-db3-production-logs","secretKey":"telemetry/clients/db3-production"},
+    {"host":"backup1-production","environment":"production","role":"backup","name":"osteoview-backup1-production-logs","secretKey":"telemetry/clients/backup1-production"},
+    {"host":"bastion1-production","environment":"production","role":"bastion","name":"osteoview-bastion1-production-logs","secretKey":"telemetry/clients/bastion1-production"}
+  ]
+}
