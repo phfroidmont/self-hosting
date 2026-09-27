@@ -70,8 +70,10 @@ placeholder rather than the application. Connected clients resolve private
 addresses, and Newt terminates HTTPS at the site. Traefik obtains certificates
 through HTTP-01; a private ACME-state mirror lets Pangolin distribute them to Newt.
 
-Client split DNS covers the configured Foyer zones, `*.internal`, and
-`*.banditlair.com`. Pangolin answers resource aliases first; matching misses go
+Client split DNS covers the configured Foyer zones, `*.internal`, and the exact
+private application names `grafana.banditlair.com`, `monero.banditlair.com`,
+`uptime.banditlair.com`, and `telemetry.banditlair.com`.
+For matching queries, Pangolin answers resource aliases first; matching misses go
 through the private DNS resource to Unbound on `relay1` at `127.0.0.1:53`.
 Other queries use the client's normal resolver.
 
@@ -79,7 +81,12 @@ Unbound forwards `foyer.cloud`, `foyer.lu`, `lefoyer.lu`, and `internal` to
 `10.33.0.100`, with DNSSEC validation disabled for those internal zones. Other
 queries go to Quad9 with validation enabled. The client's upstream is the DNS
 resource's numeric tunnel IP, not loopback; it is database-assigned, not reserved.
-Matching DNS misses, including the gateway hostname, therefore depend on `relay1`.
+Matching DNS misses therefore depend on `relay1`. Keep `pangolin.banditlair.com`
+and `ws.banditlair.com` outside the split-DNS matches so control-server and WSS
+transport resolution use native-network DNS even when `relay1` is unreachable.
+Do not match `*.banditlair.com`: Pangolin CLI 0.15.1 has no negative-pattern
+exception to exempt these bootstrap hostnames. Add new private application names
+to the workstation's explicit match list when provisioning them.
 
 ## Resource naming
 
@@ -108,8 +115,8 @@ Group codes describe logical ownership, not access roles or physical location:
 
 Existing application URLs, including `grafana.banditlair.com`,
 `uptime.banditlair.com`, and `monero.banditlair.com`, remain unchanged. The gateway
-stays at `pangolin.banditlair.com`. Keep the existing `*.internal` and
-`*.banditlair.com` split-DNS coverage and the authoritative Foyer zones.
+stays at `pangolin.banditlair.com`. Keep `*.internal`, the authoritative Foyer
+zones, and the explicit private application names in split DNS as described above.
 
 An alias rename must preserve the blueprint key, resource ID, ports, and grants.
 Update deployment hostnames and workstation consumers together, retaining the
