@@ -160,6 +160,10 @@
         (system: deployLib:
           deployLib.deployChecks self.deploy
           // nixpkgs.lib.optionalAttrs (system == "x86_64-linux") {
+            grafana-backup = import ./tests/grafana-backup.nix {
+              inherit pkgs;
+              helConfiguration = self.nixosConfigurations.hel1;
+            };
             pangolin-native = import ./packages/pangolin/test.nix { inherit pkgs; };
             telemetry-client = import ./packages/pangolin/telemetry-client-test.nix { inherit pkgs; };
             telemetry-gateway = import ./packages/pangolin/telemetry-gateway-test.nix { inherit pkgs; };

@@ -294,6 +294,11 @@
         "- /nix/var/data/transmission/downloads"
         "- /nix/var/data/transmission/.incomplete"
         "- /nix/var/data/dokuwiki/*/data/locks"
+        "- /nix/var/data/grafana/data/grafana.db"
+        "- /nix/var/data/grafana/data/grafana.db-wal"
+        "- /nix/var/data/grafana/data/grafana.db-shm"
+        "- /nix/var/data/grafana/data/grafana.db-journal"
+        "- /nix/var/data/grafana/data/log"
       ];
       readWritePaths = [
         "/nix/var/data/murmur"
@@ -302,6 +307,8 @@
         "/run"
       ];
       preHook = ''
+        ${lib.getExe (pkgs.callPackage ../packages/grafana-backup { })} \
+          /nix/var/data/grafana/data/grafana.db /nix/var/data/backup/grafana.sqlite
         cp /var/lib/murmur/murmur.sqlite /nix/var/data/murmur/murmur.sqlite
         ${config.services.postgresql.package}/bin/pg_dump -U synapse synapse > /nix/var/data/postgresql/synapse.dmp
         ${config.services.postgresql.package}/bin/pg_dump -U nextcloud nextcloud > /nix/var/data/postgresql/nextcloud.dmp
@@ -327,6 +334,19 @@
         ${pkgs.systemd}/bin/systemctl start jellyfin.service
       '';
       startAt = "02:00";
+      restoreTestPaths = [
+        "nix/var/data/murmur/murmur.sqlite"
+        "nix/var/data/postgresql/forgejo.dmp"
+        "nix/var/data/backup/stb_mariadb.sql"
+        "nix/var/data/backup/grafana.sqlite"
+      ];
+      restoreTestScript = ''
+        snapshot="$restore_dir/nix/var/data/backup/grafana.sqlite"
+        integrity="$(${pkgs.sqlite}/bin/sqlite3 -readonly "$snapshot" 'PRAGMA quick_check;')"
+        test "$integrity" = ok
+        tables="$(${pkgs.sqlite}/bin/sqlite3 -readonly "$snapshot" "SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name IN ('user', 'dashboard', 'data_source');")"
+        test "$tables" = 3
+      '';
       sshKey = config.sops.secrets.borgSshKey.path;
     };
 
