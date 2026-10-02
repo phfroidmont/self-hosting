@@ -315,7 +315,6 @@
         ${config.services.postgresql.package}/bin/pg_dump -U roundcube roundcube > /nix/var/data/postgresql/roundcube.dmp
         ${config.services.postgresql.package}/bin/pg_dump -U immich immich > /nix/var/data/postgresql/immich.dmp
         ${config.services.postgresql.package}/bin/pg_dump -U forgejo forgejo > /nix/var/data/postgresql/forgejo.dmp
-        ${pkgs.systemd}/bin/systemctl start --wait stb-mariadb-dump.service
         ${pkgs.systemd}/bin/systemctl stop jellyfin.service
         ${pkgs.systemd}/bin/systemctl --machine=torrents stop transmission.service
         ${pkgs.systemd}/bin/systemctl --machine=torrents stop slskd.service
@@ -337,7 +336,8 @@
       restoreTestPaths = [
         "nix/var/data/murmur/murmur.sqlite"
         "nix/var/data/postgresql/forgejo.dmp"
-        "nix/var/data/backup/stb_mariadb.sql"
+        "nix/var/data/stb-archive/stb_mariadb.sql"
+        "nix/var/data/stb-archive/wordpress/wp-config.php"
         "nix/var/data/backup/grafana.sqlite"
       ];
       restoreTestScript = ''

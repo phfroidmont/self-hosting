@@ -59,7 +59,6 @@ in
       default = [
         "nix/var/data/murmur/murmur.sqlite"
         "nix/var/data/postgresql/forgejo.dmp"
-        "nix/var/data/backup/stb_mariadb.sql"
       ];
     };
 
