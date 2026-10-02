@@ -65,5 +65,5 @@ files/logs. Run `borgbackup-check-data.service` and
   were active afterwards; systemd reported no failed units and Monit's
   `failed-units` check returned `OK`.
 
-PostgreSQL collation-version warnings for roundcube, immich, and forgejo remain
-a separate maintenance issue.
+The PostgreSQL collation-version warnings observed during this rollout were
+subsequently resolved; see [PostgreSQL maintenance](postgresql-maintenance.md).
