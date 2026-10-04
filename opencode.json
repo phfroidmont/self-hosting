@@ -4,6 +4,9 @@
     "grafana": {
       "type": "local",
       "command": [
+        "nix",
+        "develop",
+        "--command",
         "./scripts/mcp-grafana.sh"
       ],
       "cwd": ".",
