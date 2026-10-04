@@ -77,6 +77,9 @@ in
                 type = "prometheus";
                 url = "http://127.0.0.1:${toString config.services.prometheus.port}";
                 isDefault = true;
+                # Prometheus' default scrape interval; Grafana otherwise assumes 15s
+                # and $__rate_interval windows end up holding a single sample.
+                jsonData.timeInterval = "1m";
               }
               {
                 name = "Loki";
