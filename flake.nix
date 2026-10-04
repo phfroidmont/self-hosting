@@ -48,6 +48,7 @@
           opentofu
           terraform-ls
           sops
+          mcp-grafana
           jq
           yq-go
           curl
