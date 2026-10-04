@@ -724,7 +724,7 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "max(scalar(max(patroni_xlog_location{environment=\"$environment\"})) - (patroni_xlog_replayed_location{environment=\"$environment\"} and on (host) patroni_replica{environment=\"$environment\"} == 1))",
+          "expr": "max(clamp_min(scalar(max(patroni_xlog_location{environment=\"$environment\"})) - (patroni_xlog_replayed_location{environment=\"$environment\"} and on (host) patroni_replica{environment=\"$environment\"} == 1), 0))",
           "legendFormat": "",
           "editorMode": "code",
           "range": false,
