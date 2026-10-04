@@ -20,6 +20,13 @@ in
       recommendedGzipSettings = true;
       recommendedProxySettings = true;
 
+      # Combined format plus the virtual host and timings, for per-site log metrics.
+      commonHttpConfig = ''
+        log_format main '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent '
+                        '"$http_referer" "$http_user_agent" "$server_name" $request_time $upstream_response_time';
+        access_log /var/log/nginx/access.log main;
+      '';
+
       appendHttpConfig = ''
         limit_req_zone $binary_remote_addr zone=perip:20m rate=20r/s;
         limit_conn_zone $binary_remote_addr zone=perip_conn:20m;

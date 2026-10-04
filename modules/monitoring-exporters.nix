@@ -19,7 +19,6 @@ in
         };
         dmarc = {
           enable = true;
-          debug = true;
           imap = {
             host = "mail.banditlair.com";
             username = "paultrial@banditlair.com";
@@ -53,12 +52,12 @@ in
       loki.source.journal "journal" {
         forward_to    = [loki.write.local.receiver]
         max_age       = "12h"
-        labels        = {job = "systemd-journal", host = "${config.networking.hostName}"}
+        labels        = {job = "systemd-journal", host = "${config.networking.hostName}", environment = "banditlair"}
         relabel_rules = loki.relabel.journal.rules
       }
 
       local.file_match "nginx" {
-        path_targets = [{"__path__" = "/var/log/nginx/*.log", job = "nginx", host = "${config.networking.hostName}"}]
+        path_targets = [{"__path__" = "/var/log/nginx/*.log", job = "nginx", host = "${config.networking.hostName}", environment = "banditlair"}]
       }
 
       loki.source.file "nginx" {

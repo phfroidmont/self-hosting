@@ -21,5 +21,7 @@ in
       };
     };
     services.jitsi-videobridge.openFirewall = true;
+    # The default "*syslog" string sends debug messages too.
+    services.prosody.log = ''{ info = "*syslog" }'';
   };
 }

@@ -2,6 +2,14 @@
 let
   cfg = config.custom.services.grafana;
   backendTelemetryHosts = builtins.filter (host: host.role == "backend") cfg.telemetryHosts;
+  localTarget = port: {
+    targets = [ "127.0.0.1:${toString port}" ];
+    labels = {
+      environment = "banditlair";
+      host = config.networking.hostName;
+      role = "hosting";
+    };
+  };
   telemetryTarget = port: host: {
     targets = [ "${host.host}-metrics.ov.internal:${toString port}" ];
     labels = {
@@ -96,42 +104,27 @@ in
           {
             job_name = "node";
             static_configs = [
-              {
-                targets = [
-                  "127.0.0.1:${toString config.services.prometheus.exporters.node.port}"
-                ];
-                labels = {
-                  environment = "banditlair";
-                  host = "hel1";
-                  role = "hosting";
-                };
-              }
+              (localTarget config.services.prometheus.exporters.node.port)
             ] ++ map (telemetryTarget 9100) cfg.telemetryHosts;
           }
           {
             job_name = "synapse";
             scrape_interval = "15s";
             metrics_path = "/_synapse/metrics";
-            static_configs = [{ targets = [ "127.0.0.1:9000" ]; }];
+            static_configs = [ (localTarget 9000) ];
           }
           {
             job_name = "dmarc";
             scrape_interval = "15s";
-            static_configs = [
-              {
-                targets = [
-                  "127.0.0.1:${toString config.services.prometheus.exporters.dmarc.port}"
-                ];
-              }
-            ];
+            static_configs = [ (localTarget config.services.prometheus.exporters.dmarc.port) ];
           }
           {
             job_name = "prometheus";
-            static_configs = [{ targets = [ "127.0.0.1:9090" ]; }];
+            static_configs = [ (localTarget 9090) ];
           }
           {
             job_name = "loki";
-            static_configs = [{ targets = [ "127.0.0.1:3100" ]; }];
+            static_configs = [ (localTarget 3100) ];
           }
         ] ++ lib.optionals (backendTelemetryHosts != [ ]) [
           {
@@ -206,6 +199,8 @@ in
             http_listen_address = "127.0.0.1";
             http_listen_port = 3100;
             grpc_listen_address = "127.0.0.1";
+            # Info logs every query, including each alert rule evaluation.
+            log_level = "warn";
           };
           # The scheduler must advertise the frontend's loopback gRPC listener,
           # not the container IP chosen by automatic interface discovery.
