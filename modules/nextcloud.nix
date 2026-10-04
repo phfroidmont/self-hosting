@@ -75,6 +75,7 @@ in
         overwriteProtocol = "https";
         default_phone_region = "BE";
         maintenance_window_start = 1;
+        serverid = 1;
         trusted_domains = [ "cloud.froidmont.solutions" ];
       };
 
