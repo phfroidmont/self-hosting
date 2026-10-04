@@ -1,24 +1,37 @@
-{ pkgs }:
+{ pkgs, helConfiguration }:
 let
-  nodes = ../../modules/dashboards/nodes.json;
-  requests = ../../modules/dashboards/request-handling-performance.json;
+  providers = helConfiguration.config.services.grafana.provision.dashboards.settings.providers;
+  environments = {
+    banditlair = "banditlair";
+    osteoview-production = "production";
+    osteoview-staging = "staging";
+  };
+  checkFolder = provider: ''
+    check ${provider.folderUid} ${environments.${provider.folderUid}} ${provider.options.path}
+  '';
 in
+assert map (provider: provider.folderUid) providers == builtins.attrNames environments;
 pkgs.runCommand "telemetry-dashboards-test" { nativeBuildInputs = [ pkgs.jq ]; } ''
   set -eu
-  test "$(jq -r .uid ${nodes})" = xfpJB9FGz
-  test "$(jq -r .uid ${requests})" = 4GFbkOsZk
-  jq -se 'map(.uid) | length == (unique | length)' ${../../modules/dashboards}/*.json >/dev/null
-  jq -e '.templating.list | map(.name) | index("environment") and index("node")' ${nodes} >/dev/null
-  jq -e '.templating.list[] | select(.name == "environment") | .includeAll and .allValue == ".*" and .type == "custom" and .query == "banditlair,staging,production"' ${nodes} >/dev/null
-  jq -e '.templating.list[] | select(.name == "node") | .includeAll and ((.allValue // "") != ".*") and (.query.query == "label_values(node_uname_info{environment=~\"$environment\",job=~\"$job\",nodename=~\"$hostname\"},instance)")' ${nodes} >/dev/null
-  jq -e '[.panels[].targets[]?.expr | select(contains("$node"))] | length == 60 and all(.[]; contains("instance=~\"$node\"") or contains("instance=~\u0027$node\u0027"))' ${nodes} >/dev/null
-  jq -e '[.panels[].targets[]? | .expr | select(contains("origin_prometheus"))] | length == 0' ${nodes} >/dev/null
-  jq -e '[.panels[].targets[]? | .expr | select(contains("environment=~"))] | length >= 20' ${nodes} >/dev/null
-  jq -e '.templating.list | map(.name) == ["environment", "instance"]' ${requests} >/dev/null
-  jq -e '.templating.list[] | select(.name == "environment") | (.multi == false and .includeAll == false)' ${requests} >/dev/null
-  jq -e '[.panels[].targets[].expr | select(contains("job=\"nginx\"") and contains("environment=\"$environment\"") and contains("instance=~\"$instance\"") and (contains("$host") | not))] | length == 13' ${requests} >/dev/null
-  jq -e '[.panels[].targets[].expr | scan("\\{[^{}]+\\}")] | length == 20 and all(.[]; startswith("{job=\"nginx\",environment=\"$environment\",instance=~\"$instance\","))' ${requests} >/dev/null
-  jq -e '[.panels[].targets[].expr | select(contains("nginx_http_response_count_total")) | select(contains("job=\"nginx\"") | not)] | length == 0' ${requests} >/dev/null
-  jq -e '.panels | length == 9' ${requests} >/dev/null
+  check() {
+    folder=$1 environment=$2 directory=$3
+    for dashboard in "$directory"/*.json; do
+      if ! jq -e --arg environment "$environment" '
+        (.uid | startswith($environment + "-") and length <= 40)
+        and .tags == [$environment]
+        and ([.templating.list[] | select(.name == "environment")]
+          | length == 1 and .[0].type == "constant" and .[0].query == $environment)
+        and (tostring | contains("''${DS_") | not)
+        and ([.. | objects | .datasource? | objects | .uid]
+          - ["PBFA97CFB590B2093", "P8E80F9AEF21F6940", "grafana", "-- Grafana --"] | length == 0)
+      ' "$dashboard" >/dev/null; then
+        echo "Invalid dashboard $dashboard in folder $folder" >&2
+        exit 1
+      fi
+    done
+    cat "$directory"/*.json >> all.json
+  }
+  ${pkgs.lib.concatMapStrings checkFolder providers}
+  jq -se 'map(.uid) | length == 23 and length == (unique | length)' all.json >/dev/null
   touch "$out"
 ''

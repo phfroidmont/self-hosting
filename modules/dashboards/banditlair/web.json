@@ -1,0 +1,1100 @@
+{
+  "uid": "web",
+  "title": "Web traffic",
+  "description": "hel1 nginx access logs per virtual host.",
+  "tags": [],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "schemaVersion": 41,
+  "version": 1,
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "refresh": "1m",
+  "fiscalYearStartMonth": 0,
+  "liveNow": false,
+  "links": [],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "templating": {
+    "list": [
+      {
+        "type": "constant",
+        "name": "environment",
+        "label": "Environment",
+        "hide": 2,
+        "query": "banditlair",
+        "current": {
+          "text": "banditlair",
+          "value": "banditlair"
+        },
+        "skipUrlSync": true
+      },
+      {
+        "type": "textbox",
+        "name": "vhost",
+        "label": "Virtual host (regex)",
+        "query": ".*",
+        "hide": 0,
+        "current": {
+          "text": ".*",
+          "value": ".*"
+        },
+        "options": []
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "text",
+      "title": "",
+      "options": {
+        "mode": "markdown",
+        "content": "Built from nginx access logs. The virtual host and timings are only logged since the log format change, so older lines are ignored."
+      },
+      "id": 1,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 2
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Requests",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "sum(count_over_time({host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" [$__range]))",
+          "legendFormat": "",
+          "editorMode": "code",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "wideLayout": true,
+        "showPercentChange": false
+      },
+      "id": 2,
+      "gridPos": {
+        "x": 0,
+        "y": 2,
+        "w": 6,
+        "h": 4
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Server errors (5xx)",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "sum(count_over_time({host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" | status >= 500 [$__range])) / sum(count_over_time({host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" [$__range]))",
+          "legendFormat": "",
+          "editorMode": "code",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "percentunit",
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.01
+              },
+              {
+                "color": "red",
+                "value": 0.05
+              }
+            ]
+          },
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "wideLayout": true,
+        "showPercentChange": false
+      },
+      "id": 3,
+      "gridPos": {
+        "x": 6,
+        "y": 2,
+        "w": 6,
+        "h": 4
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Data sent",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "sum(sum_over_time({host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" | unwrap bytes [$__range]))",
+          "legendFormat": "",
+          "editorMode": "code",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "bytes",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "wideLayout": true,
+        "showPercentChange": false
+      },
+      "id": 4,
+      "gridPos": {
+        "x": 12,
+        "y": 2,
+        "w": 6,
+        "h": 4
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Distinct clients",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "count(sum by (ip) (count_over_time({host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" [$__range])))",
+          "legendFormat": "",
+          "editorMode": "code",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "wideLayout": true,
+        "showPercentChange": false
+      },
+      "id": 5,
+      "gridPos": {
+        "x": 18,
+        "y": 2,
+        "w": 6,
+        "h": 4
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Requests per second by virtual host (top 10)",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "topk(10, sum by (vhost) (rate({host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" [$__auto])))",
+          "legendFormat": "{{vhost}}",
+          "editorMode": "code",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "reqps",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "pointSize": 6,
+            "lineWidth": 1,
+            "fillOpacity": 30,
+            "gradientMode": "none",
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "barAlignment": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "id": 6,
+      "gridPos": {
+        "x": 0,
+        "y": 6,
+        "w": 12,
+        "h": 9
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Responses by status class",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "sum by (class) (rate({host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" | label_format class=`{{ substr 0 1 .status }}xx` [$__auto]))",
+          "legendFormat": "{{class}}",
+          "editorMode": "code",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "reqps",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "pointSize": 6,
+            "lineWidth": 1,
+            "fillOpacity": 30,
+            "gradientMode": "none",
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "barAlignment": 0
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "5xx"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "4xx"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "2xx"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "3xx"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "blue"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "id": 7,
+      "gridPos": {
+        "x": 12,
+        "y": 6,
+        "w": 12,
+        "h": 9
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "95th percentile request time by virtual host (top 10)",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "topk(10, quantile_over_time(0.95, {host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" | unwrap request_time | __error__=\"\" [$__auto]) by (vhost))",
+          "legendFormat": "{{vhost}}",
+          "editorMode": "code",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "pointSize": 6,
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "barAlignment": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "id": 8,
+      "gridPos": {
+        "x": 0,
+        "y": 15,
+        "w": 12,
+        "h": 9
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Server errors by virtual host",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "sum by (vhost, status) (count_over_time({host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" | status >= 500 [$__auto]))",
+          "legendFormat": "{{vhost}} {{status}}",
+          "editorMode": "code",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "pointSize": 6,
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "barAlignment": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "sum"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "id": 9,
+      "gridPos": {
+        "x": 12,
+        "y": 15,
+        "w": 12,
+        "h": 9
+      }
+    },
+    {
+      "type": "table",
+      "title": "Virtual hosts (time range)",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "sum by (vhost) (count_over_time({host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" [$__range]))",
+          "legendFormat": "",
+          "editorMode": "code",
+          "queryType": "instant",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "sum by (vhost) (count_over_time({host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" | status >= 400 | status < 500 [$__range]))",
+          "legendFormat": "",
+          "editorMode": "code",
+          "queryType": "instant",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "sum by (vhost) (count_over_time({host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" | status >= 500 [$__range]))",
+          "legendFormat": "",
+          "editorMode": "code",
+          "queryType": "instant",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "quantile_over_time(0.95, {host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" | unwrap request_time | __error__=\"\" [$__range]) by (vhost)",
+          "legendFormat": "",
+          "editorMode": "code",
+          "queryType": "instant",
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "sum by (vhost) (sum_over_time({host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" | unwrap bytes | __error__=\"\" [$__range]))",
+          "legendFormat": "",
+          "editorMode": "code",
+          "queryType": "instant",
+          "refId": "E"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "p95 time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sent"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "5xx"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ]
+        },
+        "sortBy": [
+          {
+            "displayName": "Requests",
+            "desc": true
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "renameByName": {
+              "vhost": "Virtual host",
+              "Value #A": "Requests",
+              "Value #B": "4xx",
+              "Value #C": "5xx",
+              "Value #D": "p95 time",
+              "Value #E": "Sent"
+            },
+            "indexByName": {}
+          }
+        }
+      ],
+      "id": 10,
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 24,
+        "h": 8
+      }
+    },
+    {
+      "type": "table",
+      "title": "Top 404 paths (time range)",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "topk(20, sum by (vhost, uri) (count_over_time({host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" | status = 404 [$__range])))",
+          "legendFormat": "",
+          "editorMode": "code",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ]
+        },
+        "sortBy": [
+          {
+            "displayName": "Requests",
+            "desc": true
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "renameByName": {
+              "vhost": "Virtual host",
+              "uri": "Path",
+              "Value #A": "Requests"
+            }
+          }
+        }
+      ],
+      "id": 11,
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 14,
+        "h": 10
+      }
+    },
+    {
+      "type": "table",
+      "title": "Top clients (time range)",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "topk(20, sum by (ip) (count_over_time({host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/access.log\"} | pattern `<ip> - <_> [<_>] \"<method> <uri> <_>\" <status> <bytes> \"<_>\" \"<_>\" \"<vhost>\" <request_time> <_>` | vhost != \"\" | vhost =~ \"$vhost\" [$__range])))",
+          "legendFormat": "",
+          "editorMode": "code",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false,
+          "reducer": [
+            "sum"
+          ]
+        },
+        "sortBy": [
+          {
+            "displayName": "Requests",
+            "desc": true
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "renameByName": {
+              "ip": "Client",
+              "Value #A": "Requests"
+            }
+          }
+        }
+      ],
+      "id": 12,
+      "gridPos": {
+        "x": 14,
+        "y": 32,
+        "w": 10,
+        "h": 10
+      }
+    },
+    {
+      "type": "logs",
+      "title": "nginx errors",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "{host=\"hel1\", job=\"nginx\", filename=\"/var/log/nginx/error.log\"} |~ \"\\\\[(error|crit|alert|emerg)\\\\]\"",
+          "legendFormat": "",
+          "editorMode": "code",
+          "queryType": "range",
+          "maxLines": 200,
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "showLabels": false,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "enableInfiniteScrolling": false,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
+      },
+      "id": 13,
+      "gridPos": {
+        "x": 0,
+        "y": 42,
+        "w": 24,
+        "h": 10
+      }
+    }
+  ]
+}

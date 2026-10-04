@@ -36,10 +36,14 @@ execution independently for staging and production; it refuses premature cutover
 - Grafana: `https://grafana.banditlair.com/`, through the existing private access.
 - Preserved datasource UIDs: Prometheus `PBFA97CFB590B2093`, Loki
   `P8E80F9AEF21F6940`.
-- Nodes dashboard UID `xfpJB9FGz`; Request Handling Performance UID `4GFbkOsZk`.
-  Environment/instance selection separates the fleets. The new request dashboard
-  is provisioned in Grafana's `dashboard.grafana.app` resource table, not the
-  legacy SQL `dashboard` table.
+- Dashboards are provisioned into the folders `Banditlair`, `OsteoView Production`
+  and `OsteoView Staging` (`modules/grafana.nix`). Templates under
+  `modules/dashboards/common` and `modules/dashboards/osteoview` are copied into
+  each environment's folder with the environment fixed and the UID prefixed
+  (for example `production-overview`); `modules/dashboards/banditlair` holds the
+  hel1-only dashboards. Provisioned dashboards are read-only: edit a copy in
+  Grafana, export its JSON, restore the template's unprefixed `uid`, and replace
+  the template file. Nix sets the tags, folder links and environment itself.
 - Metrics retain 180 days; logs retain 365 days.
 - Existing disk, RAM, CPU and failed-unit alerts are centralized, with additional
   expected-target and journal-heartbeat checks. All 41 central Grafana alert-rule

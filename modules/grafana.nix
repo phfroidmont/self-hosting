@@ -10,6 +10,41 @@ let
       role = "hosting";
     };
   };
+  # Each folder gets its own copy of the shared dashboards, with the hidden
+  # environment variable fixed and an environment-prefixed UID.
+  dashboardFolders = [
+    { title = "Banditlair"; uid = "banditlair"; environment = "banditlair"; directories = [ ./dashboards/common ./dashboards/banditlair ]; }
+    { title = "OsteoView Production"; uid = "osteoview-production"; environment = "production"; directories = [ ./dashboards/common ./dashboards/osteoview ]; }
+    { title = "OsteoView Staging"; uid = "osteoview-staging"; environment = "staging"; directories = [ ./dashboards/common ./dashboards/osteoview ]; }
+  ];
+  dashboardFor = folder: file:
+    let
+      dashboard = lib.importJSON file;
+      setEnvironment = variable:
+        if variable.name == "environment"
+        then variable // { query = folder.environment; current = { text = folder.environment; value = folder.environment; }; }
+        else variable;
+    in
+    pkgs.writeText (baseNameOf file) (builtins.toJSON (dashboard // {
+      uid = "${folder.environment}-${dashboard.uid}";
+      tags = [ folder.environment ];
+      links = [{
+        title = "${folder.title} dashboards";
+        type = "dashboards";
+        tags = [ folder.environment ];
+        asDropdown = true;
+        includeVars = false;
+        keepTime = true;
+      }];
+      templating.list = map setEnvironment dashboard.templating.list;
+    }));
+  dashboardDirectory = folder: pkgs.runCommand "grafana-dashboards-${folder.uid}" { } (''
+    mkdir "$out"
+  '' + lib.concatMapStrings
+    (file: ''
+      cp ${dashboardFor folder file} "$out/${baseNameOf file}"
+    '')
+    (lib.concatMap lib.filesystem.listFilesRecursive folder.directories));
   telemetryTarget = port: host: {
     targets = [ "${host.host}-metrics.ov.internal:${toString port}" ];
     labels = {
@@ -90,12 +125,14 @@ in
               }
             ];
           };
-          dashboards.settings.providers = [
-            {
-              name = "Config";
-              options.path = ./dashboards;
-            }
-          ];
+          dashboards.settings.providers = map
+            (folder: {
+              name = folder.title;
+              folder = folder.title;
+              folderUid = folder.uid;
+              options.path = dashboardDirectory folder;
+            })
+            dashboardFolders;
         };
       };
 

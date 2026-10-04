@@ -174,7 +174,10 @@
               helConfiguration = self.nixosConfigurations.hel1;
             };
             telemetry-alerting = import ./packages/pangolin/telemetry-alerting-test.nix { inherit pkgs; };
-            telemetry-dashboards = import ./packages/pangolin/telemetry-dashboards-test.nix { inherit pkgs; };
+            telemetry-dashboards = import ./packages/pangolin/telemetry-dashboards-test.nix {
+              inherit pkgs;
+              helConfiguration = self.nixosConfigurations.hel1;
+            };
             telemetry-watchdog = import ./packages/telemetry-watchdog/test.nix { inherit pkgs; };
             telemetry-alert-secrets = pkgs.runCommand "telemetry-alert-secret-tests"
               {

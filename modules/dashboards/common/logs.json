@@ -1,0 +1,396 @@
+{
+  "uid": "logs",
+  "title": "Logs",
+  "description": "Journal and nginx logs per host and unit.",
+  "tags": [],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "schemaVersion": 41,
+  "version": 1,
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "refresh": "1m",
+  "fiscalYearStartMonth": 0,
+  "liveNow": false,
+  "links": [],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "templating": {
+    "list": [
+      {
+        "type": "constant",
+        "name": "environment",
+        "label": "Environment",
+        "hide": 2,
+        "query": "production",
+        "current": {
+          "text": "production",
+          "value": "production"
+        },
+        "skipUrlSync": true
+      },
+      {
+        "type": "query",
+        "name": "host",
+        "label": "Host",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PBFA97CFB590B2093"
+        },
+        "query": {
+          "query": "label_values(node_uname_info{environment=\"$environment\"}, host)",
+          "refId": "host-query"
+        },
+        "definition": "label_values(node_uname_info{environment=\"$environment\"}, host)",
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "hide": 0,
+        "regex": "",
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "options": []
+      },
+      {
+        "type": "query",
+        "name": "unit",
+        "label": "Unit",
+        "datasource": {
+          "type": "loki",
+          "uid": "P8E80F9AEF21F6940"
+        },
+        "query": {
+          "type": 1,
+          "label": "unit",
+          "stream": "{host=~\"$host\"}",
+          "refId": "unit-query"
+        },
+        "definition": "label_values({host=~\"$host\"}, unit)",
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "hide": 0,
+        "regex": "",
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "options": []
+      },
+      {
+        "type": "textbox",
+        "name": "search",
+        "label": "Search (regex)",
+        "query": "",
+        "hide": 0,
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "options": []
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Log lines by unit (top 10)",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "topk(10, sum by (unit) (label_replace(count_over_time({host=~\"$host\", unit=~\"$unit\"} |~ \"(?i)$search\" [$__auto]), \"unit\", \"nginx $1\", \"filename\", \"/var/log/nginx/(.*)\")))",
+          "legendFormat": "{{unit}}",
+          "editorMode": "code",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "pointSize": 6,
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "barAlignment": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "sum"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "description": "nginx log files have no systemd unit and appear as \"nginx access.log\" / \"nginx error.log\".",
+      "id": 1,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 16,
+        "h": 8
+      }
+    },
+    {
+      "type": "bargauge",
+      "title": "Top log producers (time range)",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "topk(15, sum by (unit) (label_replace(count_over_time({host=~\"$host\", unit=~\"$unit\"} |~ \"(?i)$search\" [$__range]), \"unit\", \"nginx $1\", \"filename\", \"/var/log/nginx/(.*)\")))",
+          "legendFormat": "{{unit}}",
+          "editorMode": "code",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "basic",
+        "valueMode": "color",
+        "namePlacement": "left",
+        "showUnfilled": true,
+        "sizing": "auto",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "maxVizHeight": 300,
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": true,
+          "limit": 25
+        }
+      },
+      "transformations": [
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "field": "Value #A",
+                "desc": true
+              }
+            ]
+          }
+        }
+      ],
+      "id": 2,
+      "gridPos": {
+        "x": 16,
+        "y": 0,
+        "w": 8,
+        "h": 8
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Lines with error keywords",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "topk(10, sum by (unit) (label_replace(count_over_time({host=~\"$host\", unit=~\"$unit\"} |~ \"(?i)$search\" |~ \"(?i)(error|fatal|panic|critical|exception)\" [$__auto]), \"unit\", \"nginx $1\", \"filename\", \"/var/log/nginx/(.*)\")))",
+          "legendFormat": "{{unit}}",
+          "editorMode": "code",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "short",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "pointSize": 6,
+            "lineWidth": 1,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "barAlignment": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "sum"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "description": "Keyword match on error, fatal, panic, critical and exception; a quick hint, not a log level.",
+      "id": 3,
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 24,
+        "h": 7
+      }
+    },
+    {
+      "type": "logs",
+      "title": "Logs",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "{host=~\"$host\", unit=~\"$unit\"} |~ \"(?i)$search\" | line_format `{{ regexReplaceAll \"\\x1b\\\\[[0-9;]*m\" __line__ \"\" }}`",
+          "legendFormat": "",
+          "editorMode": "code",
+          "queryType": "range",
+          "maxLines": 500,
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "showLabels": false,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "enableInfiniteScrolling": false,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
+      },
+      "id": 4,
+      "gridPos": {
+        "x": 0,
+        "y": 15,
+        "w": 24,
+        "h": 18
+      }
+    }
+  ]
+}
