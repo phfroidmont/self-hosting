@@ -1,6 +1,7 @@
 { config
 , lib
 , pkgs
+, pkgs-unstable
 , ...
 }:
 let
@@ -59,7 +60,18 @@ in
       https = true;
       maxUploadSize = "1G";
       configureRedis = true;
-      # notify_push.enable = true;
+      # extraApps (added by notify_push) would otherwise disable the app store
+      appstoreEnable = true;
+
+      notify_push = {
+        enable = true;
+        # notify_push:setup fails unless binary and app share a minor version.
+        # 26.05 ships 1.3 but the instance already runs app 1.4 from the store.
+        package = pkgs-unstable.nextcloud-notify_push;
+        # Lets the push server reach Nextcloud via localhost as a trusted proxy
+        bendDomainToLocalhost = true;
+      };
+      extraApps.notify_push = lib.mkForce pkgs-unstable.nextcloud33Packages.apps.notify_push;
 
       config = {
         dbtype = "pgsql";
