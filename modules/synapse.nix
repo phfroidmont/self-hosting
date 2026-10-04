@@ -6,11 +6,10 @@
 }:
 let
   cfg = config.custom.services.synapse;
-  fqdn =
-    let
-      join = hostName: domain: hostName + lib.optionalString (domain != null) ".${domain}";
-    in
-    join "matrix" config.networking.domain;
+  join = hostName: domain: hostName + lib.optionalString (domain != null) ".${domain}";
+  fqdn = join "matrix" config.networking.domain;
+  rtcFqdn = join "matrix-rtc" config.networking.domain;
+  livekitServiceUrl = "https://${rtcFqdn}/livekit/jwt";
   createMatrixUser = pkgs.writeShellScriptBin "create-matrix-user" ''
     set -euo pipefail
     export PATH="${pkgs.python3}/bin:${pkgs.curl}/bin:$PATH"
@@ -90,6 +89,12 @@ in
                 "m.identity_server" = {
                   "base_url" = "https://vector.im";
                 };
+                "org.matrix.msc4143.rtc_foci" = [
+                  {
+                    "type" = "livekit";
+                    "livekit_service_url" = livekitServiceUrl;
+                  }
+                ];
               };
             in
             # ACAO required to allow element-web on any URL to request this json file
@@ -105,6 +110,11 @@ in
           enableACME = true;
           forceSSL = true;
 
+          # Match Synapse's default max_upload_size
+          extraConfig = ''
+            client_max_body_size 50M;
+          '';
+
           # Or do a redirect instead of the 404, or whatever is appropriate for you.
           # But do not put a Matrix Web client here! See the Element web section below.
           locations."/".extraConfig = ''
@@ -112,8 +122,32 @@ in
           '';
 
           # forward all Matrix API calls to the synapse Matrix homeserver
-          locations."~ ^(/_matrix|/health)" = {
+          locations."~ ^(/_matrix|/_synapse/client|/health)" = {
             proxyPass = "http://[::1]:8008"; # without a trailing /
+          };
+        };
+
+        # MatrixRTC backend used by Element Call (Element X, Element Web)
+        ${rtcFqdn} = {
+          enableACME = true;
+          forceSSL = true;
+
+          locations."/".extraConfig = ''
+            return 404;
+          '';
+
+          locations."^~ /livekit/jwt/" = {
+            proxyPass = "http://127.0.0.1:${toString config.services.lk-jwt-service.port}/";
+          };
+
+          locations."^~ /livekit/sfu/" = {
+            proxyPass = "http://127.0.0.1:${toString config.services.livekit.settings.port}/";
+            proxyWebsockets = true;
+            extraConfig = ''
+              proxy_send_timeout 120s;
+              proxy_read_timeout 120s;
+              proxy_buffering off;
+            '';
           };
         };
       };
@@ -144,6 +178,13 @@ in
           "coturn"
         ];
       };
+      livekitKeys = {
+        key = "synapse/livekit_keys";
+        restartUnits = [
+          "livekit.service"
+          "lk-jwt-service.service"
+        ];
+      };
     };
 
     systemd.services.matrix-synapse-setup = {
@@ -154,7 +195,7 @@ in
         install -m 600 ${synapseDbConfig} /run/synapse/synapse-db-config.yaml
         ${pkgs.replace-secret}/bin/replace-secret 'SYNAPSE_DB_PASSWORD' '${config.sops.secrets.synapseDbPassword.path}' /run/synapse/synapse-db-config.yaml
         ${pkgs.replace-secret}/bin/replace-secret 'SMTP_PASSWORD' '${config.sops.secrets.noreplySmtpPassword.path}' /run/synapse/synapse-db-config.yaml
-        ${pkgs.replace-secret}/bin/replace-secret 'MACAROON_SECRET_KEY' '${config.sops.secrets.noreplySmtpPassword.path}' /run/synapse/synapse-db-config.yaml
+        ${pkgs.replace-secret}/bin/replace-secret 'MACAROON_SECRET_KEY' '${config.sops.secrets.macaroonSecretKey.path}' /run/synapse/synapse-db-config.yaml
         ${pkgs.replace-secret}/bin/replace-secret 'TURN_SHARED_SECRET' '${config.sops.secrets.turnSharedSecret.path}' /run/synapse/synapse-db-config.yaml
       '';
 
@@ -179,6 +220,7 @@ in
       enable = true;
       settings = {
         server_name = config.networking.domain;
+        public_baseurl = "https://${fqdn}/";
 
         enable_metrics = true;
 
@@ -204,7 +246,7 @@ in
           }
           {
             port = 9000;
-            bind_addresses = [ "0.0.0.0" ];
+            bind_addresses = [ "127.0.0.1" ];
             type = "metrics";
             tls = false;
             resources = [ ];
@@ -219,14 +261,64 @@ in
         };
 
         turn_uris = [
-          "turn:${realm}:3478?transport=udp"
-          "turn:${realm}:3478?transport=tcp"
+          "turn:${realm}:${toString listening-port}?transport=udp"
+          "turn:${realm}:${toString listening-port}?transport=tcp"
+          "turns:${realm}:${toString tls-listening-port}?transport=tcp"
         ];
         turn_user_lifetime = "1h";
+
+        # MatrixRTC (Element Call) requirements, see
+        # https://github.com/element-hq/element-call/blob/livekit/docs/self_hosting.md
+        experimental_features = {
+          msc4143_enabled = true;
+          msc4222_enabled = true;
+        };
+        max_event_delay_duration = "24h";
+        rc_message = {
+          per_second = 0.5;
+          burst_count = 30;
+        };
+        rc_delayed_event_mgmt = {
+          per_second = 1;
+          burst_count = 20;
+        };
+        # Only livekit_service_url: the nixpkgs lk-jwt-service does not support
+        # the application service mode required by the newer `url` transport.
+        matrix_rtc.transports = [
+          {
+            type = "livekit";
+            livekit_service_url = livekitServiceUrl;
+          }
+        ];
       };
       dataDir = "/nix/var/data/matrix-synapse";
       extraConfigFiles = [ "/run/synapse/synapse-db-config.yaml" ];
     };
+
+    services.livekit = {
+      enable = true;
+      keyFile = config.sops.secrets.livekitKeys.path;
+      settings = {
+        # Room creation is gated by lk-jwt-service
+        room.auto_create = false;
+        rtc = {
+          tcp_port = 7881;
+          port_range_start = 50100;
+          port_range_end = 50300;
+        };
+      };
+    };
+
+    services.lk-jwt-service = {
+      enable = true;
+      # 8080 is used by jitsi-videobridge
+      port = 8089;
+      livekitUrl = "wss://${rtcFqdn}/livekit/sfu";
+      keyFile = config.sops.secrets.livekitKeys.path;
+    };
+
+    systemd.services.lk-jwt-service.environment.LIVEKIT_FULL_ACCESS_HOMESERVERS =
+      config.services.matrix-synapse.settings.server_name;
 
     services.coturn = rec {
       enable = true;
@@ -271,18 +363,26 @@ in
 
     networking.firewall =
       let
-        range = with config.services.coturn; [
-          {
-            from = min-port;
-            to = max-port;
-          }
-        ];
+        coturn = config.services.coturn;
+        livekitRtc = config.services.livekit.settings.rtc;
       in
       {
-        allowedUDPPortRanges = range;
-        allowedUDPPorts = [ 3478 ];
-        allowedTCPPortRanges = range;
-        allowedTCPPorts = [ 3478 ];
+        allowedUDPPortRanges = [
+          {
+            from = coturn.min-port;
+            to = coturn.max-port;
+          }
+          {
+            from = livekitRtc.port_range_start;
+            to = livekitRtc.port_range_end;
+          }
+        ];
+        allowedUDPPorts = [ coturn.listening-port ];
+        allowedTCPPorts = [
+          coturn.listening-port
+          coturn.tls-listening-port
+          livekitRtc.tcp_port
+        ];
       };
 
     security.acme.certs.${config.services.coturn.realm} = {
