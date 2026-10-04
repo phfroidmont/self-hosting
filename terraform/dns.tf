@@ -242,13 +242,6 @@ resource "hcloud_zone_rrset" "matrix_a" {
   ttl     = 600
 }
 
-resource "hcloud_zone_rrset" "matrix_srv" {
-  zone    = data.hcloud_zone.banditlair_zone.name
-  name    = "_matrix._tcp"
-  records = [{ value = "12 10 443 matrix.banditlair.com." }]
-  type    = "SRV"
-}
-
 resource "hcloud_zone_rrset" "coturn_a" {
   zone    = data.hcloud_zone.banditlair_zone.name
   name    = "turn"

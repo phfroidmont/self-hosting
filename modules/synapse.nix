@@ -86,9 +86,6 @@ in
                 "m.homeserver" = {
                   "base_url" = "https://${fqdn}";
                 };
-                "m.identity_server" = {
-                  "base_url" = "https://vector.im";
-                };
                 "org.matrix.msc4143.rtc_foci" = [
                   {
                     "type" = "livekit";
