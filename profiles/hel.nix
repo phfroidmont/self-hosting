@@ -237,8 +237,16 @@
   services.openssh = {
     # CI, Borg and Nix clients still need public SSH; root uses Newt's loopback path.
     openFirewall = true;
-    settings.PermitRootLogin = lib.mkForce "no";
+    settings = {
+      PermitRootLogin = lib.mkForce "no";
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
+    };
+    # Brute-force bursts were filling the unauthenticated slots and dropping Borg clients.
     extraConfig = ''
+      MaxStartups 30:30:100
+      PerSourceMaxStartups 3
+      LoginGraceTime 30
       Match User root Address 127.0.0.1,::1
         PermitRootLogin prohibit-password
       Match all
