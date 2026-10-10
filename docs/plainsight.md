@@ -112,8 +112,8 @@ accepted its deploy key for writing (`git push --dry-run`). Health returned
 `200` on loopback and through `plainsight.banditlair.com` with a valid
 certificate, and the LiveView connected in a browser through the private
 domain. No unit failed. The first snapshot left stray `-wal`/`-shm` files beside
-its copies, fixed afterwards; that fix and `Type=exec` reach `hel1` with the next
-deployment.
+its copies; the fix, with `Type=exec`, went out by plain deploy-rs, which
+restarted only PlainSight, and the next snapshot left just the three databases.
 
 ## Backups and rollback
 
