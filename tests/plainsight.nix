@@ -117,5 +117,9 @@ pkgs.testers.runNixOSTest {
             "test \"$(sqlite3 -readonly /nix/var/data/plainsight/b/upgrades/*/sessions.sqlite 'PRAGMA quick_check;')\" = ok"
         )
         machine.succeed("curl --fail --silent http://127.0.0.1:4011/_health/ready")
+
+    with subtest("a stopped instance is inactive, not failed"):
+        machine.succeed("systemctl stop plainsight-b.service")
+        machine.succeed("test \"$(systemctl is-active plainsight-b.service)\" = inactive")
   '';
 }

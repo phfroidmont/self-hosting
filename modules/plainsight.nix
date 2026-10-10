@@ -240,6 +240,8 @@ in
             ExecStartPre = prepare name instance;
             ExecStart = start name instance;
             ExecStartPost = ready name instance;
+            # The JVM exits with 128 + SIGTERM when stopped.
+            SuccessExitStatus = 143;
             Restart = "on-failure";
             RestartSec = "10s";
             TimeoutStartSec = "5min";
