@@ -28,5 +28,6 @@
     ./headscale.nix
     ./kots-libramont.nix
     ./scalive-docs.nix
+    ./reticulum.nix
   ];
 }

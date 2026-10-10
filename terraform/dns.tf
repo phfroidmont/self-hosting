@@ -55,6 +55,14 @@ resource "hcloud_zone_rrset" "hel1_a" {
   ttl     = 600
 }
 
+resource "hcloud_zone_rrset" "rns_a" {
+  zone    = data.hcloud_zone.banditlair_zone.name
+  name    = "rns"
+  records = [{ value = local.hel1_ip }]
+  type    = "A"
+  ttl     = 600
+}
+
 resource "hcloud_zone_rrset" "ws_a" {
   zone    = data.hcloud_zone.banditlair_zone.name
   name    = "ws"

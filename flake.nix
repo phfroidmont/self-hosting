@@ -30,7 +30,7 @@
         {
           _module.args.pkgs-unstable = import nixpkgs-unstable {
             system = "x86_64-linux";
-            config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [ "minecraft-server" ];
+            config.allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [ "minecraft-server" "rns" "lxmf" ];
           };
         };
     in

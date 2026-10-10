@@ -278,6 +278,7 @@
     monitoring-exporters.enable = true;
     forgejo.enable = true;
     kots-libramont.enable = true;
+    reticulum.enable = true;
     scalive-docs = {
       enable = true;
       port = 4006;
@@ -307,6 +308,8 @@
         "- /nix/var/data/grafana/data/grafana.db-shm"
         "- /nix/var/data/grafana/data/grafana.db-journal"
         "- /nix/var/data/grafana/data/log"
+        "- /nix/var/data/reticulum/rns/storage/cache"
+        "- /nix/var/data/reticulum/lxmd/storage/lxmf/messagestore"
       ];
       readWritePaths = [
         "/nix/var/data/murmur"
