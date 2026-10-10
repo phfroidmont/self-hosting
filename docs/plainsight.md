@@ -115,6 +115,13 @@ domain. No unit failed. The first snapshot left stray `-wal`/`-shm` files beside
 its copies; the fix, with `Type=exec`, went out by plain deploy-rs, which
 restarted only PlainSight, and the next snapshot left just the three databases.
 
+The workstation's data then moved in: the stopped app's three databases and
+evidence archive (16 sessions, 74 documents, 164 draft revisions) were copied,
+checked against the originals by checksum, and replaced the empty data. Both
+Cospend projects synced from `hel1`. The workstation's dev instance now uses a
+scratch clone of the books, `../pta-dev`, so it no longer commits prices to the
+real ones.
+
 ## Backups and rollback
 
 Before each Borg backup, `plainsight-<name>-snapshot.service` copies the live
