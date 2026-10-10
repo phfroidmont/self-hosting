@@ -40,6 +40,11 @@ Every instance runs the same jar, with Git, hledger, pdftotext and OpenSSH from
 `hel1`'s nixpkgs. Starting an instance waits until `/_health/ready` answers, so a
 release that does not start fails the activation and deploy-rs rolls back.
 
+A release leaves Newt alone, so plain deploy-rs is safe. Adding or changing an
+instance's Newt resource restarts Newt, which carries deploy-rs's own SSH
+connection: activate those changes detached, with a host-local rollback timer,
+as described in [Pangolin](pangolin.md#resource-naming).
+
 ## Bootstrap
 
 1. Register the instance's deploy key in Forgejo, under the books repository's
@@ -56,7 +61,8 @@ release that does not start fails the activation and deploy-rs rolls back.
 3. Add the domain to the workstation's explicit split-DNS match list (see
    [Pangolin](pangolin.md#https-and-dns)). Phones need the Pangolin client
    connected to reach it.
-4. Deploy `hel1`.
+4. Deploy `hel1` detached, since its Newt resource is new (see above). Pangolin
+   resolves the domain once Newt has registered the resource.
 
 To bring existing data along, stop the instance, copy the `*.sqlite` databases
 and `sessions/` of the old data directory into `data/` (not `.bak` files or
@@ -97,6 +103,17 @@ checks each instance's health on loopback.
 `nix build .#checks.x86_64-linux.plainsight` runs two instances in a VM: their
 books are cloned, a commit pushed elsewhere is pulled, and both database
 snapshots are taken.
+
+### Deployment verification (2026-10-10)
+
+Instance `ph` was activated detached with rollback armed, then persisted as
+generation 215. It cloned `phfroidmont/pta` and is in step with it; Forgejo
+accepted its deploy key for writing (`git push --dry-run`). Health returned
+`200` on loopback and through `plainsight.banditlair.com` with a valid
+certificate, and the LiveView connected in a browser through the private
+domain. No unit failed. The first snapshot left stray `-wal`/`-shm` files beside
+its copies, fixed afterwards; that fix and `Type=exec` reach `hel1` with the next
+deployment.
 
 ## Backups and rollback
 

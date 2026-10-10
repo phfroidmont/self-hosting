@@ -107,6 +107,7 @@ pkgs.testers.runNixOSTest {
         machine.succeed(
             "test \"$(sqlite3 -readonly /nix/var/data/plainsight/a/backup/sessions.sqlite 'PRAGMA quick_check;')\" = ok"
         )
+        machine.succeed("test \"$(ls /nix/var/data/plainsight/a/backup)\" = \"$(ls /nix/var/data/plainsight/a/data | grep '\\.sqlite$')\"")
 
     with subtest("a new release snapshots the databases before starting"):
         machine.succeed("echo /nix/store/previous-plainsight.jar > /nix/var/data/plainsight/b/release")

@@ -95,8 +95,10 @@ let
     for database in "$dir"/data/*.sqlite; do
       [[ -s "$database" ]] || continue
       target="$dir/backup/''${database##*/}"
-      rm -f "$target.partial"
+      rm -f "$target.partial" "$target.partial-wal" "$target.partial-shm"
       timeout 120s sqlite3 -readonly -cmd '.timeout 10000' "$database" ".backup '$target.partial'"
+      # One self-contained file, which a read-only check leaves without -wal and -shm files.
+      sqlite3 "$target.partial" 'PRAGMA journal_mode=DELETE;' > /dev/null
       integrity="$(sqlite3 -readonly "$target.partial" 'PRAGMA quick_check;')"
       if [[ "$integrity" != ok ]]; then
         printf 'Snapshot of %s failed its integrity check: %s\n' "$database" "$integrity" >&2
@@ -225,7 +227,7 @@ in
             PLAINSIGHT_AI_ENABLED = lib.boolToString (instance.openaiApiKeyFile != null);
           } // instance.settings;
           serviceConfig = hardening // {
-            Type = "simple";
+            Type = "exec";
             User = unitName name;
             Group = unitName name;
             WorkingDirectory = directory name;
