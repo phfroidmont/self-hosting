@@ -53,6 +53,18 @@
     scaliveDocsTokenSecret = {
       key = "scalive/docs/token_secret";
     };
+    plainsightPhSigningSecret = {
+      key = "plainsight/ph/signing_secret";
+      restartUnits = [ "plainsight-ph.service" ];
+    };
+    plainsightPhDeployKey = {
+      key = "plainsight/ph/deploy_key";
+      restartUnits = [ "plainsight-ph.service" ];
+    };
+    plainsightPhOpenaiApiKey = {
+      key = "plainsight/ph/openai_api_key";
+      restartUnits = [ "plainsight-ph.service" ];
+    };
     newtHel1Environment = {
       key = "newt/hel1/environment";
       restartUnits = [ "newt.service" ];
@@ -285,6 +297,17 @@
       signingSecretFile = config.sops.secrets.scaliveDocsTokenSecret.path;
       deployAuthorizedKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEIbGHQedFV0L87e12h5wFbHVvxXOye2JHSQ8HiUkFaQ scalive-docs-github-actions";
     };
+    plainsight.instances.ph = {
+      domain = "plainsight.banditlair.com";
+      port = 4010;
+      books.url = "forgejo@forge.froidmont.org:phfroidmont/pta.git";
+      deployKeyFile = config.sops.secrets.plainsightPhDeployKey.path;
+      signingSecretFile = config.sops.secrets.plainsightPhSigningSecret.path;
+      openaiApiKeyFile = config.sops.secrets.plainsightPhOpenaiApiKey.path;
+      settings = {
+        PLAINSIGHT_AI_DAILY_ATTEMPT_LIMIT = "5000";
+      };
+    };
 
     backup-job = {
       enable = true;
@@ -494,7 +517,22 @@
       roles = [ "Personal" "Member" ];
       users = [ ];
     };
+    blueprint.private-resources.plainsight-ph = {
+      name = "PlainSight";
+      mode = "http";
+      destination = "127.0.0.1";
+      destination-port = config.custom.services.plainsight.instances.ph.port;
+      scheme = "http";
+      full-domain = config.custom.services.plainsight.instances.ph.domain;
+      ssl = true;
+      roles = [ "Personal" ];
+      users = [ ];
+    };
   };
+
+  # PlainSight pushes the books to Forgejo on this host over SSH.
+  programs.ssh.knownHosts."forge.froidmont.org".publicKey =
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIq5MH9JDNRZPQIZ7EoqiK5iVHmcH6khsXjcPuvFj9mA";
 
   services.nginx.virtualHosts = {
 

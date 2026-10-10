@@ -166,6 +166,10 @@
               helConfiguration = self.nixosConfigurations.hel1;
             };
             pangolin-native = import ./packages/pangolin/test.nix { inherit pkgs; };
+            plainsight = import ./tests/plainsight.nix {
+              inherit pkgs;
+              sopsModule = sops-nix.nixosModules.sops;
+            };
             telemetry-client = import ./packages/pangolin/telemetry-client-test.nix { inherit pkgs; };
             telemetry-gateway = import ./packages/pangolin/telemetry-gateway-test.nix { inherit pkgs; };
             telemetry-loki = import ./packages/pangolin/telemetry-loki-test.nix { inherit pkgs; };
