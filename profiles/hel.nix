@@ -331,8 +331,8 @@
         "- /nix/var/data/grafana/data/grafana.db-shm"
         "- /nix/var/data/grafana/data/grafana.db-journal"
         "- /nix/var/data/grafana/data/log"
-        "- /nix/var/data/reticulum/rns/storage/cache"
-        "- /nix/var/data/reticulum/lxmd/storage/lxmf/messagestore"
+        "! /nix/var/data/reticulum/rns/storage/cache"
+        "! /nix/var/data/reticulum/lxmd/storage/lxmf/messagestore"
       ];
       readWritePaths = [
         "/nix/var/data/murmur"
