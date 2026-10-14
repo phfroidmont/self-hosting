@@ -273,8 +273,8 @@ in
         names;
       patterns = lib.concatMap
         (name: [
-          "- ${directory name}/data/*.sqlite*"
-          "- ${directory name}/upgrades"
+          "! ${directory name}/data/*.sqlite*"
+          "! ${directory name}/upgrades"
         ])
         names;
       # The snapshot service checks each copy before keeping it.
