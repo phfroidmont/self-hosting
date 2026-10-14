@@ -63,6 +63,10 @@ in
         access-control = [ "127.0.0.0/8 allow" ];
         # Trust Foyer's split-horizon answers rather than public DNSSEC delegations.
         domain-insecure = [ "foyer.cloud." "foyer.lu." "lefoyer.lu." "internal." ];
+        # Retry Foyer's resolver soon after the WSL tunnel returns instead of
+        # serving SERVFAIL until the down-host verdict expires.
+        infra-keep-probing = true;
+        infra-host-ttl = 60;
       };
       forward-zone = [
         {
