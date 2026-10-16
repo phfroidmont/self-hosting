@@ -161,6 +161,10 @@
         (system: deployLib:
           deployLib.deployChecks self.deploy
           // nixpkgs.lib.optionalAttrs (system == "x86_64-linux") {
+            borg-churn-tolerant = import ./tests/borg-churn-tolerant.nix {
+              inherit pkgs;
+              helConfiguration = self.nixosConfigurations.hel1;
+            };
             grafana-backup = import ./tests/grafana-backup.nix {
               inherit pkgs;
               helConfiguration = self.nixosConfigurations.hel1;

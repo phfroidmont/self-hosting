@@ -7,6 +7,11 @@ with lib;
 let
   cfg = config.custom.services.backup-job;
   repo = "ssh://u348077@u348077.your-storagebox.de:23/home/repos/${cfg.repoName}";
+  paths = [
+    "/nix/var/data"
+    cfg.sshKey
+  ]
+  ++ cfg.additionalPaths;
 in
 {
   options.custom.services.backup-job = {
@@ -81,11 +86,7 @@ in
     };
 
     services.borgbackup.jobs.data = {
-      paths = [
-        "/nix/var/data"
-        cfg.sshKey
-      ]
-      ++ cfg.additionalPaths;
+      inherit paths;
       patterns = cfg.patterns;
       doInit = false;
       repo = repo;
@@ -94,9 +95,20 @@ in
         passCommand = "cat ${config.sops.secrets.borgPassphrase.path}";
       };
       readWritePaths = cfg.readWritePaths;
-      preHook = cfg.preHook;
+      # Borg reports a missing backup path as the "file vanished" warning that
+      # the job accepts, so check them first.
+      preHook = ''
+        for path in ${escapeShellArgs paths}; do
+          if [ ! -e "$path" ]; then
+            echo "Backup path $path does not exist" >&2
+            exit 1
+          fi
+        done
+        ${cfg.preHook}
+      '';
       postHook = ''
         ${cfg.postHook}
+        # Accepted borg warnings exit 0 too: the archive was written.
         if [ $exitStatus -eq 0 ]; then
           touch /nix/var/data/backup/backup-ok
         fi
@@ -114,6 +126,14 @@ in
         monthly = 12;
       };
     };
+
+    # Put the borg that accepts churn warnings from `borg create` ahead of the
+    # module's own borg, for this job only.
+    systemd.services.borgbackup-job-data.path = mkBefore [
+      (pkgs.callPackage ../packages/borg-churn-tolerant {
+        borgbackup = config.services.borgbackup.package;
+      })
+    ];
 
     systemd.services.borgbackup-check-data = {
       description = "Borg repository check (latest archive)";

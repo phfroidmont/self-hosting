@@ -332,6 +332,10 @@
         "- /nix/var/data/grafana/data/grafana.db-journal"
         "- /nix/var/data/grafana/data/log"
         "! /nix/var/data/reticulum/rns/storage/cache"
+        # Peers' announced ratchet keys, expired after 30 days and learned again
+        # from their next announce, and in-flight resource transfers.
+        "! /nix/var/data/reticulum/rns/storage/ratchets"
+        "! /nix/var/data/reticulum/rns/storage/resources"
         "! /nix/var/data/reticulum/lxmd/storage/lxmf/messagestore"
       ];
       readWritePaths = [

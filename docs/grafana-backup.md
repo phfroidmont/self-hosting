@@ -9,7 +9,9 @@ validated with SQLite `quick_check` and checks for the `user`, `dashboard`, and
 Snapshot failure aborts the backup; an older snapshot is never used as a fallback.
 SQLite lock waits are bounded and the snapshot command has a 60-second deadline.
 Borg excludes the live database, its journal/WAL sidecars, and Grafana's log
-directory. Other Grafana files remain covered. Borg warnings still fail the job.
+directory. Other Grafana files remain covered. Borg warnings still fail the job,
+except a file changing or vanishing while `borg create` reads it, which is logged
+and accepted (see `packages/borg-churn-tolerant`).
 
 The existing scheduled restore test extracts the snapshot and repeats its
 integrity and schema checks alongside the existing application restore checks.
