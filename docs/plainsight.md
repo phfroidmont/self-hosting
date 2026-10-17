@@ -1,9 +1,12 @@
 # PlainSight
 
 PlainSight instances run on `hel1`, one per set of books, each as a private
-Pangolin HTTP resource like Grafana. Instance `ph` serves
-`https://plainsight.banditlair.com` from loopback port 4010 to the `Personal`
-role; Newt terminates HTTPS on `hel1`.
+Pangolin HTTP resource like Grafana. Newt terminates HTTPS on `hel1`.
+
+| Instance | Domain | Port | Books | Roles |
+| --- | --- | --- | --- | --- |
+| `ph` | `https://plainsight.banditlair.com` | 4010 | `phfroidmont/pta` | `Personal` |
+| `marie` | `https://plainsight-marie.banditlair.com` | 4011 | `phfroidmont/pta-marie` | `Personal` |
 
 Each instance has its own system user `plainsight-<name>`, its own secrets under
 `plainsight/<name>/` in `secrets.enc.yml`, and its own state in

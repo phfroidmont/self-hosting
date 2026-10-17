@@ -65,6 +65,18 @@
       key = "plainsight/ph/openai_api_key";
       restartUnits = [ "plainsight-ph.service" ];
     };
+    plainsightMarieSigningSecret = {
+      key = "plainsight/marie/signing_secret";
+      restartUnits = [ "plainsight-marie.service" ];
+    };
+    plainsightMarieDeployKey = {
+      key = "plainsight/marie/deploy_key";
+      restartUnits = [ "plainsight-marie.service" ];
+    };
+    plainsightMarieOpenaiApiKey = {
+      key = "plainsight/marie/openai_api_key";
+      restartUnits = [ "plainsight-marie.service" ];
+    };
     newtHel1Environment = {
       key = "newt/hel1/environment";
       restartUnits = [ "newt.service" ];
@@ -308,6 +320,17 @@
         PLAINSIGHT_AI_DAILY_ATTEMPT_LIMIT = "5000";
       };
     };
+    plainsight.instances.marie = {
+      domain = "plainsight-marie.banditlair.com";
+      port = 4011;
+      books.url = "forgejo@forge.froidmont.org:phfroidmont/pta-marie.git";
+      deployKeyFile = config.sops.secrets.plainsightMarieDeployKey.path;
+      signingSecretFile = config.sops.secrets.plainsightMarieSigningSecret.path;
+      openaiApiKeyFile = config.sops.secrets.plainsightMarieOpenaiApiKey.path;
+      settings = {
+        PLAINSIGHT_AI_DAILY_ATTEMPT_LIMIT = "5000";
+      };
+    };
 
     backup-job = {
       enable = true;
@@ -528,6 +551,17 @@
       destination-port = config.custom.services.plainsight.instances.ph.port;
       scheme = "http";
       full-domain = config.custom.services.plainsight.instances.ph.domain;
+      ssl = true;
+      roles = [ "Personal" ];
+      users = [ ];
+    };
+    blueprint.private-resources.plainsight-marie = {
+      name = "PlainSight Marie";
+      mode = "http";
+      destination = "127.0.0.1";
+      destination-port = config.custom.services.plainsight.instances.marie.port;
+      scheme = "http";
+      full-domain = config.custom.services.plainsight.instances.marie.domain;
       ssl = true;
       roles = [ "Personal" ];
       users = [ ];

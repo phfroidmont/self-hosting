@@ -72,7 +72,8 @@ through HTTP-01; a private ACME-state mirror lets Pangolin distribute them to Ne
 
 Client split DNS covers the configured Foyer zones, `*.internal`, and the exact
 private application names `grafana.banditlair.com`, `monero.banditlair.com`,
-`uptime.banditlair.com`, and `telemetry.banditlair.com`.
+`uptime.banditlair.com`, `telemetry.banditlair.com`, `plainsight.banditlair.com`,
+and `plainsight-marie.banditlair.com`.
 For matching queries, Pangolin answers resource aliases first; matching misses go
 through the private DNS resource to Unbound on `relay1` at `127.0.0.1:53`.
 Other queries use the client's normal resolver.
