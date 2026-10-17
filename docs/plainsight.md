@@ -125,6 +125,19 @@ Cospend projects synced from `hel1`. The workstation's dev instance now uses a
 scratch clone of the books, `../pta-dev`, so it no longer commits prices to the
 real ones.
 
+### Deployment verification (2026-10-17)
+
+Instance `marie` went out with release `7addc73`, activated detached with a
+15-minute rollback armed, then persisted as generation 225 once verified. The
+closure differed from the running system only by the jar and `marie`'s units.
+Copying it needed `nix copy --no-check-sigs`, as deploy-rs does. The detached
+`switch-to-configuration test` exited with status 4 only because Newt's restart
+closed the root SSH session, so reloading root's user units failed; every system
+unit started. `marie` cloned `phfroidmont/pta-marie`, committed its first prices
+and pushed them, which proves its deploy key can write. `ph` snapshotted its
+databases and restarted on the new release. Health returned `200` for both on
+loopback and for `ph` through its private domain. No unit failed.
+
 ## Backups and rollback
 
 Before each Borg backup, `plainsight-<name>-snapshot.service` copies the live
