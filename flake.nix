@@ -2,6 +2,8 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    # Temporary: PHP 8.4.27 (CVE-2026-109618, CVE-2026-109619) before it reaches nixos-26.05.
+    nixpkgs-php.url = "github:nixos/nixpkgs/nixos-26.05-small";
     disko.url = "github:nix-community/disko";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
@@ -14,6 +16,7 @@
     inputs@{ self
     , nixpkgs
     , nixpkgs-unstable
+    , nixpkgs-php
     , disko
     , deploy-rs
     , sops-nix
@@ -82,6 +85,12 @@
             {
               sops.defaultSopsFile = ./secrets.enc.yml;
               networking.hostName = "hel1";
+              # Temporary: remove with the nixpkgs-php input once nixos-26.05 ships PHP 8.4.27.
+              nixpkgs.overlays = [
+                (final: prev: {
+                  inherit (inputs.nixpkgs-php.legacyPackages.${prev.stdenv.hostPlatform.system}) php php84;
+                })
+              ];
               networking.domain = "banditlair.com";
               nix.registry.nixpkgs.flake = nixpkgs;
 
